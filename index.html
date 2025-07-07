@@ -1,15 +1,122 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AffDeals – Best Price Comparison</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
+  <title>Product Name – Landing Page</title>
 </head>
 <body>
-  <header><h1>Welcome to AffDeals</h1></header>
-  <p>Compare prices across Amazon, Flipkart, and more!</p>
-  <!-- …your content here… -->
+
+  <!-- Header / Navigation -->
+  <header>
+    <nav>
+      <a href="#hero">Home</a> |
+      <a href="#features">Features</a> |
+      <a href="#pricing">Pricing</a> |
+      <a href="#testimonials">Testimonials</a> |
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <h1>Amazing Product</h1>
+    <p>The best solution to all your problems. Fast, reliable, and cost-effective.</p>
+    <button onclick="window.location.href='#pricing'">Buy Now</button>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features">
+    <h2>Key Features</h2>
+    <ul>
+      <li><strong>Feature One:</strong> Short description of the most important benefit.</li>
+      <li><strong>Feature Two:</strong> Another incredible capability that solves a pain point.</li>
+      <li><strong>Feature Three:</strong> A third standout feature that sets you apart.</li>
+      <li><strong>Feature Four:</strong> Additional feature to sweeten the deal.</li>
+    </ul>
+  </section>
+
+  <!-- Product Details / How It Works -->
+  <section id="details">
+    <h2>How It Works</h2>
+    <ol>
+      <li>Step 1: Sign up or download.</li>
+      <li>Step 2: Configure in minutes with our easy setup wizard.</li>
+      <li>Step 3: Enjoy seamless performance and automatic updates.</li>
+    </ol>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing">
+    <h2>Pricing Plans</h2>
+    <div>
+      <h3>Basic</h3>
+      <p>$9/month</p>
+      <ul>
+        <li>Access to core features</li>
+        <li>Email support</li>
+      </ul>
+      <button onclick="alert('Selected Basic')">Select Basic</button>
+    </div>
+    <div>
+      <h3>Pro</h3>
+      <p>$29/month</p>
+      <ul>
+        <li>All Basic features</li>
+        <li>Advanced analytics</li>
+        <li>Priority support</li>
+      </ul>
+      <button onclick="alert('Selected Pro')">Select Pro</button>
+    </div>
+    <div>
+      <h3>Enterprise</h3>
+      <p>Contact us</p>
+      <ul>
+        <li>All Pro features</li>
+        <li>Dedicated account manager</li>
+        <li>Custom integrations</li>
+      </ul>
+      <button onclick="window.location.href='#contact'">Contact Sales</button>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials">
+    <h2>What Our Customers Say</h2>
+    <blockquote>
+      “This product transformed our workflow and saved us hours every week!”<br>
+      <footer>— Jane Doe, CEO of ExampleCorp</footer>
+    </blockquote>
+    <blockquote>
+      “A must‑have tool for any business looking to scale quickly.”<br>
+      <footer>— John Smith, CTO of Acme Inc.</footer>
+    </blockquote>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <h3>Q: Is there a trial period?</h3>
+    <p>A: Yes, we offer a 14‑day free trial with full access to Pro features.</p>
+    <h3>Q: Can I cancel anytime?</h3>
+    <p>A: Absolutely—no long‑term commitments or hidden fees.</p>
+    <h3>Q: Do you offer discounts for nonprofits?</h3>
+    <p>A: Yes, please <a href="#contact">contact us</a> to learn more.</p>
+  </section>
+
+  <!-- Call to Action -->
+  <section id="cta">
+    <h2>Ready to Get Started?</h2>
+    <button onclick="window.location.href='#pricing'">Choose Your Plan</button>
+  </section>
+
+  <!-- Footer / Contact -->
+  <footer id="contact">
+    <h2>Get in Touch</h2>
+    <p>Email: <a href="mailto:support@example.com">support@example.com</a></p>
+    <p>Phone: +1 (555) 123‑4567</p>
+    <p>&copy; 2025 Amazing Product, Inc.</p>
+  </footer>
+
 </body>
 </html>

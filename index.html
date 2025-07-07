@@ -5,117 +5,151 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Product Name – Landing Page</title>
 </head>
-<body>
+<body style="margin:0; font-family:Arial, sans-serif; line-height:1.6; color:#333;">
 
   <!-- Header / Navigation -->
-  <header>
-    <nav>
-      <a href="#hero">Home</a> |
-      <a href="#features">Features</a> |
-      <a href="#pricing">Pricing</a> |
-      <a href="#testimonials">Testimonials</a> |
-      <a href="#contact">Contact</a>
+  <header style="background:#2c3e50; padding:1rem 2rem;">
+    <nav style="text-align:right;">
+      <a href="#hero" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Home</a>
+      <a href="#features" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Features</a>
+      <a href="#pricing" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Pricing</a>
+      <a href="#testimonials" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Testimonials</a>
+      <a href="#contact" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Contact</a>
     </nav>
   </header>
 
   <!-- Hero Section -->
-  <section id="hero">
-    <h1>Amazing Product</h1>
-    <p>The best solution to all your problems. Fast, reliable, and cost-effective.</p>
-    <button onclick="window.location.href='#pricing'">Buy Now</button>
+  <section id="hero" style="background:#3498db; color:#fff; text-align:center; padding:4rem 2rem;">
+    <h1 style="font-size:2.5rem; margin-bottom:0.5rem;">Amazing Product</h1>
+    <p style="font-size:1.2rem; margin-bottom:1.5rem;">The best solution to all your problems. Fast, reliable, and cost-effective.</p>
+    <button onclick="window.location.href='#pricing'"
+            style="background:linear-gradient(45deg, #e67e22, #f1c40f); border:none;
+                   padding:0.75rem 1.5rem; font-size:1rem; color:#fff; cursor:pointer;
+                   border-radius:4px;">
+      Buy Now
+    </button>
   </section>
 
   <!-- Features Section -->
-  <section id="features">
-    <h2>Key Features</h2>
-    <ul>
-      <li><strong>Feature One:</strong> Short description of the most important benefit.</li>
-      <li><strong>Feature Two:</strong> Another incredible capability that solves a pain point.</li>
-      <li><strong>Feature Three:</strong> A third standout feature that sets you apart.</li>
-      <li><strong>Feature Four:</strong> Additional feature to sweeten the deal.</li>
+  <section id="features" style="padding:3rem 2rem; background:#ecf0f1;">
+    <h2 style="text-align:center; margin-bottom:2rem;">Key Features</h2>
+    <ul style="max-width:600px; margin:0 auto; list-style:none; padding:0;">
+      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
+        <strong>Feature One:</strong> Short description of the most important benefit.
+      </li>
+      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
+        <strong>Feature Two:</strong> Another incredible capability that solves a pain point.
+      </li>
+      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
+        <strong>Feature Three:</strong> A third standout feature that sets you apart.
+      </li>
+      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
+        <strong>Feature Four:</strong> Additional feature to sweeten the deal.
+      </li>
     </ul>
   </section>
 
-  <!-- Product Details / How It Works -->
-  <section id="details">
-    <h2>How It Works</h2>
-    <ol>
-      <li>Step 1: Sign up or download.</li>
-      <li>Step 2: Configure in minutes with our easy setup wizard.</li>
-      <li>Step 3: Enjoy seamless performance and automatic updates.</li>
+  <!-- How It Works -->
+  <section id="details" style="padding:3rem 2rem;">
+    <h2 style="text-align:center; margin-bottom:2rem;">How It Works</h2>
+    <ol style="max-width:600px; margin:0 auto; padding-left:1.25rem;">
+      <li style="margin-bottom:1rem;">Sign up or download.</li>
+      <li style="margin-bottom:1rem;">Configure in minutes with our easy setup wizard.</li>
+      <li style="margin-bottom:1rem;">Enjoy seamless performance and automatic updates.</li>
     </ol>
   </section>
 
   <!-- Pricing Section -->
-  <section id="pricing">
-    <h2>Pricing Plans</h2>
-    <div>
-      <h3>Basic</h3>
-      <p>$9/month</p>
-      <ul>
-        <li>Access to core features</li>
-        <li>Email support</li>
-      </ul>
-      <button onclick="alert('Selected Basic')">Select Basic</button>
-    </div>
-    <div>
-      <h3>Pro</h3>
-      <p>$29/month</p>
-      <ul>
-        <li>All Basic features</li>
-        <li>Advanced analytics</li>
-        <li>Priority support</li>
-      </ul>
-      <button onclick="alert('Selected Pro')">Select Pro</button>
-    </div>
-    <div>
-      <h3>Enterprise</h3>
-      <p>Contact us</p>
-      <ul>
-        <li>All Pro features</li>
-        <li>Dedicated account manager</li>
-        <li>Custom integrations</li>
-      </ul>
-      <button onclick="window.location.href='#contact'">Contact Sales</button>
+  <section id="pricing" style="background:#f8f9fa; padding:3rem 2rem;">
+    <h2 style="text-align:center; margin-bottom:2rem;">Pricing Plans</h2>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;">
+      <!-- Basic -->
+      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h3>Basic</h3>
+        <p style="font-size:1.5rem; color:#27ae60;">$9<span style="font-size:1rem;">/month</span></p>
+        <ul>
+          <li>Access to core features</li>
+          <li>Email support</li>
+        </ul>
+        <button onclick="alert('Selected Basic')" style="background:#27ae60; color:#fff;
+                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
+          Select Basic
+        </button>
+      </div>
+      <!-- Pro -->
+      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h3>Pro</h3>
+        <p style="font-size:1.5rem; color:#c0392b;">$29<span style="font-size:1rem;">/month</span></p>
+        <ul>
+          <li>All Basic features</li>
+          <li>Advanced analytics</li>
+          <li>Priority support</li>
+        </ul>
+        <button onclick="alert('Selected Pro')" style="background:#c0392b; color:#fff;
+                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
+          Select Pro
+        </button>
+      </div>
+      <!-- Enterprise -->
+      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h3>Enterprise</h3>
+        <p style="font-size:1.5rem; color:#8e44ad;">Contact us</p>
+        <ul>
+          <li>All Pro features</li>
+          <li>Dedicated account manager</li>
+          <li>Custom integrations</li>
+        </ul>
+        <button onclick="window.location.href='#contact'" style="background:#8e44ad; color:#fff;
+                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
+          Contact Sales
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- Testimonials Section -->
-  <section id="testimonials">
-    <h2>What Our Customers Say</h2>
-    <blockquote>
+  <section id="testimonials" style="padding:3rem 2rem; background:#ecf0f1;">
+    <h2 style="text-align:center; margin-bottom:2rem;">What Our Customers Say</h2>
+    <blockquote style="max-width:600px; margin:1rem auto; font-style:italic; color:#555;">
       “This product transformed our workflow and saved us hours every week!”<br>
-      <footer>— Jane Doe, CEO of ExampleCorp</footer>
+      <footer style="text-align:right; margin-top:0.5rem; font-weight:bold;">— Jane Doe, CEO of ExampleCorp</footer>
     </blockquote>
-    <blockquote>
+    <blockquote style="max-width:600px; margin:1rem auto; font-style:italic; color:#555;">
       “A must‑have tool for any business looking to scale quickly.”<br>
-      <footer>— John Smith, CTO of Acme Inc.</footer>
+      <footer style="text-align:right; margin-top:0.5rem; font-weight:bold;">— John Smith, CTO of Acme Inc.</footer>
     </blockquote>
   </section>
 
   <!-- FAQ Section -->
-  <section id="faq">
-    <h2>Frequently Asked Questions</h2>
-    <h3>Q: Is there a trial period?</h3>
-    <p>A: Yes, we offer a 14‑day free trial with full access to Pro features.</p>
-    <h3>Q: Can I cancel anytime?</h3>
-    <p>A: Absolutely—no long‑term commitments or hidden fees.</p>
-    <h3>Q: Do you offer discounts for nonprofits?</h3>
-    <p>A: Yes, please <a href="#contact">contact us</a> to learn more.</p>
+  <section id="faq" style="padding:3rem 2rem;">
+    <h2 style="text-align:center; margin-bottom:2rem;">Frequently Asked Questions</h2>
+    <div style="max-width:600px; margin:0 auto;">
+      <h3 style="margin-top:1rem;">Q: Is there a trial period?</h3>
+      <p>A: Yes, we offer a 14‑day free trial with full access to Pro features.</p>
+      <h3 style="margin-top:1rem;">Q: Can I cancel anytime?</h3>
+      <p>A: Absolutely—no long‑term commitments or hidden fees.</p>
+      <h3 style="margin-top:1rem;">Q: Do you offer discounts for nonprofits?</h3>
+      <p>A: Yes, please <a href="#contact" style="color:#3498db; text-decoration:none;">contact us</a> to learn more.</p>
+    </div>
   </section>
 
   <!-- Call to Action -->
-  <section id="cta">
-    <h2>Ready to Get Started?</h2>
-    <button onclick="window.location.href='#pricing'">Choose Your Plan</button>
+  <section id="cta" style="background:#3498db; color:#fff; text-align:center; padding:3rem 2rem;">
+    <h2 style="margin-bottom:1rem;">Ready to Get Started?</h2>
+    <button onclick="window.location.href='#pricing'"
+            style="background:linear-gradient(45deg, #e67e22, #f1c40f); border:none;
+                   padding:0.75rem 1.5rem; font-size:1rem; color:#fff; cursor:pointer;
+                   border-radius:4px;">
+      Choose Your Plan
+    </button>
   </section>
 
   <!-- Footer / Contact -->
-  <footer id="contact">
+  <footer id="contact" style="background:#2c3e50; color:#ecf0f1; text-align:center; padding:2rem;">
     <h2>Get in Touch</h2>
-    <p>Email: <a href="mailto:support@example.com">support@example.com</a></p>
+    <p>Email: <a href="mailto:support@example.com" style="color:#ecf0f1; text-decoration:none;">support@example.com</a></p>
     <p>Phone: +1 (555) 123‑4567</p>
-    <p>&copy; 2025 Amazing Product, Inc.</p>
+    <p style="margin-top:1rem;">&copy; 2025 Amazing Product, Inc.</p>
   </footer>
 
 </body>

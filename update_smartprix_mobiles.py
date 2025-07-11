@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Smartprix Mobile Phone Image Scraper
-Scrapes product images from individual mobile phone pages using Selenium
+Smartprix Mobile Phone Image and Variant Scraper
+Scrapes product images and variants from individual mobile phone pages using Selenium
 """
 
 import json
@@ -11,12 +11,14 @@ import sys
 import requests
 import re
 import shutil
+import unicodedata
 from urllib.parse import urlparse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import contextlib
 from PIL import Image, ImageDraw
@@ -34,6 +36,44 @@ def suppress_stderr():
             yield
         finally:
             sys.stderr = old_stderr
+
+
+def clean_unicode_text(text):
+    """Clean and normalize unicode text to ensure proper handling"""
+    if not text:
+        return text
+    
+    try:
+        # Normalize unicode characters
+        normalized = unicodedata.normalize('NFKC', text)
+        
+        # Clean up any problematic characters while preserving important ones
+        # Keep currency symbols, measurement symbols, and special characters
+        cleaned = normalized.strip()
+        
+        # Handle specific problematic characters
+        replacements = {
+            # Smart quotes to regular quotes
+            '"': '"',
+            '"': '"',
+            ''': "'",
+            ''': "'",
+            # En-dash and em-dash to regular dash
+            '–': '-',
+            '—': '-',
+            # Other problematic characters
+            '…': '...',
+            # Keep these important symbols as-is:
+            # ₹ (rupee), ƒ (f-hook), µ (micro), ~ (tilde), ° (degree)
+        }
+        
+        for old, new in replacements.items():
+            cleaned = cleaned.replace(old, new)
+        
+        return cleaned
+    except Exception as e:
+        print(f"Error cleaning unicode text: {e}")
+        return text
 
 
 def setup_driver():
@@ -490,6 +530,230 @@ def download_and_process_image(image_url, save_path, driver=None, retries=3):
 
 
 
+def scrape_product_variants(driver, product_url, retries=3):
+    """Scrape product variants from a product page"""
+    for attempt in range(retries):
+        try:
+            print(f"  Scraping variants from: {product_url}")
+            driver.get(product_url)
+            
+            # Wait for page to load
+            wait = WebDriverWait(driver, 10)
+            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            
+            # Give extra time for dynamic content to load
+            time.sleep(3)
+            
+            variants = []
+            
+            # Try to scrape variants using the specified XPath pattern
+            # /html/body/div[1]/main/div[1]/div[2]/div[4]/div[2]/div[1]
+            # /html/body/div[1]/main/div[1]/div[2]/div[4]/div[2]/div[2]
+            # etc.
+            
+            # Try multiple variations of the XPath in case the structure varies slightly
+            xpath_patterns = [
+                "/html/body/div[1]/main/div[1]/div[2]/div[4]/div[2]/div[{index}]",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/div[2]/div[{index}]",
+                "/html/body/div[1]/main/div[1]/div[2]/div[5]/div[2]/div[{index}]",
+                "/html/body/div[1]/main/div[1]/div[1]/div[4]/div[2]/div[{index}]",
+                "/html/body/div[1]/main/div[1]/div[3]/div[4]/div[2]/div[{index}]"
+            ]
+            
+            # Try each pattern
+            for pattern in xpath_patterns:
+                if variants:  # If we already found variants with a previous pattern, break
+                    break
+                    
+                print(f"    Trying XPath pattern: {pattern.format(index='N')}")
+                variant_index = 1
+                
+                while True:
+                    try:
+                        # Construct XPath for current variant
+                        xpath = pattern.format(index=variant_index)
+                        
+                        # Try to find the variant element
+                        variant_element = driver.find_element(By.XPATH, xpath)
+                        
+                        # Extract variant data
+                        variant_data = {
+                            "size": None,
+                            "price": None
+                        }
+                        
+                        # Try to extract size/variant info
+                        try:
+                            # Look for size info in various ways
+                            size_selectors = [
+                                "span",
+                                "div[class*='size']",
+                                "div[class*='variant']",
+                                "div[class*='option']",
+                                "*[class*='size']",
+                                "*[class*='variant']",
+                                "*[class*='option']"
+                            ]
+                            
+                            for selector in size_selectors:
+                                try:
+                                    size_elements = variant_element.find_elements(By.CSS_SELECTOR, selector)
+                                    for elem in size_elements:
+                                        text = elem.text.strip()
+                                        if text and any(keyword in text.lower() for keyword in ['gb', 'tb', 'ram', 'storage', 'memory']):
+                                            variant_data["size"] = text
+                                            break
+                                    if variant_data["size"]:
+                                        break
+                                except:
+                                    continue
+                            
+                            # If no size found, try getting all text from the element
+                            if not variant_data["size"]:
+                                all_text = variant_element.text.strip()
+                                if all_text:
+                                    # Look for patterns like "8GB+128GB" or "8GB RAM 128GB"
+                                    size_match = re.search(r'(\d+\s*GB[^₹]*(?:\+|\s+)\d+\s*GB[^₹]*)', all_text, re.IGNORECASE)
+                                    if size_match:
+                                        variant_data["size"] = size_match.group(1).strip()
+                                    else:
+                                        # Look for any GB/TB patterns
+                                        gb_match = re.search(r'(\d+\s*(?:GB|TB)[^₹]*)', all_text, re.IGNORECASE)
+                                        if gb_match:
+                                            variant_data["size"] = gb_match.group(1).strip()
+                        except Exception as e:
+                            print(f"    Error extracting size: {e}")
+                        
+                        # Try to extract price
+                        try:
+                            # Look for price info in various ways
+                            price_selectors = [
+                                "span[class*='price']",
+                                "div[class*='price']",
+                                "*[class*='price']",
+                                "span",
+                                "div"
+                            ]
+                            
+                            for selector in price_selectors:
+                                try:
+                                    price_elements = variant_element.find_elements(By.CSS_SELECTOR, selector)
+                                    for elem in price_elements:
+                                        text = elem.text.strip()
+                                        if text and '₹' in text:
+                                            variant_data["price"] = text
+                                            break
+                                    if variant_data["price"]:
+                                        break
+                                except:
+                                    continue
+                            
+                            # If no price found, try getting all text from the element
+                            if not variant_data["price"]:
+                                all_text = variant_element.text.strip()
+                                if all_text and '₹' in all_text:
+                                    # Extract price pattern
+                                    price_match = re.search(r'₹[\d,]+', all_text)
+                                    if price_match:
+                                        variant_data["price"] = price_match.group().strip()
+                        except Exception as e:
+                            print(f"    Error extracting price: {e}")
+                        
+                        # Only add variant if we have at least size or price
+                        if variant_data["size"] or variant_data["price"]:
+                            variants.append(variant_data)
+                            print(f"    Found variant {variant_index}: Size='{variant_data['size']}', Price='{variant_data['price']}'")
+                        
+                        variant_index += 1
+                        
+                    except NoSuchElementException:
+                        # No more variants found at this index for this pattern
+                        if variant_index == 1:
+                            print(f"    No variants found with this pattern")
+                        else:
+                            print(f"    Found {variant_index - 1} variants with this pattern")
+                        break
+                    except Exception as e:
+                        print(f"    Error getting variant {variant_index}: {e}")
+                        break
+            
+            # If no variants found with the specific pattern, try alternative methods
+            if not variants:
+                print("    No variants found with specific XPath, trying alternative methods...")
+                
+                # Try alternative selectors that might work
+                alternative_selectors = [
+                    "div[class*='variant']",
+                    "div[class*='option']",
+                    "div[class*='size']",
+                    "div[class*='price-option']",
+                    "div[class*='config']",
+                    "div[class*='storage']",
+                    "button[class*='variant']",
+                    "button[class*='option']",
+                    "span[class*='variant']",
+                    "span[class*='option']"
+                ]
+                
+                for selector in alternative_selectors:
+                    try:
+                        variant_elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                        for elem in variant_elements:
+                            text = elem.text.strip()
+                            if text and (any(keyword in text.lower() for keyword in ['gb', 'tb', 'ram', 'storage']) or '₹' in text):
+                                # Try to extract size and price from the text
+                                variant_data = {
+                                    "size": None,
+                                    "price": None
+                                }
+                                
+                                # Extract size
+                                size_match = re.search(r'(\d+\s*GB[^₹]*(?:\+|\s+)\d+\s*GB[^₹]*)', text, re.IGNORECASE)
+                                if size_match:
+                                    variant_data["size"] = size_match.group(1).strip()
+                                else:
+                                    gb_match = re.search(r'(\d+\s*(?:GB|TB)[^₹]*)', text, re.IGNORECASE)
+                                    if gb_match:
+                                        variant_data["size"] = gb_match.group(1).strip()
+                                
+                                # Extract price
+                                price_match = re.search(r'₹[\d,]+', text)
+                                if price_match:
+                                    variant_data["price"] = price_match.group().strip()
+                                
+                                # Add variant if we have at least size or price
+                                if variant_data["size"] or variant_data["price"]:
+                                    # Check if this variant already exists
+                                    variant_exists = False
+                                    for existing_variant in variants:
+                                        if (existing_variant["size"] == variant_data["size"] and 
+                                            existing_variant["price"] == variant_data["price"]):
+                                            variant_exists = True
+                                            break
+                                    
+                                    if not variant_exists:
+                                        variants.append(variant_data)
+                        
+                        if variants:
+                            print(f"    Found {len(variants)} variants using alternative method")
+                            break
+                    except Exception as e:
+                        continue
+            
+            print(f"  Found {len(variants)} total variants")
+            return variants
+            
+        except Exception as e:
+            print(f"  Error scraping variants (attempt {attempt + 1}/{retries}): {e}")
+            if attempt < retries - 1:
+                time.sleep(2)
+            else:
+                print(f"  Failed to scrape variants after {retries} attempts")
+                return []
+    
+    return []
+
+
 def scrape_and_save_product_images(driver, product_url, unique_id, retries=3):
     """Scrape image URLs from a product page and save them locally, return original URLs"""
     for attempt in range(retries):
@@ -655,6 +919,575 @@ def save_updated_mobiles_data(data, json_file_path):
         return False
 
 
+def append_product_to_json(product_data, json_file_path):
+    """Append a single product to the JSON file with correct count (serial number)"""
+    try:
+        # Load existing data
+        try:
+            with open(json_file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # If file doesn't exist or is corrupted, create new structure
+            data = {
+                "products": []
+            }
+        
+        # Set the count as the next serial number (number of existing products + 1)
+        next_count = len(data["products"]) + 1
+        product_data["count"] = next_count
+        
+        # Add the new product
+        data["products"].append(product_data)
+        
+        # Save updated data
+        with open(json_file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        
+        return True
+    except Exception as e:
+        print(f"Error appending product to JSON: {e}")
+        return False
+
+
+def extract_asin_from_amazon_url(url):
+    """Extract ASIN from Amazon URL"""
+    try:
+        # Common Amazon ASIN patterns
+        patterns = [
+            r'/dp/([A-Z0-9]{10})',
+            r'/product/([A-Z0-9]{10})',
+            r'/gp/product/([A-Z0-9]{10})',
+            r'asin=([A-Z0-9]{10})',
+            r'ASIN=([A-Z0-9]{10})'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, url)
+            if match:
+                return match.group(1)
+        return None
+    except Exception as e:
+        print(f"    Error extracting ASIN from URL: {e}")
+        return None
+
+
+def extract_specs_from_popup(driver, popup_element):
+    """Extract specifications from the popup element and organize by sections"""
+    try:
+        features_by_section = {}
+        
+        # Extract specifications from the popup structure
+        
+        # Look for main section headers - these are typically larger headers that represent major categories
+        main_section_selectors = [
+            "h2, h3[class*='section'], h4[class*='section']",
+            "div[class*='section-title'], div[class*='spec-section-title']",
+            "dt[class*='section'], .spec-category[class*='main']",
+            "*[class*='main-heading'], *[class*='section-header']"
+        ]
+        
+        # Get all potential headers and analyze them
+        all_headers = []
+        header_selectors = ["h1, h2, h3, h4, h5, h6", "div[class*='title'], div[class*='header']", "dt, .category, .section"]
+        
+        for selector in header_selectors:
+            try:
+                found_headers = popup_element.find_elements(By.CSS_SELECTOR, selector)
+                for header in found_headers:
+                    header_text = header.text.strip()
+                    if header_text:
+                        header_info = {
+                            'element': header,
+                            'text': header_text,
+                            'tag': header.tag_name,
+                            'class': header.get_attribute('class') or '',
+                            'font_size': header.value_of_css_property('font-size'),
+                            'font_weight': header.value_of_css_property('font-weight')
+                        }
+                        all_headers.append(header_info)
+            except:
+                continue
+        
+        # Identify main sections based on known keywords and styling
+        main_sections = []
+        main_section_keywords = ['general', 'design', 'display', 'memory', 'camera', 'battery', 'connectivity', 'performance', 'technical', 'multimedia', 'extra']
+        
+        for header_info in all_headers:
+            header_text_lower = header_info['text'].lower()
+            
+            # Check if this is a main section header
+            if any(keyword in header_text_lower for keyword in main_section_keywords):
+                # Additional checks to distinguish main sections from subsections
+                is_main_section = False
+                
+                # Check 1: Main sections are typically one word and match our keywords exactly
+                if header_text_lower in main_section_keywords:
+                    is_main_section = True
+                # Check 2: Main sections might have specific styling (larger font, bold, etc.)
+                elif header_info['font_weight'] in ['bold', '700', '600'] or int(header_info['font_size'].replace('px', '')) > 14:
+                    is_main_section = True
+                # Check 3: Main sections might have specific classes
+                elif any(cls in header_info['class'].lower() for cls in ['section', 'main', 'title', 'header']):
+                    is_main_section = True
+                
+                if is_main_section:
+                    main_sections.append(header_info)
+        
+        if main_sections:
+            
+            for i, section_info in enumerate(main_sections):
+                section_name = section_info['text']
+                section_element = section_info['element']
+                
+                # Find all specifications between this section and the next main section
+                section_specs = []
+                
+                # Determine the range for this section
+                if i < len(main_sections) - 1:
+                    next_section_element = main_sections[i + 1]['element']
+                    # Get all elements between current section and next section
+                    xpath_query = f".//*[preceding-sibling::*[. = '{section_element}'] and following-sibling::*[. = '{next_section_element}']]"
+                else:
+                    # Last section - get all elements after this section
+                    xpath_query = f".//*[preceding-sibling::*[. = '{section_element}']]"
+                
+                try:
+                    # Find all tables in this section's range
+                    tables_in_section = section_element.find_elements(By.XPATH, "following-sibling::table | following::table")
+                    
+                    # Limit to tables that come before the next main section
+                    if i < len(main_sections) - 1:
+                        next_section_element = main_sections[i + 1]['element']
+                        filtered_tables = []
+                        for table in tables_in_section:
+                            try:
+                                # Check if this table comes before the next main section
+                                comparison_result = driver.execute_script("""
+                                    var table = arguments[0];
+                                    var nextSection = arguments[1];
+                                    var tablePos = table.getBoundingClientRect();
+                                    var nextSectionPos = nextSection.getBoundingClientRect();
+                                    return tablePos.top < nextSectionPos.top;
+                                """, table, next_section_element)
+                                
+                                if comparison_result:
+                                    filtered_tables.append(table)
+                            except:
+                                continue
+                        tables_in_section = filtered_tables
+                    
+                    # Extract specifications from all tables in this section
+                    for table in tables_in_section[:3]:  # Limit to first 3 tables to avoid going too far
+                        rows = table.find_elements(By.CSS_SELECTOR, "tr")
+                        for row in rows:
+                            cells = row.find_elements(By.CSS_SELECTOR, "td, th")
+                            if len(cells) >= 2:
+                                key = clean_unicode_text(cells[0].text.strip())
+                                value = clean_unicode_text(cells[1].text.strip())
+                                if key and value:
+                                    section_specs.append({
+                                        "specification": key,
+                                        "value": value
+                                    })
+                
+                except Exception as e:
+                    continue
+                
+                if section_specs:
+                    features_by_section[section_name] = section_specs
+        
+        else:
+            # Fallback: extract all specifications without sectioning
+            all_specs = []
+            tables = popup_element.find_elements(By.CSS_SELECTOR, "table")
+            for table in tables:
+                rows = table.find_elements(By.CSS_SELECTOR, "tr")
+                for row in rows:
+                    cells = row.find_elements(By.CSS_SELECTOR, "td, th")
+                    if len(cells) >= 2:
+                        key = clean_unicode_text(cells[0].text.strip())
+                        value = clean_unicode_text(cells[1].text.strip())
+                        if key and value:
+                            all_specs.append({
+                                "specification": key,
+                                "value": value
+                            })
+            
+            if all_specs:
+                features_by_section["Specifications"] = all_specs
+        
+        return features_by_section
+        
+    except Exception as e:
+        print(f"    Error extracting specs from popup: {e}")
+        return None
+
+
+def scrape_features(driver, product_url, retries=3):
+    """Scrape Features from product page and return structured data organized by sections"""
+    for attempt in range(retries):
+        try:
+            print(f"  Scraping Features from: {product_url}")
+            driver.get(product_url)
+            
+            # Wait for page to load
+            wait = WebDriverWait(driver, 10)
+            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            time.sleep(3)
+            
+            # First, try to find and click the "VIEW FULL SPECS" button to open the popup
+            try:
+                print("    Looking for VIEW FULL SPECS button...")
+                
+                # Try different selectors for the VIEW FULL SPECS button
+                full_specs_button_selectors = [
+                    "/html/body/div[1]/main/div[3]/div/div[1]/div[5]/a/b",
+                    "/html/body/div[1]/main/div[3]/div/div[1]/div[5]/a",
+                    "//a[contains(text(), 'VIEW FULL SPECS')]",
+                    "//b[contains(text(), 'VIEW FULL SPECS')]",
+                    "//a[contains(text(), 'Full Specs')]",
+                    "//button[contains(text(), 'VIEW FULL SPECS')]"
+                ]
+                
+                button_found = False
+                for selector in full_specs_button_selectors:
+                    try:
+                        if selector.startswith("//"):
+                            button = driver.find_element(By.XPATH, selector)
+                        else:
+                            button = driver.find_element(By.XPATH, selector)
+                        
+                        if button and button.is_displayed():
+                            print(f"    Found VIEW FULL SPECS button with selector: {selector}")
+                            
+                            # Scroll to the button to make sure it's visible
+                            driver.execute_script("arguments[0].scrollIntoView(true);", button)
+                            time.sleep(1)
+                            
+                            # Try multiple click methods
+                            try:
+                                # Method 1: Regular click
+                                button.click()
+                                print("    Clicked VIEW FULL SPECS button (regular click)")
+                                button_found = True
+                                break
+                            except Exception as e:
+                                try:
+                                    # Method 2: JavaScript click
+                                    driver.execute_script("arguments[0].click();", button)
+                                    print("    Clicked VIEW FULL SPECS button (JavaScript click)")
+                                    button_found = True
+                                    break
+                                except Exception as e2:
+                                    print(f"    Failed to click button with selector {selector}: {e2}")
+                                    continue
+                    except Exception as e:
+                        continue
+                
+                if not button_found:
+                    print("    VIEW FULL SPECS button not found or could not be clicked")
+                else:
+                    # Wait for popup to load with more time
+                    print("    Waiting for popup to load...")
+                    time.sleep(5)
+                    
+                    # Try to find the popup with specifications
+                    popup_selectors = [
+                        "div.sm-bottom-popup.with-overlay",
+                        "div[class*='sm-bottom-popup']",
+                        "div[class*='popup']",
+                        "div[class*='modal']",
+                        "div[class*='overlay']"
+                    ]
+                    
+                    popup_found = False
+                    for popup_selector in popup_selectors:
+                        try:
+                            # Use WebDriverWait to wait for popup
+                            wait = WebDriverWait(driver, 10)
+                            popup = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, popup_selector)))
+                            
+                            if popup and popup.is_displayed():
+                                print(f"    Found popup with selector: {popup_selector}")
+                                popup_found = True
+                                
+                                # Wait a bit more for popup content to load
+                                time.sleep(2)
+                                
+                                # Now extract specifications from the popup
+                                features_by_section = extract_specs_from_popup(driver, popup)
+                                
+                                if features_by_section:
+                                    print(f"    Successfully extracted specifications from popup")
+                                    
+                                    # Close the popup
+                                    try:
+                                        close_button = popup.find_element(By.CSS_SELECTOR, "button[class*='close'], .close, button[aria-label='Close'], .close-btn")
+                                        close_button.click()
+                                        print("    Closed popup")
+                                    except:
+                                        # Try pressing Escape key
+                                        try:
+                                            driver.execute_script("arguments[0].style.display = 'none';", popup)
+                                            print("    Hid popup")
+                                        except:
+                                            # Try pressing Escape key
+                                            driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+                                            print("    Pressed Escape to close popup")
+                                    
+                                    return features_by_section
+                                break
+                        except Exception as e:
+                            continue
+                    
+                    if not popup_found:
+                        print("    Popup not found or not accessible")
+                        # Try to debug by taking a screenshot
+                        try:
+                            driver.save_screenshot("debug_popup.png")
+                            print("    Saved debug screenshot as debug_popup.png")
+                        except:
+                            pass
+                        
+            except Exception as e:
+                print(f"    Error handling popup: {e}")
+            
+            # If popup method failed, return None
+            print("    Could not extract specifications from popup")
+            return None
+                
+        except Exception as e:
+            print(f"  Error scraping Features (attempt {attempt + 1}/{retries}): {e}")
+            if attempt < retries - 1:
+                time.sleep(2)
+            else:
+                print(f"  Failed to scrape Features after {retries} attempts")
+                return None
+    
+    return None
+
+
+def scrape_spec_score(driver, product_url, retries=3):
+    """Scrape Spec Score from product page using specific XPath"""
+    for attempt in range(retries):
+        try:
+            print(f"  Scraping Spec Score from: {product_url}")
+            driver.get(product_url)
+            
+            # Wait for page to load
+            wait = WebDriverWait(driver, 10)
+            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            time.sleep(3)
+            
+            # Try to find Spec Score using the specific XPath
+            spec_score_xpath = "/html/body/div[1]/main/div[3]/div/div[1]/div[2]/div[1]"
+            
+            try:
+                spec_score_element = driver.find_element(By.XPATH, spec_score_xpath)
+                spec_score_text = spec_score_element.text.strip()
+                
+                if spec_score_text:
+                    print(f"    Found Spec Score: {spec_score_text}")
+                    return spec_score_text
+                else:
+                    print(f"    Spec Score element found but empty")
+            except NoSuchElementException:
+                print(f"    Spec Score element not found with specific XPath")
+            except Exception as e:
+                print(f"    Error finding Spec Score element: {e}")
+            
+            # Try alternative XPaths for Spec Score
+            alternative_xpaths = [
+                "/html/body/div[1]/main/div[3]/div/div[1]/div[2]/div[1]",
+                "/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[1]",
+                "/html/body/div[1]/main/div[4]/div/div[1]/div[2]/div[1]",
+                "//div[contains(@class, 'spec-score')]",
+                "//div[contains(text(), 'Spec Score')]",
+                "//div[contains(@class, 'score')]//div[contains(@class, 'number')]",
+                "//span[contains(@class, 'score')]"
+            ]
+            
+            for alt_xpath in alternative_xpaths:
+                try:
+                    elements = driver.find_elements(By.XPATH, alt_xpath)
+                    for element in elements:
+                        text = element.text.strip()
+                        if text and (text.replace('.', '').replace('/10', '').replace('%', '').isdigit() or 
+                                   any(keyword in text.lower() for keyword in ['score', 'rating', 'spec'])):
+                            print(f"    Found Spec Score with alternative XPath: {text}")
+                            return text
+                except Exception as e:
+                    continue
+            
+            print(f"  No Spec Score found")
+            return None
+            
+        except Exception as e:
+            print(f"  Error scraping Spec Score (attempt {attempt + 1}/{retries}): {e}")
+            if attempt < retries - 1:
+                time.sleep(2)
+            else:
+                print(f"  Failed to scrape Spec Score after {retries} attempts")
+                return None
+    
+    return None
+
+
+def scrape_store_links(driver, product_url, retries=3):
+    """Scrape store links from product page using specific XPath patterns"""
+    for attempt in range(retries):
+        try:
+            print(f"  Scraping store links from: {product_url}")
+            driver.get(product_url)
+            
+            # Wait for page to load
+            wait = WebDriverWait(driver, 10)
+            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            time.sleep(3)
+            
+            store_links = []
+            
+            # Try the specific XPath patterns provided
+            xpath_patterns = [
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/div[1]/a[1]",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[1]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[2]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[3]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[4]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[5]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[6]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[7]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[8]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[9]/a",
+                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[10]/a"
+            ]
+            
+            for i, xpath in enumerate(xpath_patterns):
+                try:
+                    element = driver.find_element(By.XPATH, xpath)
+                    href = element.get_attribute("href")
+                    if href:
+                        store_links.append(href)
+                        print(f"    Found store link {i+1}: {href}")
+                except NoSuchElementException:
+                    continue
+                except Exception as e:
+                    print(f"    Error finding element with XPath {xpath}: {e}")
+                    continue
+            
+            # Try to find more store links dynamically if the specific ones don't work
+            if not store_links:
+                print("    No store links found with specific XPaths, trying alternative patterns...")
+                alternative_xpaths = [
+                    "//div[contains(@class, 'store')]//a[@href]",
+                    "//div[contains(@class, 'buy')]//a[@href]",
+                    "//div[contains(@class, 'shop')]//a[@href]",
+                    "//a[contains(@href, 'amazon')]",
+                    "//a[contains(@href, 'flipkart')]",
+                    "//a[contains(@href, 'myntra')]",
+                    "//a[contains(@href, 'ajio')]"
+                ]
+                
+                for alt_xpath in alternative_xpaths:
+                    try:
+                        elements = driver.find_elements(By.XPATH, alt_xpath)
+                        for element in elements[:10]:  # Limit to first 10 to avoid too many links
+                            href = element.get_attribute("href")
+                            if href and href not in store_links:
+                                store_links.append(href)
+                                print(f"    Found alternative store link: {href}")
+                    except Exception as e:
+                        continue
+            
+            print(f"  Found {len(store_links)} total store links")
+            return store_links
+            
+        except Exception as e:
+            print(f"  Error scraping store links (attempt {attempt + 1}/{retries}): {e}")
+            if attempt < retries - 1:
+                time.sleep(2)
+            else:
+                print(f"  Failed to scrape store links after {retries} attempts")
+                return []
+    
+    return []
+
+
+def find_amazon_link_and_extract_asin(driver, store_links):
+    """Find Amazon.in link from store links and extract ASIN"""
+    potential_amazon_links = []
+    
+    # Filter for potential Amazon links (including smartprix redirect links)
+    for link in store_links:
+        if 'amazon' in link.lower() or 'l.smartprix.com' in link.lower():
+            potential_amazon_links.append(link)
+    
+    if not potential_amazon_links:
+        print("  No potential Amazon links found in store links")
+        return None
+    
+    print(f"  Found {len(potential_amazon_links)} potential Amazon links")
+    
+    # Try each potential Amazon link to see which one redirects to amazon.in
+    for i, amazon_link in enumerate(potential_amazon_links):
+        try:
+            print(f"    Checking link {i+1}: {amazon_link}")
+            
+            # Visit the link
+            driver.get(amazon_link)
+            time.sleep(5)  # Give more time for redirects
+            
+            # Check if we're on amazon.in
+            current_url = driver.current_url
+            print(f"    Redirected to: {current_url}")
+            
+            if 'amazon.in' in current_url:
+                print(f"    Found Amazon.in redirect!")
+                
+                # Extract ASIN from the URL
+                asin = extract_asin_from_amazon_url(current_url)
+                if asin:
+                    print(f"    Extracted ASIN: {asin}")
+                    return asin
+                else:
+                    print(f"    Could not extract ASIN from URL, trying to find ASIN in page content...")
+                    # Try to find ASIN in page content
+                    try:
+                        # Look for products with ASIN in the page
+                        asin_elements = driver.find_elements(By.XPATH, "//div[@data-asin]")
+                        if asin_elements:
+                            for element in asin_elements:
+                                asin = element.get_attribute("data-asin")
+                                if asin and len(asin) == 10:  # ASIN is typically 10 characters
+                                    print(f"    Found ASIN in page data: {asin}")
+                                    return asin
+                        
+                        # Try alternative methods to find ASIN
+                        asin_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/dp/')]")
+                        if asin_links:
+                            for link in asin_links[:3]:  # Check first 3 links
+                                href = link.get_attribute("href")
+                                if href:
+                                    asin = extract_asin_from_amazon_url(href)
+                                    if asin:
+                                        print(f"    Found ASIN in product link: {asin}")
+                                        return asin
+                    except Exception as e:
+                        print(f"    Error finding ASIN in page: {e}")
+                        continue
+                    
+                    print(f"    Could not extract ASIN from page content")
+            else:
+                print(f"    Link does not redirect to amazon.in")
+                
+        except Exception as e:
+            print(f"    Error checking link {i+1}: {e}")
+            continue
+    
+    print("  No valid Amazon.in links found or ASIN could not be extracted")
+    return None
+
+
 def clear_existing_data():
     """Clear update_mobiles.json and empty images folder"""
     try:
@@ -662,7 +1495,6 @@ def clear_existing_data():
         print("Clearing update_mobiles.json...")
         with open("update_mobiles.json", "w", encoding="utf-8") as f:
             json.dump({
-                "total_mobile_phones": 0,
                 "products": []
             }, f, indent=2, ensure_ascii=False)
         
@@ -676,6 +1508,7 @@ def clear_existing_data():
         os.makedirs(images_dir, exist_ok=True)
         
         print("Successfully cleared existing data and images.")
+        print("Products will be appended to update_mobiles.json as they are processed.")
         return True
     except Exception as e:
         print(f"Error clearing existing data: {e}")
@@ -711,23 +1544,22 @@ def main():
         return
     
     try:
-        # Prepare updated data structure
-        updated_data = {
-            "total_mobile_phones": mobiles_data.get("total_mobile_phones", 0),
-            "products": []
-        }
-        
         # Process each product
         for i, product in enumerate(products, 1):
             print(f"\nProcessing product {i}/{total_products}: {product.get('name', 'Unknown')}")
             
-            # Create updated product data with original fields
+            # Create updated product data in the new format
             updated_product = {
-                "count": product.get("count", i),
-                "unique_id": product.get("unique_id"),
+                "id": product.get("unique_id"),
                 "name": product.get("name"),
+                "count": 1,  # This will be updated to correct serial number in append_product_to_json
                 "price": product.get("price"),
-                "url": product.get("url")
+                "url": product.get("url"),
+                "images": [],  # Initialize empty images array
+                "variants": [],  # Initialize empty variants array
+                "asin": None,  # Initialize ASIN field
+                "spec_score": None,  # Initialize Spec Score field
+                "features": None  # Initialize Features field
             }
             
             # Scrape and save images if URL exists (always download all images)
@@ -735,46 +1567,77 @@ def main():
                 original_image_urls = scrape_and_save_product_images(driver, product["url"], product["unique_id"])
                 print(f"  Downloaded {len(original_image_urls)} new images")
                 
-                # Add GitHub raw URL image paths to the product data
+                # Add GitHub raw URL image paths to the images array
                 for j, image_url in enumerate(original_image_urls, 1):
                     # Create relative path: images/unique_id/image_j.jpg
                     relative_path = f"images/{product['unique_id']}/image_{j}.jpg"
                     # Add GitHub raw URL prefix
                     github_raw_url = f"https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/{relative_path}"
-                    updated_product[f"image_{j}_url"] = github_raw_url
+                    updated_product["images"].append(github_raw_url)
                 
                 if original_image_urls:
                     print(f"  Added {len(original_image_urls)} GitHub raw URL image paths to JSON")
+                
+                # Scrape variants from the same product URL
+                variants = scrape_product_variants(driver, product["url"])
+                if variants:
+                    updated_product["variants"] = variants
+                    print(f"  Added {len(variants)} variants to product data")
+                else:
+                    print("  No variants found for this product")
+                
+                # Scrape Spec Score from the product page
+                print("  Scraping Spec Score...")
+                spec_score = scrape_spec_score(driver, product["url"])
+                if spec_score:
+                    updated_product["spec_score"] = spec_score
+                    print(f"  Added Spec Score: {spec_score}")
+                else:
+                    print("  No Spec Score found")
+                
+                # Scrape Features from the product page
+                print("  Scraping Features...")
+                features = scrape_features(driver, product["url"])
+                if features:
+                    updated_product["features"] = features
+                    total_specs = sum(len(specs) for specs in features.values())
+                    print(f"  Added {total_specs} specifications across {len(features)} sections")
+                else:
+                    print("  No Features found")
+                
+                # Scrape store links and extract Amazon ASIN
+                print("  Scraping store links to find Amazon ASIN...")
+                store_links = scrape_store_links(driver, product["url"])
+                if store_links:
+                    asin = find_amazon_link_and_extract_asin(driver, store_links)
+                    if asin:
+                        updated_product["asin"] = asin
+                        print(f"  Added ASIN: {asin}")
+                    else:
+                        print("  No Amazon ASIN found")
+                else:
+                    print("  No store links found")
             else:
                 print("  No URL or unique_id found for this product")
             
-            # Add to updated data
-            updated_data["products"].append(updated_product)
-            
-            # Save progress every 10 products
-            if i % 10 == 0:
-                print(f"  Saving progress... ({i}/{total_products})")
-                save_updated_mobiles_data(updated_data, "update_mobiles.json")
+            # Append product to JSON file immediately after processing
+            print(f"  Appending product to update_mobiles.json...")
+            if append_product_to_json(updated_product, "update_mobiles.json"):
+                print(f"  Successfully appended product {i}/{total_products} to JSON")
+            else:
+                print(f"  Failed to append product {i}/{total_products} to JSON")
             
             # Add small delay between requests
             time.sleep(1)
         
-        # Save final data
-        print(f"\nSaving final data to update_mobiles.json...")
-        if save_updated_mobiles_data(updated_data, "update_mobiles.json"):
-            print("Successfully saved updated mobiles data!")
-        else:
-            print("Failed to save updated mobiles data.")
+        print(f"\nAll products processed and appended to update_mobiles.json!")
     
     except KeyboardInterrupt:
-        print("\nScript interrupted by user. Saving current progress...")
-        save_updated_mobiles_data(updated_data, "update_mobiles.json")
-        print("Progress saved.")
+        print("\nScript interrupted by user. Current progress is already saved in update_mobiles.json")
     
     except Exception as e:
         print(f"Error during scraping: {e}")
-        print("Saving current progress...")
-        save_updated_mobiles_data(updated_data, "update_mobiles.json")
+        print("Current progress is already saved in update_mobiles.json")
     
     finally:
         # Close the driver

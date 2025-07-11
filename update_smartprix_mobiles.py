@@ -218,6 +218,71 @@ def convert_svg_to_jpg_with_selenium(driver, svg_content, jpg_path):
         return False
 
 
+def download_svg_with_selenium(driver, svg_url, save_path):
+    """Download SVG using Selenium and convert to black and white JPG"""
+    try:
+        print(f"    Using Selenium to access SVG: {svg_url}")
+        
+        # Navigate to the SVG URL directly
+        driver.get(svg_url)
+        time.sleep(3)  # Wait for SVG to load
+        
+        # Get the page source which should contain the SVG
+        page_source = driver.page_source
+        
+        # Check if this is actually an SVG response by looking at content type or page source
+        if '<svg' in page_source:
+            # Extract SVG content from the page source
+            svg_start = page_source.find('<svg')
+            svg_end = page_source.find('</svg>') + 6
+            
+            if svg_start != -1 and svg_end != -1:
+                svg_content = page_source[svg_start:svg_end]
+                print(f"    Extracted SVG content from page")
+                
+                # Convert extracted SVG to JPG
+                if convert_svg_to_jpg_with_selenium(driver, svg_content, save_path):
+                    return True
+        
+        # If extraction failed, try taking a screenshot of the entire page
+        print(f"    SVG extraction failed, taking screenshot instead")
+        
+        # Set window size to ensure we get the full SVG
+        driver.set_window_size(1200, 800)
+        time.sleep(1)
+        
+        screenshot = driver.get_screenshot_as_png()
+        
+        # Convert screenshot to PIL Image
+        img = Image.open(io.BytesIO(screenshot))
+        
+        # Try to crop to just the SVG content (remove browser chrome)
+        # This is a rough estimate - you might need to adjust based on actual SVG size
+        width, height = img.size
+        
+        # Crop out browser elements (rough estimate)
+        # Usually SVG content is centered, so we crop from center
+        crop_margin = min(width, height) // 10
+        cropped_img = img.crop((crop_margin, crop_margin, width - crop_margin, height - crop_margin))
+        
+        # Convert to black and white
+        bw_img = cropped_img.convert('L')
+        
+        # Resize to a reasonable size (e.g., 800x600 max)
+        max_size = 800
+        if bw_img.width > max_size or bw_img.height > max_size:
+            bw_img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
+        
+        # Save as JPG
+        bw_img.save(save_path, 'JPEG', quality=95)
+        print(f"    Saved screenshot as black and white JPG")
+        return True
+        
+    except Exception as e:
+        print(f"    Error downloading SVG with Selenium: {e}")
+        return False
+
+
 def convert_svg_to_jpg(svg_content, jpg_path):
     """Convert SVG content to JPG format and make it black and white (fallback method)"""
     try:
@@ -246,6 +311,15 @@ def download_and_process_image(image_url, save_path, driver=None, retries=3):
     """Download image from URL, process it, and save locally"""
     for attempt in range(retries):
         try:
+            # Check if this is a smartprix.com SVG URL that might need special handling
+            if image_url.startswith("https://www.smartprix.com/"):
+                print(f"    Detected smartprix.com SVG URL: {image_url}")
+                if driver:
+                    return download_svg_with_selenium(driver, image_url, save_path)
+                else:
+                    print(f"    No driver available for SVG download")
+                    return False
+            
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }

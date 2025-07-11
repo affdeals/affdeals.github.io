@@ -1,5 +1,34 @@
 {
   "total_mobile_phones": 1561,
   "products": [
+    {
+      "count": 1,
+      "unique_id": "motorola_moto_g96_5g",
+      "name": "Motorola Moto G96 5G",
+      "price": "₹17,999",
+      "url": "https://www.smartprix.com/mobiles/motorola-moto-g96-5g-ppd1lex9864q",
+      "image_1_url": "https://cdn1.smartprix.com/rx-ifyyP3Et2-w420-h420/motorola-moto-g96-5g.webp",
+      "image_2_url": "https://www.smartprix.com/ui/img/specs/pd1lex9864q?v=1sz6qs7",
+      "image_3_url": "https://cdn1.smartprix.com/rx-ivIqbsa0K-w60-h60/motorola-moto-g96-5g.webp",
+      "image_4_url": "https://cdn1.smartprix.com/rx-ierfdVWyI-w60-h60/motorola-moto-g96-5g.webp",
+      "image_5_url": "https://cdn1.smartprix.com/rx-il6v4nCQA-w60-h60/motorola-moto-g96-5g.webp",
+      "image_6_url": "https://cdn1.smartprix.com/rx-iOLWtK0Xu-w60-h60/motorola-moto-g96-5g.webp",
+      "image_7_url": "https://cdn1.smartprix.com/rx-ieMsFMbB5-w60-h60/motorola-moto-g96-5g.webp"
+    },
+    {
+      "count": 2,
+      "unique_id": "ai_nova_5g",
+      "name": "Ai+ Nova 5G",
+      "price": "₹7,999",
+      "url": "https://www.smartprix.com/mobiles/ai-nova-2-5g-ppd1fhrcus7v",
+      "image_1_url": "https://cdn1.smartprix.com/rx-iUSEy16BT-w420-h420/ai-nova-5g.webp",
+      "image_2_url": "https://www.smartprix.com/ui/img/specs/pd1fhrcus7v?v=1sz2kl6",
+      "image_3_url": "https://cdn1.smartprix.com/rx-iGXxlxXXu-w60-h60/ai-nova-5g.webp",
+      "image_4_url": "https://cdn1.smartprix.com/rx-ik8GsB2n7-w60-h60/ai-nova-5g.webp",
+      "image_5_url": "https://cdn1.smartprix.com/rx-iZF680uFe-w60-h60/ai-nova-5g.webp",
+      "image_6_url": "https://cdn1.smartprix.com/rx-iKW3OUV3o-w60-h60/ai-nova-5g.webp",
+      "image_7_url": "https://cdn1.smartprix.com/rx-ivbYOfv6W-w60-h60/ai-nova-5g.webp",
+      "image_8_url": "https://cdn1.smartprix.com/rx-iqp8XZPss-w60-h60/ai-nova-5g.webp"
+    }
   ]
 }

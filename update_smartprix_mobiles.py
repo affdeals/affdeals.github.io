@@ -10,6 +10,7 @@ import os
 import sys
 import requests
 import re
+import shutil
 from urllib.parse import urlparse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -66,6 +67,7 @@ def setup_driver():
     chrome_options.add_argument("--hide-scrollbars")  # Hide scrollbars
     chrome_options.add_argument("--mute-audio")  # Mute audio
     chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--force-device-scale-factor=1")  # Ensure consistent scaling
     chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
     
     # Suppress DevTools listening message
@@ -107,20 +109,7 @@ def create_images_directory(unique_id):
         return None
 
 
-def check_existing_images(unique_id):
-    """Check if images already exist for this product and return count"""
-    try:
-        product_dir = os.path.join("images", unique_id)
-        if os.path.exists(product_dir):
-            existing_count = 0
-            for filename in os.listdir(product_dir):
-                if filename.startswith("image_") and filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
-                    existing_count += 1
-            return existing_count
-        return 0
-    except Exception as e:
-        print(f"Error checking existing images: {e}")
-        return 0
+
 
 
 def transform_image_url(image_url):
@@ -170,12 +159,16 @@ def convert_svg_to_jpg_with_selenium(driver, svg_content, jpg_path):
                     background-color: white;
                     display: flex;
                     justify-content: center;
-                    align-items: center;
+                    align-items: flex-start;
                     min-height: 100vh;
+                    overflow: visible;
                 }}
                 svg {{
-                    max-width: 800px;
-                    max-height: 600px;
+                    max-width: 1200px;
+                    max-height: none;
+                    height: auto;
+                    width: auto;
+                    display: block;
                 }}
             </style>
         </head>
@@ -193,6 +186,29 @@ def convert_svg_to_jpg_with_selenium(driver, svg_content, jpg_path):
         # Load HTML in selenium
         driver.get(f"file:///{os.path.abspath(temp_html_path)}")
         time.sleep(2)
+        
+        # Get the SVG element to determine its actual dimensions
+        try:
+            svg_element = driver.find_element(By.TAG_NAME, "svg")
+            svg_rect = svg_element.rect
+            svg_width = svg_rect['width']
+            svg_height = svg_rect['height']
+            
+            # Set window size to accommodate the SVG with some padding
+            window_width = max(1200, int(svg_width) + 100)
+            window_height = max(800, int(svg_height) + 200)
+            driver.set_window_size(window_width, window_height)
+            time.sleep(1)
+            
+            print(f"    SVG dimensions: {svg_width}x{svg_height}, window size: {window_width}x{window_height}")
+            
+        except Exception as e:
+            print(f"    Could not get SVG dimensions, using default window size: {e}")
+            driver.set_window_size(1200, 1000)
+        
+        # Scroll to top to ensure we capture from the beginning
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(1)
         
         # Take screenshot
         screenshot = driver.get_screenshot_as_png()
@@ -227,6 +243,24 @@ def download_svg_with_selenium(driver, svg_url, save_path):
         driver.get(svg_url)
         time.sleep(3)  # Wait for SVG to load
         
+        # Try to get the SVG element dimensions if it's loaded directly
+        try:
+            svg_element = driver.find_element(By.TAG_NAME, "svg")
+            if svg_element:
+                svg_rect = svg_element.rect
+                svg_width = svg_rect['width']
+                svg_height = svg_rect['height']
+                
+                # Set window size to accommodate the SVG
+                window_width = max(1200, int(svg_width) + 100)
+                window_height = max(800, int(svg_height) + 200)
+                driver.set_window_size(window_width, window_height)
+                time.sleep(2)
+                
+                print(f"    Direct SVG dimensions: {svg_width}x{svg_height}, window size: {window_width}x{window_height}")
+        except Exception as e:
+            print(f"    Could not get direct SVG dimensions: {e}")
+        
         # Get the page source which should contain the SVG
         page_source = driver.page_source
         
@@ -247,29 +281,63 @@ def download_svg_with_selenium(driver, svg_url, save_path):
         # If extraction failed, try taking a screenshot of the entire page
         print(f"    SVG extraction failed, taking screenshot instead")
         
-        # Set window size to ensure we get the full SVG
-        driver.set_window_size(1200, 800)
+        # Try to get the actual content dimensions first
+        try:
+            # Execute JavaScript to get the actual content dimensions
+            content_width = driver.execute_script("return Math.max(document.body.scrollWidth, document.documentElement.scrollWidth);")
+            content_height = driver.execute_script("return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);")
+            
+            # Set window size to ensure we get the full content
+            window_width = max(1200, content_width + 100)
+            window_height = max(800, content_height + 100)
+            driver.set_window_size(window_width, window_height)
+            time.sleep(2)
+            
+            print(f"    Content dimensions: {content_width}x{content_height}, window size: {window_width}x{window_height}")
+            
+        except Exception as e:
+            print(f"    Could not get content dimensions, using larger default window size: {e}")
+            driver.set_window_size(1600, 1200)
+            time.sleep(2)
+        
+        # Scroll to top to ensure we capture from the beginning
+        driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(1)
         
+        # Take screenshot of the full page
         screenshot = driver.get_screenshot_as_png()
         
         # Convert screenshot to PIL Image
         img = Image.open(io.BytesIO(screenshot))
         
-        # Try to crop to just the SVG content (remove browser chrome)
-        # This is a rough estimate - you might need to adjust based on actual SVG size
+        # More conservative cropping to avoid cutting off content
         width, height = img.size
         
-        # Crop out browser elements (rough estimate)
-        # Usually SVG content is centered, so we crop from center
-        crop_margin = min(width, height) // 10
-        cropped_img = img.crop((crop_margin, crop_margin, width - crop_margin, height - crop_margin))
+        # Only crop if the image is much larger than expected
+        # Use smaller margins to preserve more content
+        if width > 1000 or height > 800:
+            # Conservative cropping - only remove obvious browser chrome
+            crop_top = 50  # Remove top browser elements
+            crop_bottom = 50  # Remove bottom browser elements  
+            crop_left = 50  # Remove left browser elements
+            crop_right = 50  # Remove right browser elements
+            
+            # Make sure we don't crop too much
+            crop_top = min(crop_top, height // 20)
+            crop_bottom = min(crop_bottom, height // 20)
+            crop_left = min(crop_left, width // 20)
+            crop_right = min(crop_right, width // 20)
+            
+            cropped_img = img.crop((crop_left, crop_top, width - crop_right, height - crop_bottom))
+        else:
+            # For smaller images, don't crop at all
+            cropped_img = img
         
         # Convert to black and white
         bw_img = cropped_img.convert('L')
         
-        # Resize to a reasonable size (e.g., 800x600 max)
-        max_size = 800
+        # Resize to a reasonable size (e.g., 1200x900 max to preserve more detail)
+        max_size = 1200
         if bw_img.width > max_size or bw_img.height > max_size:
             bw_img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
         
@@ -419,113 +487,7 @@ def download_and_process_image(image_url, save_path, driver=None, retries=3):
     return False
 
 
-def scrape_product_image_urls_only(driver, product_url, retries=3):
-    """Scrape image URLs from a product page without downloading"""
-    for attempt in range(retries):
-        try:
-            print(f"  Visiting URL: {product_url}")
-            driver.get(product_url)
-            
-            # Wait for page to load
-            wait = WebDriverWait(driver, 10)
-            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-            
-            # Give extra time for images to load
-            time.sleep(3)
-            
-            # Find all image elements using the specific XPath pattern
-            image_urls = []
-            
-            # Try multiple variations of the XPath in case the structure varies slightly
-            xpath_patterns = [
-                "/html/body/div[1]/main/div[1]/div[1]/div[1]/div[3]/ul/li[{index}]/img",
-                "/html/body/div[1]/main/div[1]/div[1]/div[1]/div[2]/ul/li[{index}]/img",
-                "/html/body/div[1]/main/div[1]/div[1]/div[1]/div[4]/ul/li[{index}]/img",
-                "/html/body/div[1]/main/div[1]/div[1]/div[2]/div[3]/ul/li[{index}]/img",
-                "/html/body/div[1]/main/div[1]/div[2]/div[1]/div[3]/ul/li[{index}]/img"
-            ]
-            
-            # Try each pattern
-            for pattern in xpath_patterns:
-                if image_urls:  # If we already found images with a previous pattern, break
-                    break
-                    
-                print(f"    Trying XPath pattern: {pattern.format(index='N')}")
-                image_index = 1
-                
-                while True:
-                    try:
-                        # Construct XPath for current image
-                        xpath = pattern.format(index=image_index)
-                        
-                        # Try to find the image element
-                        img_element = driver.find_element(By.XPATH, xpath)
-                        
-                        # Get the image URL
-                        src = img_element.get_attribute("src")
-                        if not src:
-                            # Try data-src or data-lazy attributes
-                            src = img_element.get_attribute("data-src") or img_element.get_attribute("data-lazy")
-                        
-                        if src and src.startswith("http"):
-                            image_urls.append(src)
-                            print(f"    Found image {image_index}: {src}")
-                        
-                        image_index += 1
-                        
-                    except NoSuchElementException:
-                        # No more images found at this index for this pattern
-                        if image_index == 1:
-                            print(f"    No images found with this pattern")
-                        else:
-                            print(f"    Found {image_index - 1} images with this pattern")
-                        break
-                    except Exception as e:
-                        print(f"    Error getting image {image_index}: {e}")
-                        break
-            
-            # If no images found with the specific patterns, try alternative methods
-            if not image_urls:
-                print("    No images found with specific XPath, trying alternative methods...")
-                
-                # Try alternative XPaths that might work
-                alternative_xpaths = [
-                    "//div[contains(@class, 'gallery')]//img",
-                    "//div[contains(@class, 'product-images')]//img",
-                    "//div[contains(@class, 'image')]//img",
-                    "//ul//li//img",
-                    "//main//img"
-                ]
-                
-                for alt_xpath in alternative_xpaths:
-                    try:
-                        images = driver.find_elements(By.XPATH, alt_xpath)
-                        for img in images:
-                            src = img.get_attribute("src") or img.get_attribute("data-src")
-                            if src and src.startswith("http"):
-                                # Filter out obvious non-product images
-                                if not any(unwanted in src.lower() for unwanted in ['logo', 'icon', 'banner', 'ad', 'social', 'header', 'footer']):
-                                    if src not in image_urls:
-                                        image_urls.append(src)
-                        
-                        if image_urls:
-                            print(f"    Found {len(image_urls)} images using alternative method")
-                            break
-                    except Exception as e:
-                        continue
-            
-            print(f"  Found {len(image_urls)} total images")
-            return image_urls
-            
-        except Exception as e:
-            print(f"  Error scraping images (attempt {attempt + 1}/{retries}): {e}")
-            if attempt < retries - 1:
-                time.sleep(2)
-            else:
-                print(f"  Failed to scrape images after {retries} attempts")
-                return []
-    
-    return []
+
 
 
 def scrape_and_save_product_images(driver, product_url, unique_id, retries=3):
@@ -693,9 +655,42 @@ def save_updated_mobiles_data(data, json_file_path):
         return False
 
 
+def clear_existing_data():
+    """Clear update_mobiles.json and empty images folder"""
+    try:
+        # Clear update_mobiles.json
+        print("Clearing update_mobiles.json...")
+        with open("update_mobiles.json", "w", encoding="utf-8") as f:
+            json.dump({
+                "total_mobile_phones": 0,
+                "products": []
+            }, f, indent=2, ensure_ascii=False)
+        
+        # Clear images folder
+        print("Clearing images folder...")
+        images_dir = "images"
+        if os.path.exists(images_dir):
+            shutil.rmtree(images_dir)
+        
+        # Recreate empty images folder
+        os.makedirs(images_dir, exist_ok=True)
+        
+        print("Successfully cleared existing data and images.")
+        return True
+    except Exception as e:
+        print(f"Error clearing existing data: {e}")
+        return False
+
+
 def main():
     """Main function to scrape product images"""
     print("=== Smartprix Mobile Image Scraper ===")
+    
+    # Clear existing data at the beginning
+    if not clear_existing_data():
+        print("Failed to clear existing data. Exiting.")
+        return
+    
     print("Loading existing mobiles data...")
     
     # Load existing mobiles data
@@ -707,14 +702,6 @@ def main():
     products = mobiles_data.get("products", [])
     total_products = len(products)
     print(f"Found {total_products} products to process")
-    
-    # Option to test with limited products first
-    test_mode = input("Test mode? Enter number of products to test (or press Enter for all): ").strip()
-    if test_mode and test_mode.isdigit():
-        test_limit = int(test_mode)
-        products = products[:test_limit]
-        total_products = len(products)
-        print(f"Testing with first {total_products} products")
     
     # Setup Chrome driver
     print("Setting up Chrome driver...")
@@ -743,34 +730,23 @@ def main():
                 "url": product.get("url")
             }
             
-            # Check for existing images first
-            existing_count = check_existing_images(product.get("unique_id", ""))
-            
-            if existing_count > 0:
-                print(f"  Found {existing_count} existing images, skipping download")
-                # For existing images, we need to scrape URLs but not download
-                if product.get("url") and product.get("unique_id"):
-                    # Just scrape URLs without downloading
-                    original_image_urls = scrape_product_image_urls_only(driver, product["url"])
-                    print(f"  Retrieved {len(original_image_urls)} original URLs")
-                else:
-                    print("  No URL found for this product")
-                    original_image_urls = []
+            # Scrape and save images if URL exists (always download all images)
+            if product.get("url") and product.get("unique_id"):
+                original_image_urls = scrape_and_save_product_images(driver, product["url"], product["unique_id"])
+                print(f"  Downloaded {len(original_image_urls)} new images")
+                
+                # Add GitHub raw URL image paths to the product data
+                for j, image_url in enumerate(original_image_urls, 1):
+                    # Create relative path: images/unique_id/image_j.jpg
+                    relative_path = f"images/{product['unique_id']}/image_{j}.jpg"
+                    # Add GitHub raw URL prefix
+                    github_raw_url = f"https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/{relative_path}"
+                    updated_product[f"image_{j}_url"] = github_raw_url
+                
+                if original_image_urls:
+                    print(f"  Added {len(original_image_urls)} GitHub raw URL image paths to JSON")
             else:
-                # Scrape and save images if URL exists
-                if product.get("url") and product.get("unique_id"):
-                    original_image_urls = scrape_and_save_product_images(driver, product["url"], product["unique_id"])
-                    print(f"  Downloaded {len(original_image_urls)} new images")
-                else:
-                    print("  No URL or unique_id found for this product")
-                    original_image_urls = []
-            
-            # Add original image URLs to the product data
-            for j, image_url in enumerate(original_image_urls, 1):
-                updated_product[f"image_{j}_url"] = image_url
-            
-            if original_image_urls:
-                print(f"  Added {len(original_image_urls)} original image URLs to JSON")
+                print("  No URL or unique_id found for this product")
             
             # Add to updated data
             updated_data["products"].append(updated_product)

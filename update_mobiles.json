@@ -1,6 +1,16 @@
 {
-  "total_mobile_phones": 1561,
+  "total_mobile_phones": 936,
   "products": [
-   
+    {
+      "count": 1,
+      "unique_id": "oneplus_nord_ce_5_5g",
+      "name": "OnePlus Nord CE 5 5G",
+      "price": "₹24,999",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1",
+      "image_1_url": "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g/image_1.jpg",
+      "image_2_url": "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g/image_2.jpg",
+      "image_3_url": "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g/image_3.jpg",
+      "image_4_url": "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g/image_4.jpg"
+    }
   ]
 }

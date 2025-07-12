@@ -30,12 +30,38 @@ jobs:
           pip install webdriver-manager
           pip install pillow
           pip install requests
+          pip install undetected-chromedriver
+          pip install fake-useragent
       
       - name: Install Chrome & Chromedriver
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
           install-chromedriver: true
+          
+      - name: Configure network settings for India
+        run: |
+          # Configure DNS to use Google's DNS servers
+          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+          echo "nameserver 8.8.4.4" | sudo tee -a /etc/resolv.conf > /dev/null
+          
+          # Set system locale and timezone to India
+          sudo timedatectl set-timezone Asia/Kolkata
+          
+          # Install and configure language packs for Indian English
+          sudo apt-get update
+          sudo apt-get install -y language-pack-en-base
+          sudo locale-gen en_IN.UTF-8
+          
+          # Create a hosts file entry to help with Amazon India
+          echo "13.232.69.59 www.amazon.in" | sudo tee -a /etc/hosts > /dev/null
+          echo "13.232.69.59 amazon.in" | sudo tee -a /etc/hosts > /dev/null
+          
+          # Display network configuration for debugging
+          echo "Current DNS configuration:"
+          cat /etc/resolv.conf
+          echo "Current hosts file entries for Amazon:"
+          grep amazon /etc/hosts
       
       - name: Run update_mobiles.py script
         env:

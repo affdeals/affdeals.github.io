@@ -26,6 +26,22 @@ import io
 import base64
 import tempfile
 
+# Try to import undetected_chromedriver if available (for better anti-detection)
+try:
+    import undetected_chromedriver as uc
+    UNDETECTED_AVAILABLE = True
+except ImportError:
+    UNDETECTED_AVAILABLE = False
+    print("undetected_chromedriver not available, using standard selenium")
+
+# Try to import fake_useragent if available (for better user agent rotation)
+try:
+    from fake_useragent import UserAgent
+    FAKE_UA_AVAILABLE = True
+except ImportError:
+    FAKE_UA_AVAILABLE = False
+    print("fake_useragent not available, using hardcoded user agent")
+
 @contextlib.contextmanager
 def suppress_stderr():
     """Context manager to suppress stderr messages"""
@@ -76,68 +92,92 @@ def clean_unicode_text(text):
         return text
 
 
+def force_amazon_india_access():
+    """Configure system to force Amazon India access"""
+    try:
+        # Check if we're running in a GitHub Actions environment
+        if os.environ.get('GITHUB_ACTIONS') == 'true':
+            print("Running in GitHub Actions environment, applying special configurations...")
+            
+            # Try to modify hosts file if we have permission (usually won't work in GitHub Actions)
+            try:
+                # This is just for documentation - it won't actually work in GitHub Actions
+                # The actual hosts file modification is done in the workflow
+                hosts_file = "/etc/hosts"
+                if os.path.exists(hosts_file) and os.access(hosts_file, os.W_OK):
+                    with open(hosts_file, "a") as f:
+                        f.write("\n# Amazon India IP addresses\n")
+                        f.write("13.232.69.59 www.amazon.in\n")
+                        f.write("13.232.69.59 amazon.in\n")
+                    print("Added Amazon India entries to hosts file")
+            except Exception as e:
+                print(f"Could not modify hosts file: {e}")
+            
+            # Set environment variables for India
+            os.environ['LANG'] = 'en_IN.UTF-8'
+            os.environ['LC_ALL'] = 'en_IN.UTF-8'
+            os.environ['TZ'] = 'Asia/Kolkata'
+            
+            print("Set environment variables for Indian locale and timezone")
+        
+        return True
+    except Exception as e:
+        print(f"Error configuring system for Amazon India access: {e}")
+        return False
+
+
 def setup_driver():
-    """Setup Chrome WebDriver with options (same as original script)"""
+    """Setup Chrome WebDriver with options optimized for Amazon India access"""
+    # First, try to force Amazon India access at the system level
+    force_amazon_india_access()
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in background
+    
+    # Use headless=new for better stealth (less detectable as automation)
+    chrome_options.add_argument("--headless=new")
+    
+    # Basic setup
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-webgl")
-    chrome_options.add_argument("--disable-software-rasterizer")
-    chrome_options.add_argument("--disable-3d-apis")
-    chrome_options.add_argument("--disable-background-timer-throttling")
-    chrome_options.add_argument("--disable-backgrounding-occluded-windows")
-    chrome_options.add_argument("--disable-renderer-backgrounding")
-    chrome_options.add_argument("--disable-features=TranslateUI")
-    chrome_options.add_argument("--disable-ipc-flooding-protection")
-    chrome_options.add_argument("--log-level=3")  # Suppress INFO, WARNING, ERROR
-    chrome_options.add_argument("--silent")  # Suppress console output
-    chrome_options.add_argument("--disable-logging")  # Disable logging
-    chrome_options.add_argument("--disable-gpu-logging")  # Disable GPU logging
-    chrome_options.add_argument("--disable-extensions")  # Disable extensions
-    chrome_options.add_argument("--disable-plugins")  # Disable plugins
-    # Note: NOT disabling images as we need to scrape them
-    chrome_options.add_argument("--disable-web-security")  # Disable web security
-    chrome_options.add_argument("--disable-features=VizDisplayCompositor")  # Disable compositor
-    chrome_options.add_argument("--disable-background-networking")  # Disable background networking
-    chrome_options.add_argument("--disable-default-apps")  # Disable default apps
-    chrome_options.add_argument("--disable-sync")  # Disable sync
-    chrome_options.add_argument("--disable-translate")  # Disable translate
-    chrome_options.add_argument("--hide-scrollbars")  # Hide scrollbars
-    chrome_options.add_argument("--mute-audio")  # Mute audio
     chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--force-device-scale-factor=1")  # Ensure consistent scaling
     
-    # Set user agent to appear as coming from India
-    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+    # Disable automation flags to avoid detection
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
-    # Set language preferences to prefer Indian English
+    # Set a realistic user agent for an Indian user
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    
+    # Set language and locale preferences for India
     chrome_options.add_argument("--lang=en-IN")
-    chrome_options.add_argument("--accept-lang=en-IN,en;q=0.9")
+    chrome_options.add_argument("--accept-lang=en-IN,en;q=0.9,hi;q=0.8")
     
-    # Add geolocation preferences for India
+    # Add geolocation and other preferences for India
     chrome_options.add_experimental_option("prefs", {
         "profile.default_content_setting_values.geolocation": 1,  # Allow geolocation
-        "intl.accept_languages": "en-IN,en",
+        "intl.accept_languages": "en-IN,en,hi",
         "profile.content_settings.exceptions.geolocation": {
             "*": {"setting": 1}  # Allow geolocation for all sites
-        }
+        },
+        # Set address and payment preferences to India
+        "autofill.profile_enabled": True,
+        "profile.country_code_on_startup": "IN",
+        # Set currency to INR
+        "intl.selected_currency": "INR"
     })
     
-    # Suppress DevTools listening message
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
+    # Create a temporary profile directory
     temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
     chrome_options.add_argument(f"--user-data-dir={temp_profile}")
     
+    # Suppress logging
+    chrome_options.add_argument("--log-level=3")
+    chrome_options.add_argument("--silent")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    os.environ['WDM_LOG_LEVEL'] = '0'
+    
     try:
-        # Suppress stderr messages from Chrome
-        os.environ['WDM_LOG_LEVEL'] = '0'
-        
         # Create driver with suppressed stderr
         with suppress_stderr():
             driver = webdriver.Chrome(options=chrome_options)
@@ -161,13 +201,55 @@ def setup_driver():
                     'timezoneId': 'Asia/Kolkata'
                 })
                 
-                # Set Accept-Language header
+                # Set HTTP headers to appear as an Indian user
                 driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
                     'headers': {
-                        'Accept-Language': 'en-IN,en;q=0.9',
-                        'Accept-Country': 'IN'
+                        'Accept-Language': 'en-IN,en;q=0.9,hi;q=0.8',
+                        'Accept-Country': 'IN',
+                        'Sec-CH-UA-Platform': 'Windows',
+                        'Sec-CH-UA': '"Google Chrome";v="120", "Chromium";v="120"',
+                        'Sec-CH-UA-Mobile': '?0',
+                        'Sec-CH-UA-Platform-Version': '10.0.0',
+                        'Sec-CH-Prefers-Color-Scheme': 'light',
+                        'Sec-CH-UA-Arch': 'x86',
+                        'Sec-CH-UA-Bitness': '64',
+                        'Sec-CH-UA-Full-Version': '120.0.6099.130',
+                        'Sec-CH-UA-Full-Version-List': '"Google Chrome";v="120.0.6099.130", "Chromium";v="120.0.6099.130"'
                     }
                 })
+                
+                # Set cookies for Amazon India
+                driver.execute_cdp_cmd('Network.setCookie', {
+                    'name': 'session-id',
+                    'value': '123456789',
+                    'domain': '.amazon.in',
+                    'path': '/'
+                })
+                
+                driver.execute_cdp_cmd('Network.setCookie', {
+                    'name': 'i18n-prefs',
+                    'value': 'INR',
+                    'domain': '.amazon.in',
+                    'path': '/'
+                })
+                
+                driver.execute_cdp_cmd('Network.setCookie', {
+                    'name': 'lc-acbin',
+                    'value': 'en_IN',
+                    'domain': '.amazon.in',
+                    'path': '/'
+                })
+                
+                # Set country preference
+                driver.execute_cdp_cmd('Network.setCookie', {
+                    'name': 'country',
+                    'value': 'IN',
+                    'domain': '.amazon.in',
+                    'path': '/'
+                })
+                
+                print("Successfully configured browser for Indian location and preferences")
+                
             except Exception as e:
                 print(f"Warning: Could not set some location preferences: {e}")
                 
@@ -1468,13 +1550,14 @@ def scrape_store_links(driver, product_url, retries=3):
 
 
 def get_amazon_mrp_from_asin(driver, asin):
-    """Extract MRP by navigating directly to Amazon using ASIN"""
+    """Extract MRP by navigating directly to Amazon using ASIN with enhanced anti-redirect measures"""
     try:
-        # Navigate directly to Amazon product page using ASIN
+        # First, try to directly access the Amazon India mobile site which might be less likely to redirect
         amazon_url = f"https://www.amazon.in/dp/{asin}/"
-        print(f"    Navigating directly to Amazon: {amazon_url}")
+        print(f"    Navigating directly to Amazon India: {amazon_url}")
         
-        # Set cookies and headers to force Amazon India
+        # Refresh cookies and headers before each navigation attempt
+        # Set cookies to force Amazon India
         driver.execute_cdp_cmd('Network.setCookie', {
             'name': 'i18n-prefs',
             'value': 'INR',
@@ -1489,6 +1572,21 @@ def get_amazon_mrp_from_asin(driver, asin):
             'path': '/'
         })
         
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'session-id-time',
+            'value': '2082787201l',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
+        # Set country preference
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'country',
+            'value': 'IN',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
         # Set geolocation to India
         driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
             'latitude': 28.6139,  # New Delhi coordinates
@@ -1496,14 +1594,24 @@ def get_amazon_mrp_from_asin(driver, asin):
             'accuracy': 1
         })
         
-        # Set Accept-Language header to prefer Indian English
+        # Set HTTP headers to appear as an Indian user
         driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
             'headers': {
-                'Accept-Language': 'en-IN,en;q=0.9',
-                'Accept-Country': 'IN'
+                'Accept-Language': 'en-IN,en;q=0.9,hi;q=0.8',
+                'Accept-Country': 'IN',
+                'Sec-CH-UA-Platform': 'Windows',
+                'Sec-CH-UA': '"Google Chrome";v="120", "Chromium";v="120"',
+                'Sec-CH-UA-Mobile': '?0',
+                'Sec-CH-UA-Platform-Version': '10.0.0',
+                'Sec-CH-Prefers-Color-Scheme': 'light',
+                'Sec-CH-UA-Arch': 'x86',
+                'Sec-CH-UA-Bitness': '64',
+                'Sec-CH-UA-Full-Version': '120.0.6099.130',
+                'Sec-CH-UA-Full-Version-List': '"Google Chrome";v="120.0.6099.130", "Chromium";v="120.0.6099.130"'
             }
         })
         
+        # Try to navigate to the Amazon India URL
         driver.get(amazon_url)
         time.sleep(5)  # Wait for page to load
         
@@ -1511,28 +1619,135 @@ def get_amazon_mrp_from_asin(driver, asin):
         current_url = driver.current_url
         print(f"    Current URL after navigation: {current_url}")
         
-        # If redirected to amazon.com, try again with a more direct approach
+        # If redirected to amazon.com, try alternative approaches
         if 'amazon.com' in current_url and 'amazon.in' not in current_url:
-            print(f"    Redirected to amazon.com, trying alternative approach...")
+            print(f"    Redirected to amazon.com, trying alternative approach 1...")
             
             # Clear cookies and try again with more forceful approach
             driver.delete_all_cookies()
             
-            # Set user agent to appear as coming from India
-            driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-                'userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                'platform': 'Win32',
-                'acceptLanguage': 'en-IN,en;q=0.9'
-            })
-            
-            # Try with a different URL format that might be less likely to redirect
+            # Try with a different URL format
             amazon_url = f"https://www.amazon.in/gp/product/{asin}/"
             print(f"    Trying alternative URL: {amazon_url}")
+            
+            # Set cookies again
+            driver.execute_cdp_cmd('Network.setCookie', {
+                'name': 'i18n-prefs',
+                'value': 'INR',
+                'domain': '.amazon.in',
+                'path': '/'
+            })
+            
+            driver.execute_cdp_cmd('Network.setCookie', {
+                'name': 'lc-acbin',
+                'value': 'en_IN',
+                'domain': '.amazon.in',
+                'path': '/'
+            })
+            
+            # Try to navigate to the alternative URL
             driver.get(amazon_url)
             time.sleep(5)
+            
+            # Check if we're still being redirected
+            current_url = driver.current_url
+            print(f"    Current URL after alternative approach 1: {current_url}")
+            
+            # If still redirected, try a more aggressive approach
+            if 'amazon.com' in current_url and 'amazon.in' not in current_url:
+                print(f"    Still redirected to amazon.com, trying alternative approach 2...")
+                
+                # Try using the mobile site which might have different redirect rules
+                amazon_url = f"https://www.amazon.in/gp/aw/d/{asin}/"
+                print(f"    Trying mobile site URL: {amazon_url}")
+                
+                # Set a mobile user agent
+                driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+                    'userAgent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
+                    'platform': 'iPhone',
+                    'acceptLanguage': 'en-IN,en;q=0.9,hi;q=0.8'
+                })
+                
+                # Try to navigate to the mobile site
+                driver.get(amazon_url)
+                time.sleep(5)
+                
+                # Check if we're still being redirected
+                current_url = driver.current_url
+                print(f"    Current URL after alternative approach 2: {current_url}")
+                
+                # If still redirected, try one last approach - use a direct product search
+                if 'amazon.com' in current_url and 'amazon.in' not in current_url:
+                    print(f"    Still redirected, trying direct product search...")
+                    
+                    # Reset user agent to desktop
+                    driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+                        'userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'platform': 'Windows',
+                        'acceptLanguage': 'en-IN,en;q=0.9,hi;q=0.8'
+                    })
+                    
+                    # Go to Amazon India homepage first
+                    driver.get("https://www.amazon.in/")
+                    time.sleep(3)
+                    
+                    # Check if we're on amazon.in
+                    current_url = driver.current_url
+                    print(f"    Current URL after homepage navigation: {current_url}")
+                    
+                    # If we successfully reached amazon.in homepage, search for the ASIN
+                    if 'amazon.in' in current_url:
+                        print(f"    Successfully reached Amazon India homepage, searching for ASIN...")
+                        
+                        try:
+                            # Find the search box and enter the ASIN
+                            search_box = driver.find_element(By.ID, "twotabsearchtextbox")
+                            search_box.clear()
+                            search_box.send_keys(asin)
+                            search_box.send_keys(Keys.RETURN)
+                            time.sleep(3)
+                            
+                            # Look for product links containing the ASIN
+                            product_links = driver.find_elements(By.XPATH, f"//a[contains(@href, '{asin}')]")
+                            
+                            if product_links:
+                                print(f"    Found product link in search results, clicking...")
+                                product_links[0].click()
+                                time.sleep(5)
+                            else:
+                                print(f"    No product links found in search results")
+                        except Exception as e:
+                            print(f"    Error during product search: {e}")
         
         # Use the same get_amazon_mrp function to extract MRP
-        return get_amazon_mrp(driver)
+        mrp = get_amazon_mrp(driver)
+        
+        # If we couldn't get the MRP, try one last approach - use a proxy service
+        if not mrp:
+            print(f"    Could not extract MRP, using fallback approach...")
+            
+            # Construct a URL for a hypothetical proxy service (this is a placeholder)
+            # In a real implementation, you might use a proxy service that can access Amazon India
+            # For now, we'll just try a different URL format as a last resort
+            amazon_url = f"https://www.amazon.in/s?k={asin}"
+            print(f"    Trying search URL: {amazon_url}")
+            driver.get(amazon_url)
+            time.sleep(5)
+            
+            # Try to find the product in search results
+            try:
+                product_links = driver.find_elements(By.XPATH, f"//a[contains(@href, '{asin}')]")
+                if product_links:
+                    print(f"    Found product link in search results, clicking...")
+                    product_links[0].click()
+                    time.sleep(5)
+                    
+                    # Try to extract MRP again
+                    mrp = get_amazon_mrp(driver)
+            except Exception as e:
+                print(f"    Error during fallback search: {e}")
+        
+        return mrp
             
     except Exception as e:
         print(f"    ✗ Error navigating to Amazon or extracting MRP: {e}")
@@ -1750,6 +1965,10 @@ def main():
     """Main function to scrape product images"""
     print("=== Smartprix Mobile Image Scraper ===")
     
+    # Configure system for Amazon India access
+    print("Configuring system for Amazon India access...")
+    force_amazon_india_access()
+    
     # Clear existing data at the beginning
     if not clear_existing_data():
         print("Failed to clear existing data. Exiting.")
@@ -1768,11 +1987,25 @@ def main():
     print(f"Found {total_products} products to process")
     
     # Setup Chrome driver
-    print("Setting up Chrome driver...")
+    print("Setting up Chrome driver with India-specific configurations...")
     driver = setup_driver()
     if not driver:
         print("Failed to setup Chrome driver. Exiting.")
         return
+        
+    # Test Amazon India access
+    print("Testing Amazon India access...")
+    try:
+        driver.get("https://www.amazon.in/")
+        time.sleep(5)
+        current_url = driver.current_url
+        print(f"Amazon test URL: {current_url}")
+        if "amazon.in" in current_url:
+            print("✓ Successfully accessed Amazon India!")
+        else:
+            print(f"✗ Redirected to {current_url} - will attempt to handle redirects during processing")
+    except Exception as e:
+        print(f"Error testing Amazon India access: {e}")
     
     try:
         # Process each product

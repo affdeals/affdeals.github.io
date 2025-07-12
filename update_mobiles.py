@@ -108,7 +108,22 @@ def setup_driver():
     chrome_options.add_argument("--mute-audio")  # Mute audio
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--force-device-scale-factor=1")  # Ensure consistent scaling
+    
+    # Set user agent to appear as coming from India
     chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+    
+    # Set language preferences to prefer Indian English
+    chrome_options.add_argument("--lang=en-IN")
+    chrome_options.add_argument("--accept-lang=en-IN,en;q=0.9")
+    
+    # Add geolocation preferences for India
+    chrome_options.add_experimental_option("prefs", {
+        "profile.default_content_setting_values.geolocation": 1,  # Allow geolocation
+        "intl.accept_languages": "en-IN,en",
+        "profile.content_settings.exceptions.geolocation": {
+            "*": {"setting": 1}  # Allow geolocation for all sites
+        }
+    })
     
     # Suppress DevTools listening message
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -126,6 +141,36 @@ def setup_driver():
         # Create driver with suppressed stderr
         with suppress_stderr():
             driver = webdriver.Chrome(options=chrome_options)
+            
+            # Set additional preferences after driver is created
+            try:
+                # Set geolocation to India (New Delhi)
+                driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
+                    'latitude': 28.6139,
+                    'longitude': 77.2090,
+                    'accuracy': 1
+                })
+                
+                # Set locale to India
+                driver.execute_cdp_cmd('Emulation.setLocaleOverride', {
+                    'locale': 'en-IN'
+                })
+                
+                # Set timezone to India
+                driver.execute_cdp_cmd('Emulation.setTimezoneOverride', {
+                    'timezoneId': 'Asia/Kolkata'
+                })
+                
+                # Set Accept-Language header
+                driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
+                    'headers': {
+                        'Accept-Language': 'en-IN,en;q=0.9',
+                        'Accept-Country': 'IN'
+                    }
+                })
+            except Exception as e:
+                print(f"Warning: Could not set some location preferences: {e}")
+                
         return driver
     except Exception as e:
         print(f"Error setting up Chrome driver: {e}")
@@ -953,7 +998,7 @@ def append_product_to_json(product_data, json_file_path):
 
 
 def extract_asin_from_amazon_url(url):
-    """Extract ASIN from Amazon URL"""
+    """Extract ASIN from Amazon URL (works with both amazon.in and amazon.com)"""
     try:
         # Common Amazon ASIN patterns
         patterns = [
@@ -961,13 +1006,19 @@ def extract_asin_from_amazon_url(url):
             r'/product/([A-Z0-9]{10})',
             r'/gp/product/([A-Z0-9]{10})',
             r'asin=([A-Z0-9]{10})',
-            r'ASIN=([A-Z0-9]{10})'
+            r'ASIN=([A-Z0-9]{10})',
+            r'amazon\.[a-z\.]+/.*?/([A-Z0-9]{10})/',  # More general pattern for various Amazon domains
+            r'amazon\.[a-z\.]+.*?/([A-Z0-9]{10})(?:/|$)'  # Even more general pattern
         ]
         
         for pattern in patterns:
             match = re.search(pattern, url)
             if match:
-                return match.group(1)
+                asin = match.group(1)
+                # Validate ASIN format (10 alphanumeric characters)
+                if re.match(r'^[A-Z0-9]{10}$', asin):
+                    print(f"    Valid ASIN extracted: {asin}")
+                    return asin
         return None
     except Exception as e:
         print(f"    Error extracting ASIN from URL: {e}")
@@ -1423,8 +1474,62 @@ def get_amazon_mrp_from_asin(driver, asin):
         amazon_url = f"https://www.amazon.in/dp/{asin}/"
         print(f"    Navigating directly to Amazon: {amazon_url}")
         
+        # Set cookies and headers to force Amazon India
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'i18n-prefs',
+            'value': 'INR',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'lc-acbin',
+            'value': 'en_IN',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
+        # Set geolocation to India
+        driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
+            'latitude': 28.6139,  # New Delhi coordinates
+            'longitude': 77.2090,
+            'accuracy': 1
+        })
+        
+        # Set Accept-Language header to prefer Indian English
+        driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
+            'headers': {
+                'Accept-Language': 'en-IN,en;q=0.9',
+                'Accept-Country': 'IN'
+            }
+        })
+        
         driver.get(amazon_url)
         time.sleep(5)  # Wait for page to load
+        
+        # Check if we're on amazon.in
+        current_url = driver.current_url
+        print(f"    Current URL after navigation: {current_url}")
+        
+        # If redirected to amazon.com, try again with a more direct approach
+        if 'amazon.com' in current_url and 'amazon.in' not in current_url:
+            print(f"    Redirected to amazon.com, trying alternative approach...")
+            
+            # Clear cookies and try again with more forceful approach
+            driver.delete_all_cookies()
+            
+            # Set user agent to appear as coming from India
+            driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+                'userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'platform': 'Win32',
+                'acceptLanguage': 'en-IN,en;q=0.9'
+            })
+            
+            # Try with a different URL format that might be less likely to redirect
+            amazon_url = f"https://www.amazon.in/gp/product/{asin}/"
+            print(f"    Trying alternative URL: {amazon_url}")
+            driver.get(amazon_url)
+            time.sleep(5)
         
         # Use the same get_amazon_mrp function to extract MRP
         return get_amazon_mrp(driver)
@@ -1484,7 +1589,41 @@ def find_amazon_link_and_extract_asin(driver, store_links):
     
     print(f"  Found {len(potential_amazon_links)} potential Amazon links")
     
-    # Try each potential Amazon link to see which one redirects to amazon.in
+    # Set cookies and headers to force Amazon India before visiting any links
+    try:
+        # Set cookies to prefer India
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'i18n-prefs',
+            'value': 'INR',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
+        driver.execute_cdp_cmd('Network.setCookie', {
+            'name': 'lc-acbin',
+            'value': 'en_IN',
+            'domain': '.amazon.in',
+            'path': '/'
+        })
+        
+        # Set geolocation to India
+        driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
+            'latitude': 28.6139,  # New Delhi coordinates
+            'longitude': 77.2090,
+            'accuracy': 1
+        })
+        
+        # Set Accept-Language header to prefer Indian English
+        driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
+            'headers': {
+                'Accept-Language': 'en-IN,en;q=0.9',
+                'Accept-Country': 'IN'
+            }
+        })
+    except Exception as e:
+        print(f"    Warning: Could not set location preferences: {e}")
+    
+    # Try each potential Amazon link to see which one redirects to amazon.in or amazon.com
     for i, amazon_link in enumerate(potential_amazon_links):
         try:
             print(f"    Checking link {i+1}: {amazon_link}")
@@ -1493,25 +1632,34 @@ def find_amazon_link_and_extract_asin(driver, store_links):
             driver.get(amazon_link)
             time.sleep(5)  # Give more time for redirects
             
-            # Check if we're on amazon.in
+            # Check if we're on amazon.in or amazon.com
             current_url = driver.current_url
             print(f"    Redirected to: {current_url}")
             
-            if 'amazon.in' in current_url:
-                print(f"    Found Amazon.in redirect!")
+            # Check for both amazon.in and amazon.com since we'll handle amazon.com redirects
+            if 'amazon.in' in current_url or 'amazon.com' in current_url:
+                if 'amazon.in' in current_url:
+                    print(f"    Found Amazon.in redirect!")
+                else:
+                    print(f"    Found Amazon.com redirect - will attempt to extract ASIN and use with amazon.in")
                 
                 # Extract ASIN from the URL
                 asin = extract_asin_from_amazon_url(current_url)
                 if asin:
                     print(f"    Extracted ASIN: {asin}")
                     
-                    # Try to extract MRP from current page first
-                    mrp = get_amazon_mrp(driver)
-                    
-                    # If MRP not found on redirect page, try navigating directly to Amazon
-                    if not mrp:
-                        print(f"    MRP not found via redirect, trying direct navigation...")
+                    # If we're on amazon.com, we need to use the ASIN with amazon.in
+                    if 'amazon.com' in current_url:
+                        print(f"    Redirecting to Amazon.in with extracted ASIN...")
                         mrp = get_amazon_mrp_from_asin(driver, asin)
+                    else:
+                        # Try to extract MRP from current page first
+                        mrp = get_amazon_mrp(driver)
+                        
+                        # If MRP not found on redirect page, try navigating directly to Amazon
+                        if not mrp:
+                            print(f"    MRP not found via redirect, trying direct navigation...")
+                            mrp = get_amazon_mrp_from_asin(driver, asin)
                     
                     return {"asin": asin, "mrp": mrp}, True
                 else:

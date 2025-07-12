@@ -4,9 +4,15 @@
       "id": "samsung_galaxy_m36_5g",
       "name": "Samsung Galaxy M36 5G",
       "count": 1,
+<<<<<<< Updated upstream
       "listed": "no",
       "price": "₹17,499",
       "mrp": "",
+=======
+      "listed": "yes",
+      "price": "₹17,499",
+      "mrp": "₹22,999",
+>>>>>>> Stashed changes
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m36-5g-ppd1negtlorc",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_m36_5g/image_1.jpg",
@@ -29,7 +35,11 @@
           "price": "₹21,999"
         }
       ],
+<<<<<<< Updated upstream
       "asin": null,
+=======
+      "asin": "B0FDBB2VRC",
+>>>>>>> Stashed changes
       "spec_score": "78",
       "features": {
         "GENERAL": [

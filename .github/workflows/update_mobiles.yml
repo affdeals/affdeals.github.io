@@ -38,7 +38,21 @@ jobs:
           install-chromedriver: true
       
       - name: Run update_mobiles.py script
+        env:
+          # Set environment variables to help with region detection
+          LANG: en_IN.UTF-8
+          LC_ALL: en_IN.UTF-8
+          TZ: Asia/Kolkata
         run: |
+          # Set system locale and timezone to India
+          sudo timedatectl set-timezone Asia/Kolkata
+          
+          # Install and configure language packs for Indian English
+          sudo apt-get update
+          sudo apt-get install -y language-pack-en-base
+          sudo locale-gen en_IN.UTF-8
+          
+          # Run the script with environment variables set
           python update_mobiles.py
       
       - name: Commit and push if changes

@@ -99,20 +99,6 @@ def force_amazon_india_access():
         if os.environ.get('GITHUB_ACTIONS') == 'true':
             print("Running in GitHub Actions environment, applying special configurations...")
             
-            # Try to modify hosts file if we have permission (usually won't work in GitHub Actions)
-            try:
-                # This is just for documentation - it won't actually work in GitHub Actions
-                # The actual hosts file modification is done in the workflow
-                hosts_file = "/etc/hosts"
-                if os.path.exists(hosts_file) and os.access(hosts_file, os.W_OK):
-                    with open(hosts_file, "a") as f:
-                        f.write("\n# Amazon India IP addresses\n")
-                        f.write("13.232.69.59 www.amazon.in\n")
-                        f.write("13.232.69.59 amazon.in\n")
-                    print("Added Amazon India entries to hosts file")
-            except Exception as e:
-                print(f"Could not modify hosts file: {e}")
-            
             # Set environment variables for India
             os.environ['LANG'] = 'en_IN.UTF-8'
             os.environ['LC_ALL'] = 'en_IN.UTF-8'
@@ -1775,13 +1761,7 @@ def get_amazon_mrp_from_asin(driver, asin):
             driver.get(amazon_url)
             time.sleep(5)
             
-            # Save a screenshot of the search results page
-            try:
-                screenshot_path = f"amazon_search_{asin}.png"
-                driver.save_screenshot(screenshot_path)
-                print(f"    Saved search results screenshot to {screenshot_path}")
-            except Exception as e:
-                print(f"    Could not save search screenshot: {e}")
+            # Screenshot saving removed
             
             # Try to find the product in search results
             try:
@@ -1819,28 +1799,7 @@ def get_amazon_mrp_from_asin(driver, asin):
                 except Exception as e:
                     print(f"    Error extracting MRP from text: {e}")
         
-        # If we still couldn't get the MRP, check if we're in debug mode
-        if os.environ.get('DEBUG_MODE') == 'true':
-            print("    DEBUG MODE: Dumping page information for troubleshooting")
-            try:
-                # Save a full page screenshot
-                driver.save_screenshot(f"debug_amazon_{asin}.png")
-                
-                # Save the page source
-                with open(f"debug_amazon_{asin}.html", "w", encoding="utf-8") as f:
-                    f.write(driver.page_source)
-                
-                # Print some page information
-                print(f"    Current URL: {driver.current_url}")
-                print(f"    Page title: {driver.title}")
-                
-                # Try to extract all price-related elements
-                price_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '₹')]")
-                print(f"    Found {len(price_elements)} elements containing '₹':")
-                for i, elem in enumerate(price_elements[:10]):  # Print first 10 only
-                    print(f"      {i+1}. {elem.tag_name}: {elem.text}")
-            except Exception as e:
-                print(f"    Error in debug mode: {e}")
+        # Debug mode section removed
         
         return mrp
             
@@ -1857,22 +1816,7 @@ def get_amazon_mrp(driver):
         
         print("    Attempting to extract MRP from Amazon page...")
         
-        # Save a screenshot for debugging (especially useful in GitHub Actions)
-        try:
-            screenshot_path = "amazon_page_screenshot.png"
-            driver.save_screenshot(screenshot_path)
-            print(f"    Saved screenshot to {screenshot_path} for debugging")
-        except Exception as e:
-            print(f"    Could not save screenshot: {e}")
-        
-        # Get the page source for debugging
-        try:
-            page_source = driver.page_source
-            with open("amazon_page_source.html", "w", encoding="utf-8") as f:
-                f.write(page_source)
-            print("    Saved page source for debugging")
-        except Exception as e:
-            print(f"    Could not save page source: {e}")
+        # Debugging code removed
         
         # Try multiple selectors for MRP - Amazon's structure can vary
         mrp_selectors = [
@@ -2367,20 +2311,6 @@ def main():
     if not driver:
         print("Failed to setup Chrome driver. Exiting.")
         return
-        
-    # Test Amazon India access
-    print("Testing Amazon India access...")
-    try:
-        driver.get("https://www.amazon.in/")
-        time.sleep(5)
-        current_url = driver.current_url
-        print(f"Amazon test URL: {current_url}")
-        if "amazon.in" in current_url:
-            print("✓ Successfully accessed Amazon India!")
-        else:
-            print(f"✗ Redirected to {current_url} - will attempt to handle redirects during processing")
-    except Exception as e:
-        print(f"Error testing Amazon India access: {e}")
     
     try:
         # Process each product

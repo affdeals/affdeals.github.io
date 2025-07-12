@@ -69,8 +69,6 @@ jobs:
           LANG: en_IN.UTF-8
           LC_ALL: en_IN.UTF-8
           TZ: Asia/Kolkata
-          # Enable debug mode for more verbose output
-          DEBUG_MODE: "true"
           # Force GitHub Actions detection
           GITHUB_ACTIONS: "true"
         run: |
@@ -87,21 +85,8 @@ jobs:
           
           # Run the script with environment variables set
           python update_mobiles.py
-          
-          # If debug artifacts were created, list them
-          echo "Debug artifacts:"
-          ls -la *.png *.html 2>/dev/null || echo "No debug artifacts found"
       
-      - name: Upload debug artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: debug-artifacts
-          path: |
-            *.png
-            *.html
-            *.log
-          retention-days: 5
+      # Debug artifacts upload removed
 
       - name: Commit and push if changes
         run: |

@@ -407,7 +407,7 @@ def scrape_smartprix_mobiles(debug_mode=False):
     # XPath patterns
     total_count_xpath = "/html/body/div[1]/main/div[1]/div[2]/div[1]/div/div[1]"
     load_more_xpath = "/html/body/div[1]/main/div[1]/div[2]/div[3]"
-    json_file_path = "d:/Workspace/affdeals.github.io/mobiles.json"
+    json_file_path = "mobiles.json"
     
     # Setup driver
     driver = setup_driver()

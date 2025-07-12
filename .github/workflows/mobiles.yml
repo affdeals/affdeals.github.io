@@ -35,7 +35,7 @@ jobs:
       - name: Install Chromedriver
         uses: nanasess/setup-chromedriver@v1
         with:
-          chrome-version: stable
+          chromedriver-version: 'latest'
       
       - name: Run mobiles.py script
         run: |

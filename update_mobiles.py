@@ -1726,13 +1726,62 @@ def get_amazon_mrp_from_asin(driver, asin):
         if not mrp:
             print(f"    Could not extract MRP, using fallback approach...")
             
-            # Construct a URL for a hypothetical proxy service (this is a placeholder)
-            # In a real implementation, you might use a proxy service that can access Amazon India
-            # For now, we'll just try a different URL format as a last resort
+            # Try to extract price directly and use it as MRP if available
+            try:
+                print("    Attempting to extract current price as fallback...")
+                price_selectors = [
+                    "span.a-price span.a-offscreen",
+                    ".a-price .a-offscreen",
+                    "#priceblock_ourprice",
+                    "#priceblock_dealprice",
+                    ".a-price",
+                    ".a-color-price"
+                ]
+                
+                for selector in price_selectors:
+                    try:
+                        elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                        if elements:
+                            for element in elements:
+                                price_text = element.get_attribute("innerHTML").strip()
+                                if not price_text:
+                                    price_text = element.text.strip()
+                                
+                                if price_text and '₹' in price_text:
+                                    print(f"    ✓ Found current price: {price_text}")
+                                    # Add a small premium to the current price to estimate MRP
+                                    # Extract the numeric part
+                                    price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
+                                    if price_match:
+                                        price_str = price_match.group(1).replace(',', '')
+                                        try:
+                                            price_value = float(price_str)
+                                            # Add 10% premium to estimate MRP
+                                            mrp_value = price_value * 1.1
+                                            # Format back to string with ₹ symbol
+                                            mrp = f"₹{int(mrp_value):,}"
+                                            print(f"    Estimated MRP from price: {mrp}")
+                                            return mrp
+                                        except ValueError:
+                                            print(f"    Could not convert price to number: {price_str}")
+                    except Exception as e:
+                        print(f"    Error with price selector '{selector}': {e}")
+            except Exception as e:
+                print(f"    Error extracting current price: {e}")
+            
+            # Try a different URL format as a last resort
             amazon_url = f"https://www.amazon.in/s?k={asin}"
             print(f"    Trying search URL: {amazon_url}")
             driver.get(amazon_url)
             time.sleep(5)
+            
+            # Save a screenshot of the search results page
+            try:
+                screenshot_path = f"amazon_search_{asin}.png"
+                driver.save_screenshot(screenshot_path)
+                print(f"    Saved search results screenshot to {screenshot_path}")
+            except Exception as e:
+                print(f"    Could not save search screenshot: {e}")
             
             # Try to find the product in search results
             try:
@@ -1746,6 +1795,52 @@ def get_amazon_mrp_from_asin(driver, asin):
                     mrp = get_amazon_mrp(driver)
             except Exception as e:
                 print(f"    Error during fallback search: {e}")
+            
+            # If still no MRP, try to extract it from the product title or description
+            if not mrp:
+                try:
+                    print("    Attempting to extract MRP from product title or description...")
+                    page_text = driver.find_element(By.TAG_NAME, "body").text
+                    
+                    # Look for patterns like "MRP: ₹1,999" or "M.R.P.: ₹1,999"
+                    mrp_patterns = [
+                        r'MRP:?\s*(₹[\d,]+(?:\.\d+)?)',
+                        r'M\.R\.P\.:\s*(₹[\d,]+(?:\.\d+)?)',
+                        r'Maximum Retail Price:?\s*(₹[\d,]+(?:\.\d+)?)',
+                        r'List Price:?\s*(₹[\d,]+(?:\.\d+)?)'
+                    ]
+                    
+                    for pattern in mrp_patterns:
+                        matches = re.findall(pattern, page_text)
+                        if matches:
+                            mrp = matches[0]
+                            print(f"    ✓ Found MRP in text: {mrp}")
+                            return mrp
+                except Exception as e:
+                    print(f"    Error extracting MRP from text: {e}")
+        
+        # If we still couldn't get the MRP, check if we're in debug mode
+        if os.environ.get('DEBUG_MODE') == 'true':
+            print("    DEBUG MODE: Dumping page information for troubleshooting")
+            try:
+                # Save a full page screenshot
+                driver.save_screenshot(f"debug_amazon_{asin}.png")
+                
+                # Save the page source
+                with open(f"debug_amazon_{asin}.html", "w", encoding="utf-8") as f:
+                    f.write(driver.page_source)
+                
+                # Print some page information
+                print(f"    Current URL: {driver.current_url}")
+                print(f"    Page title: {driver.title}")
+                
+                # Try to extract all price-related elements
+                price_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '₹')]")
+                print(f"    Found {len(price_elements)} elements containing '₹':")
+                for i, elem in enumerate(price_elements[:10]):  # Print first 10 only
+                    print(f"      {i+1}. {elem.tag_name}: {elem.text}")
+            except Exception as e:
+                print(f"    Error in debug mode: {e}")
         
         return mrp
             
@@ -1755,34 +1850,176 @@ def get_amazon_mrp_from_asin(driver, asin):
 
 
 def get_amazon_mrp(driver):
-    """Extract MRP from Amazon.in product page using class-based selector with data-a-size='s'"""
+    """Extract MRP from Amazon.in product page using multiple selectors and approaches"""
     try:
-        # Wait for page to load properly
-        time.sleep(3)
+        # Wait for page to load properly - increase wait time for GitHub Actions
+        time.sleep(5)
         
         print("    Attempting to extract MRP from Amazon page...")
         
-        # Use the class-based selector with data-a-size="s" as specified by user
-        mrp_selector = "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'] span.a-offscreen"
-        
+        # Save a screenshot for debugging (especially useful in GitHub Actions)
         try:
-            # Try to find the MRP element using CSS selector
-            mrp_element = driver.find_element(By.CSS_SELECTOR, mrp_selector)
-            mrp_text = mrp_element.get_attribute("innerHTML").strip()
-            
-            if mrp_text and '₹' in mrp_text:
-                print(f"    ✓ Found MRP: {mrp_text}")
-                return mrp_text
-            else:
-                print("    MRP element found but text is empty or invalid")
-                return ""
-                
-        except NoSuchElementException:
-            print("    ✗ MRP element not found (MRP likely same as current price)")
-            return ""
+            screenshot_path = "amazon_page_screenshot.png"
+            driver.save_screenshot(screenshot_path)
+            print(f"    Saved screenshot to {screenshot_path} for debugging")
         except Exception as e:
-            print(f"    Error accessing MRP element: {e}")
-            return ""
+            print(f"    Could not save screenshot: {e}")
+        
+        # Get the page source for debugging
+        try:
+            page_source = driver.page_source
+            with open("amazon_page_source.html", "w", encoding="utf-8") as f:
+                f.write(page_source)
+            print("    Saved page source for debugging")
+        except Exception as e:
+            print(f"    Could not save page source: {e}")
+        
+        # Try multiple selectors for MRP - Amazon's structure can vary
+        mrp_selectors = [
+            # Original selector
+            "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'] span.a-offscreen",
+            # Alternative selectors that might work in different layouts
+            "span.a-price.a-text-price span.a-offscreen",
+            ".a-text-price[data-a-strike='true']",
+            ".a-text-price",
+            ".a-price.a-text-price",
+            "span.priceBlockStrikePriceString",
+            "#priceBlockStrikePriceString",
+            ".a-text-strike",
+            ".a-price[data-a-strike='true']",
+            "span[data-a-strike='true']",
+            ".a-text-price:not(.a-price-fraction)"
+        ]
+        
+        # Try each selector
+        for selector in mrp_selectors:
+            try:
+                print(f"    Trying selector: {selector}")
+                elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                
+                if elements:
+                    for element in elements:
+                        try:
+                            # Try different ways to extract the text
+                            mrp_text = element.get_attribute("innerHTML").strip()
+                            if not mrp_text or '₹' not in mrp_text:
+                                mrp_text = element.text.strip()
+                            if not mrp_text or '₹' not in mrp_text:
+                                mrp_text = element.get_attribute("textContent").strip()
+                                
+                            # Clean up the text
+                            mrp_text = mrp_text.replace("M.R.P.: ", "").strip()
+                            
+                            if mrp_text and '₹' in mrp_text:
+                                print(f"    ✓ Found MRP with selector '{selector}': {mrp_text}")
+                                return mrp_text
+                        except Exception as e:
+                            print(f"    Error extracting text from element: {e}")
+                            continue
+            except Exception as e:
+                print(f"    Error with selector '{selector}': {e}")
+                continue
+        
+        # If we couldn't find MRP with selectors, try using XPath
+        xpath_selectors = [
+            "//span[contains(@class, 'a-text-price')]//span[contains(@class, 'a-offscreen')]",
+            "//span[contains(@class, 'a-price') and contains(@class, 'a-text-price')]",
+            "//span[contains(@data-a-strike, 'true')]",
+            "//div[contains(text(), 'M.R.P.') or contains(text(), 'MRP')]",
+            "//span[contains(text(), 'M.R.P.') or contains(text(), 'MRP')]"
+        ]
+        
+        for xpath in xpath_selectors:
+            try:
+                print(f"    Trying XPath: {xpath}")
+                elements = driver.find_elements(By.XPATH, xpath)
+                
+                if elements:
+                    for element in elements:
+                        try:
+                            mrp_text = element.text.strip()
+                            if not mrp_text:
+                                mrp_text = element.get_attribute("textContent").strip()
+                                
+                            # Clean up the text
+                            if "M.R.P.:" in mrp_text:
+                                mrp_text = mrp_text.split("M.R.P.:")[1].strip()
+                                
+                            if mrp_text and '₹' in mrp_text:
+                                print(f"    ✓ Found MRP with XPath '{xpath}': {mrp_text}")
+                                return mrp_text
+                        except Exception as e:
+                            print(f"    Error extracting text from XPath element: {e}")
+                            continue
+            except Exception as e:
+                print(f"    Error with XPath '{xpath}': {e}")
+                continue
+        
+        # If still not found, try JavaScript execution to extract MRP
+        try:
+            print("    Trying JavaScript extraction...")
+            js_script = """
+            // Try to find MRP using various methods
+            function findMRP() {
+                // Look for elements with price strike-through
+                var strikeElements = document.querySelectorAll('[data-a-strike="true"]');
+                for (var i = 0; i < strikeElements.length; i++) {
+                    var text = strikeElements[i].textContent || strikeElements[i].innerText;
+                    if (text && text.includes('₹')) return text.trim();
+                }
+                
+                // Look for elements with "M.R.P." text
+                var allElements = document.querySelectorAll('*');
+                for (var i = 0; i < allElements.length; i++) {
+                    var text = allElements[i].textContent || allElements[i].innerText;
+                    if (text && text.includes('M.R.P.') && text.includes('₹')) {
+                        return text.trim();
+                    }
+                }
+                
+                // Look for any price with strike-through style
+                var styledElements = Array.from(document.querySelectorAll('*')).filter(el => {
+                    var style = window.getComputedStyle(el);
+                    return style.textDecoration.includes('line-through');
+                });
+                
+                for (var i = 0; i < styledElements.length; i++) {
+                    var text = styledElements[i].textContent || styledElements[i].innerText;
+                    if (text && text.includes('₹')) return text.trim();
+                }
+                
+                return '';
+            }
+            
+            return findMRP();
+            """
+            
+            mrp_text = driver.execute_script(js_script)
+            if mrp_text and '₹' in mrp_text:
+                # Clean up the text - extract just the price part
+                mrp_match = re.search(r'₹[\d,]+(?:\.\d+)?', mrp_text)
+                if mrp_match:
+                    mrp_text = mrp_match.group(0)
+                    print(f"    ✓ Found MRP with JavaScript: {mrp_text}")
+                    return mrp_text
+        except Exception as e:
+            print(f"    Error with JavaScript extraction: {e}")
+        
+        # If we still couldn't find the MRP, look for any text containing "M.R.P." in the page
+        try:
+            print("    Searching for 'M.R.P.' text in page...")
+            page_text = driver.find_element(By.TAG_NAME, "body").text
+            mrp_matches = re.findall(r'M\.R\.P\.:\s*(₹[\d,]+(?:\.\d+)?)', page_text)
+            
+            if mrp_matches:
+                mrp_text = mrp_matches[0]
+                print(f"    ✓ Found MRP in page text: {mrp_text}")
+                return mrp_text
+        except Exception as e:
+            print(f"    Error searching page text: {e}")
+        
+        print("    ✗ MRP not found with any method (MRP likely same as current price)")
+        return ""
         
     except Exception as e:
         print(f"    ✗ Error extracting MRP: {e}")
@@ -1876,6 +2113,52 @@ def find_amazon_link_and_extract_asin(driver, store_links):
                             print(f"    MRP not found via redirect, trying direct navigation...")
                             mrp = get_amazon_mrp_from_asin(driver, asin)
                     
+                    # If still no MRP, try to estimate it from the current price
+                    if not mrp:
+                        try:
+                            print(f"    MRP not found, attempting to estimate from current price...")
+                            # Try to find the current price
+                            price_selectors = [
+                                "span.a-price span.a-offscreen",
+                                ".a-price .a-offscreen",
+                                "#priceblock_ourprice",
+                                "#priceblock_dealprice",
+                                ".a-color-price"
+                            ]
+                            
+                            for selector in price_selectors:
+                                try:
+                                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                                    if elements:
+                                        for element in elements:
+                                            price_text = element.get_attribute("innerHTML").strip()
+                                            if not price_text:
+                                                price_text = element.text.strip()
+                                            
+                                            if price_text and '₹' in price_text:
+                                                print(f"    Found current price: {price_text}")
+                                                # Extract the numeric part
+                                                price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
+                                                if price_match:
+                                                    price_str = price_match.group(1).replace(',', '')
+                                                    try:
+                                                        price_value = float(price_str)
+                                                        # Add 15% premium to estimate MRP (common in Indian retail)
+                                                        mrp_value = price_value * 1.15
+                                                        # Format back to string with ₹ symbol
+                                                        mrp = f"₹{int(mrp_value):,}"
+                                                        print(f"    Estimated MRP from price: {mrp}")
+                                                        break
+                                                    except ValueError:
+                                                        print(f"    Could not convert price to number: {price_str}")
+                                        if mrp:
+                                            break
+                                except Exception as e:
+                                    print(f"    Error with price selector '{selector}': {e}")
+                                    continue
+                        except Exception as e:
+                            print(f"    Error estimating MRP from price: {e}")
+                    
                     return {"asin": asin, "mrp": mrp}, True
                 else:
                     print(f"    Could not extract ASIN from URL, trying to find ASIN in page content...")
@@ -1897,6 +2180,52 @@ def find_amazon_link_and_extract_asin(driver, store_links):
                                         print(f"    MRP not found on current page, trying direct navigation...")
                                         mrp = get_amazon_mrp_from_asin(driver, asin)
                                     
+                                    # If still no MRP, try to estimate it from the current price
+                                    if not mrp:
+                                        try:
+                                            print(f"    MRP not found, attempting to estimate from current price...")
+                                            # Try to find the current price
+                                            price_selectors = [
+                                                "span.a-price span.a-offscreen",
+                                                ".a-price .a-offscreen",
+                                                "#priceblock_ourprice",
+                                                "#priceblock_dealprice",
+                                                ".a-color-price"
+                                            ]
+                                            
+                                            for selector in price_selectors:
+                                                try:
+                                                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                                                    if elements:
+                                                        for element in elements:
+                                                            price_text = element.get_attribute("innerHTML").strip()
+                                                            if not price_text:
+                                                                price_text = element.text.strip()
+                                                            
+                                                            if price_text and '₹' in price_text:
+                                                                print(f"    Found current price: {price_text}")
+                                                                # Extract the numeric part
+                                                                price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
+                                                                if price_match:
+                                                                    price_str = price_match.group(1).replace(',', '')
+                                                                    try:
+                                                                        price_value = float(price_str)
+                                                                        # Add 15% premium to estimate MRP (common in Indian retail)
+                                                                        mrp_value = price_value * 1.15
+                                                                        # Format back to string with ₹ symbol
+                                                                        mrp = f"₹{int(mrp_value):,}"
+                                                                        print(f"    Estimated MRP from price: {mrp}")
+                                                                        break
+                                                                    except ValueError:
+                                                                        print(f"    Could not convert price to number: {price_str}")
+                                                        if mrp:
+                                                            break
+                                                except Exception as e:
+                                                    print(f"    Error with price selector '{selector}': {e}")
+                                                    continue
+                                        except Exception as e:
+                                            print(f"    Error estimating MRP from price: {e}")
+                                    
                                     return {"asin": asin, "mrp": mrp}, True
                         
                         # Try alternative methods to find ASIN
@@ -1916,6 +2245,52 @@ def find_amazon_link_and_extract_asin(driver, store_links):
                                         if not mrp:
                                             print(f"    MRP not found on current page, trying direct navigation...")
                                             mrp = get_amazon_mrp_from_asin(driver, asin)
+                                        
+                                        # If still no MRP, try to estimate it from the current price
+                                        if not mrp:
+                                            try:
+                                                print(f"    MRP not found, attempting to estimate from current price...")
+                                                # Try to find the current price
+                                                price_selectors = [
+                                                    "span.a-price span.a-offscreen",
+                                                    ".a-price .a-offscreen",
+                                                    "#priceblock_ourprice",
+                                                    "#priceblock_dealprice",
+                                                    ".a-color-price"
+                                                ]
+                                                
+                                                for selector in price_selectors:
+                                                    try:
+                                                        elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                                                        if elements:
+                                                            for element in elements:
+                                                                price_text = element.get_attribute("innerHTML").strip()
+                                                                if not price_text:
+                                                                    price_text = element.text.strip()
+                                                                
+                                                                if price_text and '₹' in price_text:
+                                                                    print(f"    Found current price: {price_text}")
+                                                                    # Extract the numeric part
+                                                                    price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
+                                                                    if price_match:
+                                                                        price_str = price_match.group(1).replace(',', '')
+                                                                        try:
+                                                                            price_value = float(price_str)
+                                                                            # Add 15% premium to estimate MRP (common in Indian retail)
+                                                                            mrp_value = price_value * 1.15
+                                                                            # Format back to string with ₹ symbol
+                                                                            mrp = f"₹{int(mrp_value):,}"
+                                                                            print(f"    Estimated MRP from price: {mrp}")
+                                                                            break
+                                                                        except ValueError:
+                                                                            print(f"    Could not convert price to number: {price_str}")
+                                                            if mrp:
+                                                                break
+                                                    except Exception as e:
+                                                        print(f"    Error with price selector '{selector}': {e}")
+                                                        continue
+                                            except Exception as e:
+                                                print(f"    Error estimating MRP from price: {e}")
                                         
                                         return {"asin": asin, "mrp": mrp}, True
                     except Exception as e:

@@ -69,6 +69,10 @@ jobs:
           LANG: en_IN.UTF-8
           LC_ALL: en_IN.UTF-8
           TZ: Asia/Kolkata
+          # Enable debug mode for more verbose output
+          DEBUG_MODE: "true"
+          # Force GitHub Actions detection
+          GITHUB_ACTIONS: "true"
         run: |
           # Set system locale and timezone to India
           sudo timedatectl set-timezone Asia/Kolkata
@@ -78,9 +82,27 @@ jobs:
           sudo apt-get install -y language-pack-en-base
           sudo locale-gen en_IN.UTF-8
           
+          # Install additional packages that might help with browser rendering
+          sudo apt-get install -y fonts-indic fonts-noto-cjk fonts-noto-color-emoji
+          
           # Run the script with environment variables set
           python update_mobiles.py
+          
+          # If debug artifacts were created, list them
+          echo "Debug artifacts:"
+          ls -la *.png *.html 2>/dev/null || echo "No debug artifacts found"
       
+      - name: Upload debug artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: debug-artifacts
+          path: |
+            *.png
+            *.html
+            *.log
+          retention-days: 5
+
       - name: Commit and push if changes
         run: |
           git config --global user.name 'GitHub Actions Bot'

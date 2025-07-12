@@ -69,51 +69,18 @@ def setup_driver():
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
-    # Add additional options for CI/CD environments
-    chrome_options.add_argument("--disable-setuid-sandbox")
-    chrome_options.add_argument("--disable-infobars")
-    chrome_options.add_argument("--single-process")
-    chrome_options.add_argument("--disable-application-cache")
-    chrome_options.add_argument("--ignore-certificate-errors")
-    chrome_options.add_argument("--ignore-ssl-errors")
-    
     try:
         # Suppress stderr messages from Chrome
         os.environ['WDM_LOG_LEVEL'] = '0'
         
-        # Try to use webdriver-manager for CI/CD compatibility
-        try:
-            from webdriver_manager.chrome import ChromeDriverManager
-            from selenium.webdriver.chrome.service import Service
-            
-            # Create driver with webdriver-manager
-            service = Service(ChromeDriverManager().install())
-            driver = webdriver.Chrome(service=service, options=chrome_options)
-            print("Using webdriver-manager for ChromeDriver")
-            return driver
-        except ImportError:
-            # Fallback to direct Chrome driver if webdriver-manager is not available
-            print("webdriver-manager not available, using direct ChromeDriver")
-            with suppress_stderr():
-                driver = webdriver.Chrome(options=chrome_options)
-            return driver
+        # Create driver with suppressed stderr
+        with suppress_stderr():
+            driver = webdriver.Chrome(options=chrome_options)
+        return driver
     except Exception as e:
         print(f"Error setting up Chrome driver: {e}")
         print("Make sure ChromeDriver is installed and in your PATH")
-        
-        # Try one more time with even more basic options
-        try:
-            basic_options = Options()
-            basic_options.add_argument("--headless")
-            basic_options.add_argument("--no-sandbox")
-            basic_options.add_argument("--disable-dev-shm-usage")
-            
-            print("Trying with minimal Chrome options...")
-            driver = webdriver.Chrome(options=basic_options)
-            return driver
-        except Exception as e2:
-            print(f"Second attempt failed: {e2}")
-            return None
+        return None
 
 
 def extract_mobile_count(text):
@@ -445,73 +412,17 @@ def scrape_smartprix_mobiles(debug_mode=False):
         return None
     
     try:
-        # Add retry logic for loading the page
-        max_retries = 3
-        for retry in range(max_retries):
-            try:
-                print(f"Loading page (attempt {retry+1}/{max_retries})...")
-                driver.get(url)
-                time.sleep(5)  # Increased wait time
-                break
-            except Exception as e:
-                print(f"Error loading page (attempt {retry+1}): {e}")
-                if retry == max_retries - 1:
-                    print("Failed to load page after multiple attempts")
-                    return None
-                time.sleep(2)
+        driver.get(url)
+        time.sleep(3)
         
-        # First, get total count with retry logic
-        total_mobile_count = None
-        for retry in range(max_retries):
-            try:
-                print(f"Extracting total count (attempt {retry+1}/{max_retries})...")
-                wait = WebDriverWait(driver, 15)  # Increased timeout
-                total_element = wait.until(EC.presence_of_element_located((By.XPATH, total_count_xpath)))
-                total_text = total_element.text
-                total_mobile_count = extract_mobile_count(total_text)
-                
-                if total_mobile_count:
-                    break
-                    
-                print(f"Failed to extract count from text: '{total_text}'")
-            except Exception as e:
-                print(f"Error extracting total count (attempt {retry+1}): {e}")
-                
-                # Try an alternative XPath if the original fails
-                try:
-                    alternative_xpath = "//div[contains(@class, 'pg-prf-head')]"
-                    alt_element = driver.find_element(By.XPATH, alternative_xpath)
-                    total_text = alt_element.text
-                    total_mobile_count = extract_mobile_count(total_text)
-                    if total_mobile_count:
-                        print(f"Found total count using alternative method: {total_mobile_count}")
-                        break
-                except:
-                    pass
-                    
-            # Take a screenshot for debugging in CI environment
-            try:
-                screenshot_path = "debug_screenshot.png"
-                driver.save_screenshot(screenshot_path)
-                print(f"Saved debug screenshot to {screenshot_path}")
-            except:
-                pass
-                
-            if retry < max_retries - 1:
-                time.sleep(3)
+        # First, get total count
+        wait = WebDriverWait(driver, 10)
+        total_element = wait.until(EC.presence_of_element_located((By.XPATH, total_count_xpath)))
+        total_text = total_element.text
+        total_mobile_count = extract_mobile_count(total_text)
         
         if not total_mobile_count:
-            print("Failed to extract total mobile count after multiple attempts")
-            # As a fallback, check if we can find products anyway
-            try:
-                products = driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]")
-                if products:
-                    print(f"Found {len(products)} products on page despite failing to get total count")
-                    total_mobile_count = len(products)
-                else:
-                    return None
-            except:
-                return None
+            return None
         
         # Print total count found
         print(f"Total Mobile Phones Found = {total_mobile_count}")
@@ -663,67 +574,16 @@ def scrape_smartprix_mobiles(debug_mode=False):
 
 if __name__ == "__main__":
     import sys
-    import platform
-    
-    # Print system information for debugging
-    print(f"Python version: {sys.version}")
-    print(f"Platform: {platform.platform()}")
-    print(f"Running in directory: {os.getcwd()}")
     
     # Check if debug mode is requested
     debug_mode = len(sys.argv) > 1 and sys.argv[1] == "--debug"
     
-    # Check if we're running in a CI environment
-    is_ci = os.environ.get('CI', 'false').lower() == 'true'
-    if is_ci:
-        print("Running in CI environment")
+    result = scrape_smartprix_mobiles(debug_mode=debug_mode)
     
-    try:
-        # Check if the JSON file already exists and has content
-        json_file_path = "d:/Workspace/affdeals.github.io/mobiles.json"
-        try:
-            with open(json_file_path, "r", encoding="utf-8") as f:
-                existing_data = json.load(f)
-                existing_products = existing_data.get("products", [])
-                if existing_products:
-                    print(f"Found existing mobiles.json with {len(existing_products)} products")
-                    
-                    # In CI environment, if we already have data, consider it a success
-                    if is_ci and len(existing_products) > 0:
-                        print(f"CI environment: Using existing {len(existing_products)} products")
-                        sys.exit(0)
-        except (FileNotFoundError, json.JSONDecodeError):
-            print("No existing mobiles.json file found or file is invalid")
-        
-        # Run the scraper
-        result = scrape_smartprix_mobiles(debug_mode=debug_mode)
-        
-        if result:
-            print(f"Successfully scraped {result} mobile phones and saved to mobiles.json")
-            sys.exit(0)
-        else:
-            print("Failed to scrape mobile phones")
-            
-            # Check if we have any products in the JSON file despite the failure
-            try:
-                with open(json_file_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    products = data.get("products", [])
-                    if products:
-                        print(f"Despite failure, found {len(products)} products in mobiles.json")
-                        if len(products) > 10:  # If we have a reasonable number of products
-                            print("Considering this a partial success")
-                            sys.exit(0)
-            except:
-                pass
-                
-            # Exit with error code in CI environment
-            if is_ci:
-                sys.exit(1)
-    except Exception as e:
-        print(f"Unhandled exception: {e}")
-        if is_ci:
-            sys.exit(1)
+    if result:
+        print(f"Successfully scraped {result} mobile phones and saved to mobiles.json")
+    else:
+        print("Failed to scrape mobile phones")
         
     if debug_mode:
         print("\nDebug mode was enabled. Run without --debug flag for normal operation.")

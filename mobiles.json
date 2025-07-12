@@ -1,0 +1,285 @@
+{
+  "total_mobile_phones": 887,
+  "products": [
+    {
+      "count": 1,
+      "unique_id": "oneplus_nord_ce_5_5g",
+      "name": "OnePlus Nord CE 5 5G",
+      "price": "₹24,998",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1"
+    },
+    {
+      "count": 2,
+      "unique_id": "oneplus_nord_5_5g",
+      "name": "OnePlus Nord 5 5G",
+      "price": "₹31,999",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-5-ppd1aage1z7d"
+    },
+    {
+      "count": 3,
+      "unique_id": "oppo_reno_14_pro_5g",
+      "name": "OPPO Reno 14 Pro 5G",
+      "price": "₹49,999",
+      "url": "https://www.smartprix.com/mobiles/oppo-reno-14-pro-5g-ppd159386vd3"
+    },
+    {
+      "count": 4,
+      "unique_id": "oppo_reno_14_5g",
+      "name": "OPPO Reno 14 5G",
+      "price": "₹37,999",
+      "url": "https://www.smartprix.com/mobiles/oppo-reno-14-5g-ppd16yet8j4z"
+    },
+    {
+      "count": 5,
+      "unique_id": "motorola_edge_60_5g",
+      "name": "Motorola Edge 60 5G",
+      "price": "₹26,399",
+      "url": "https://www.smartprix.com/mobiles/motorola-edge-60-5g-ppd1qz8oqize"
+    },
+    {
+      "count": 6,
+      "unique_id": "oppo_reno_12_5g",
+      "name": "OPPO Reno 12 5G",
+      "price": "₹19,999",
+      "url": "https://www.smartprix.com/mobiles/oppo-reno-12-ppd1elple3sk"
+    },
+    {
+      "count": 7,
+      "unique_id": "motorola_edge_60_pro",
+      "name": "Motorola Edge 60 Pro",
+      "price": "₹29,907",
+      "url": "https://www.smartprix.com/mobiles/motorola-edge-60-pro-ppd1n6m7zz1w"
+    },
+    {
+      "count": 8,
+      "unique_id": "samsung_galaxy_m36_5g",
+      "name": "Samsung Galaxy M36 5G",
+      "price": "₹17,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m36-5g-ppd1negtlorc"
+    },
+    {
+      "count": 9,
+      "unique_id": "motorola_edge_60_fusion",
+      "name": "Motorola Edge 60 Fusion",
+      "price": "₹22,451",
+      "url": "https://www.smartprix.com/mobiles/motorola-edge-60-fusion-ppd1qc7i0he4"
+    },
+    {
+      "count": 10,
+      "unique_id": "samsung_galaxy_s24_ultra",
+      "name": "Samsung Galaxy S24 Ultra",
+      "price": "₹74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-ppd1iyi3f6js"
+    },
+    {
+      "count": 11,
+      "unique_id": "samsung_galaxy_s24_fe_5g",
+      "name": "Samsung Galaxy S24 FE 5G",
+      "price": "₹35,500",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-fe-ppd1o1zy1v5x"
+    },
+    {
+      "count": 12,
+      "unique_id": "vivo_t4_5g",
+      "name": "Vivo T4 5G",
+      "price": "₹21,505",
+      "url": "https://www.smartprix.com/mobiles/vivo-t4-ppd186aae1n5"
+    },
+    {
+      "count": 13,
+      "unique_id": "vivo_t4x_5g",
+      "name": "Vivo T4x 5G",
+      "price": "₹13,999",
+      "url": "https://www.smartprix.com/mobiles/vivo-t4x-5g-ppd1xeoou6dt"
+    },
+    {
+      "count": 14,
+      "unique_id": "oneplus_nord_ce_5_5g_8gb_ram_256gb",
+      "name": "OnePlus Nord CE 5 5G (8GB RAM + 256GB)",
+      "price": "₹26,998",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-8gb-ram-256gb-ppd1qyk0ajaa"
+    },
+    {
+      "count": 15,
+      "unique_id": "iqoo_neo_10",
+      "name": "iQOO Neo 10",
+      "price": "₹31,998",
+      "url": "https://www.smartprix.com/mobiles/iqoo-neo-10-ppd1z84s265q"
+    },
+    {
+      "count": 16,
+      "unique_id": "vivo_t4_lite_5g",
+      "name": "Vivo T4 Lite 5G",
+      "price": "₹10,294",
+      "url": "https://www.smartprix.com/mobiles/vivo-t4-lite-5g-ppd1rdfw89gz"
+    },
+    {
+      "count": 17,
+      "unique_id": "oneplus_13s_5g",
+      "name": "OnePlus 13s 5G",
+      "price": "₹54,998",
+      "url": "https://www.smartprix.com/mobiles/oneplus-13s-ppd15ix9v6ny"
+    },
+    {
+      "count": 18,
+      "unique_id": "samsung_galaxy_z_fold_7",
+      "name": "Samsung Galaxy Z Fold 7",
+      "price": "₹1,74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-7-ppd1h0forpp0"
+    },
+    {
+      "count": 19,
+      "unique_id": "vivo_y200_5g_8gb_ram_256gb",
+      "name": "Vivo Y200 5G (8GB RAM + 256GB)",
+      "price": "₹14,000",
+      "url": "https://www.smartprix.com/mobiles/vivo-y200-5g-8gb-ram-256gb-ppd1xnmmfu8l"
+    },
+    {
+      "count": 20,
+      "unique_id": "motorola_moto_g85_5g",
+      "name": "Motorola Moto G85 5G",
+      "price": "₹16,025",
+      "url": "https://www.smartprix.com/mobiles/motorola-moto-g85-5g-ppd1atwftc6s"
+    },
+    {
+      "count": 21,
+      "unique_id": "oppo_k13",
+      "name": "Oppo K13",
+      "price": "₹17,665",
+      "url": "https://www.smartprix.com/mobiles/oppo-k13-ppd1qv80akej"
+    },
+    {
+      "count": 22,
+      "unique_id": "samsung_galaxy_z_fold_7_1",
+      "name": "Samsung Galaxy Z Fold 7",
+      "price": "₹1,74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-7-ppd1h0forpp0"
+    },
+    {
+      "count": 23,
+      "unique_id": "vivo_v50_5g",
+      "name": "Vivo V50 5G",
+      "price": "₹34,999",
+      "url": "https://www.smartprix.com/mobiles/vivo-v50-5g-ppd1f519nrvv"
+    },
+    {
+      "count": 24,
+      "unique_id": "samsung_galaxy_m55s",
+      "name": "Samsung Galaxy M55s",
+      "price": "₹16,198",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55s-ppd1afgkxdis"
+    },
+    {
+      "count": 25,
+      "unique_id": "oneplus_nord_5_12gb_ram_512gb",
+      "name": "OnePlus Nord 5 (12GB RAM + 512GB)",
+      "price": "₹37,999",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-5-12gb-ram-512gb-ppd1122ym6v6"
+    },
+    {
+      "count": 26,
+      "unique_id": "iqoo_z10_5g",
+      "name": "iQOO Z10 5G",
+      "price": "₹21,998",
+      "url": "https://www.smartprix.com/mobiles/iqoo-z10-5g-ppd1aku7730p"
+    },
+    {
+      "count": 27,
+      "unique_id": "iqoo_neo_10r",
+      "name": "iQOO Neo 10R",
+      "price": "₹25,998",
+      "url": "https://www.smartprix.com/mobiles/iqoo-neo-10r-ppd1bm0myepb"
+    },
+    {
+      "count": 28,
+      "unique_id": "samsung_galaxy_a35_5g",
+      "name": "Samsung Galaxy A35 5G",
+      "price": "₹20,500",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a35-5g-ppd10kgb4go2"
+    },
+    {
+      "count": 29,
+      "unique_id": "oppo_reno_14_pro_5g_12gb_ram_512gb",
+      "name": "OPPO Reno 14 Pro 5G (12GB RAM + 512GB)",
+      "price": "₹54,999",
+      "url": "https://www.smartprix.com/mobiles/oppo-reno-14-pro-5g-12gb-ram-512gb-ppd126xxceb8"
+    },
+    {
+      "count": 30,
+      "unique_id": "realme_p3_5g",
+      "name": "Realme P3 5G",
+      "price": "₹15,999",
+      "url": "https://www.smartprix.com/mobiles/realme-p3-5g-ppd1cyzzadan"
+    },
+    {
+      "count": 31,
+      "unique_id": "honor_x9c",
+      "name": "Honor X9c",
+      "price": "₹21,999",
+      "url": "https://www.smartprix.com/mobiles/honor-x9c-ppd1vf6w9zmu"
+    },
+    {
+      "count": 32,
+      "unique_id": "vivo_t4_ultra",
+      "name": "Vivo T4 Ultra",
+      "price": "₹40,899",
+      "url": "https://www.smartprix.com/mobiles/vivo-t4-ultra-ppd1mhevvkc6"
+    },
+    {
+      "count": 33,
+      "unique_id": "nothing_phone_3a",
+      "name": "Nothing Phone 3a",
+      "price": "₹23,561",
+      "url": "https://www.smartprix.com/mobiles/nothing-phone-3a-ppd1r4h604a1"
+    },
+    {
+      "count": 34,
+      "unique_id": "xiaomi_redmi_note_14",
+      "name": "Xiaomi Redmi Note 14",
+      "price": "₹16,998",
+      "url": "https://www.smartprix.com/mobiles/xiaomi-redmi-note-14-ppd1xdbfxrx7"
+    },
+    {
+      "count": 35,
+      "unique_id": "motorola_moto_g45_5g_8gb_ram_128gb",
+      "name": "Motorola Moto G45 5G (8GB RAM + 128GB)",
+      "price": "₹11,983",
+      "url": "https://www.smartprix.com/mobiles/motorola-moto-g45-5g-8gb-ram-128gb-ppd1o8zc4lqh"
+    },
+    {
+      "count": 36,
+      "unique_id": "oneplus_13r_5g",
+      "name": "OnePlus 13R 5G",
+      "price": "₹42,997",
+      "url": "https://www.smartprix.com/mobiles/oneplus-13r-ppd1cxr5fr5p"
+    },
+    {
+      "count": 37,
+      "unique_id": "samsung_galaxy_s25_ultra",
+      "name": "Samsung Galaxy S25 Ultra",
+      "price": "₹1,17,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-ultra-ppd1p8z4fzt4"
+    },
+    {
+      "count": 38,
+      "unique_id": "samsung_galaxy_s24_5g",
+      "name": "Samsung Galaxy S24 5G",
+      "price": "₹49,000",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ppd1rhc5ozwd"
+    },
+    {
+      "count": 39,
+      "unique_id": "iqoo_z10_lite",
+      "name": "iQOO Z10 Lite",
+      "price": "₹9,998",
+      "url": "https://www.smartprix.com/mobiles/iqoo-z10-lite-ppd1ajmybxsa"
+    },
+    {
+      "count": 40,
+      "unique_id": "xiaomi_redmi_note_14_pro_plus",
+      "name": "Xiaomi Redmi Note 14 Pro Plus",
+      "price": "₹25,900",
+      "url": "https://www.smartprix.com/mobiles/xiaomi-redmi-note-14-pro-plus-ppd11nn0bmxi"
+    }
+  ]
+}

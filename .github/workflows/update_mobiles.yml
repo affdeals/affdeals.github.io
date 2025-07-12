@@ -1,4 +1,4 @@
-name: Update Mobiles Data
+name: Run Update Mobiles Script
 
 on:
   schedule:

@@ -48,5 +48,5 @@ jobs:
           
           # Set the remote URL with PAT for authentication
           # Using the format username:token for better authentication with organizations
-          git remote set-url origin https://affnarayani:${{ secrets.PAT_TOKEN }}@github.com/affdeals/affdeals.github.io.git
+          git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/affdeals/affdeals.github.io.git
           git push

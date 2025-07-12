@@ -89,7 +89,7 @@ jobs:
       
       - name: Upload debug screenshot
         if: steps.run_script.outputs.script_exit_code != '0'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debug-screenshot
           path: debug_screenshot.png

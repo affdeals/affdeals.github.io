@@ -27,16 +27,12 @@ jobs:
           pip install selenium
           pip install webdriver-manager
       
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v2
+      - name: Install Chrome & Chromedriver
+        uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
+          install-chromedriver: true
 
-      - name: Install Chromedriver
-        uses: nanasess/setup-chromedriver@v1
-        with:
-          chromedriver-version: 'latest'
-      
       - name: Run mobiles.py script
         run: |
           python mobiles.py

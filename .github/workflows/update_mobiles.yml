@@ -29,15 +29,10 @@ jobs:
       
       - name: Install Chrome and ChromeDriver
         run: |
-          # Install Chrome
           wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          
-          # Create temp directory for Chrome user data
-          mkdir -p /tmp/chrome-user-data
-          chmod 777 /tmp/chrome-user-data
       
       - name: Run update_mobiles.py script
         run: |

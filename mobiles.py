@@ -16,6 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException
 import contextlib
+import tempfile
 
 
 @contextlib.contextmanager
@@ -33,7 +34,7 @@ def suppress_stderr():
 def setup_driver():
     """Setup Chrome WebDriver with options"""
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")  # Run in background (required for CI/CD)
+    # chrome_options.add_argument("--headless")  # Run in background
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
@@ -63,10 +64,9 @@ def setup_driver():
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
     
-    # Fix for "user data directory is already in use" error in GitHub Actions
-    chrome_options.add_argument("--user-data-dir=/tmp/chrome-user-data")
-    chrome_options.add_argument("--remote-debugging-port=9222")
-    
+    temp_profile = tempfile.mkdtemp(prefix="selenium-chrome-")
+    chrome_options.add_argument(f"--user-data-dir={temp_profile}")
+
     # Suppress DevTools listening message
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
@@ -79,12 +79,7 @@ def setup_driver():
         
         # Create driver with suppressed stderr
         with suppress_stderr():
-            from selenium.webdriver.chrome.service import Service
-            from webdriver_manager.chrome import ChromeDriverManager
-            
-            # Use webdriver_manager to handle ChromeDriver installation
-            service = Service(ChromeDriverManager().install())
-            driver = webdriver.Chrome(service=service, options=chrome_options)
+            driver = webdriver.Chrome(options=chrome_options)
         return driver
     except Exception as e:
         print(f"Error setting up Chrome driver: {e}")

@@ -4,7 +4,9 @@
       "id": "oneplus_nord_ce_5_5g",
       "name": "OnePlus Nord CE 5 5G",
       "count": 1,
+      "listed": "yes",
       "price": "₹24,999",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g/image_1.jpg",
@@ -377,7 +379,9 @@
       "id": "oneplus_nord_5_5g",
       "name": "OnePlus Nord 5 5G",
       "count": 2,
+      "listed": "yes",
       "price": "₹31,999",
+      "mrp": "₹34,999",
       "url": "https://www.smartprix.com/mobiles/oneplus-nord-5-ppd1aage1z7d",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_5_5g/image_1.jpg",
@@ -740,7 +744,9 @@
       "id": "oppo_reno_14_pro_5g",
       "name": "OPPO Reno 14 Pro 5G",
       "count": 3,
+      "listed": "yes",
       "price": "₹49,999",
+      "mrp": "₹54,999",
       "url": "https://www.smartprix.com/mobiles/oppo-reno-14-pro-5g-ppd159386vd3",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oppo_reno_14_pro_5g/image_1.jpg",

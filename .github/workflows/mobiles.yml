@@ -1,0 +1,46 @@
+name: Update Mobile Phones Data
+
+on:
+  schedule:
+    # Run every Saturday at 12 AM IST (6:30 PM UTC on Friday)
+    - cron: '30 18 * * 5'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  update-mobiles-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium
+          pip install webdriver-manager
+      
+      - name: Install Chrome and ChromeDriver
+        run: |
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+      
+      - name: Run mobiles.py script
+        run: |
+          python mobiles.py
+      
+      - name: Commit and push if changes
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add mobiles.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update mobiles.json data [automated]" && git push)

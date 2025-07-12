@@ -16,7 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException
 import contextlib
-
+import tempfile
 
 @contextlib.contextmanager
 def suppress_stderr():
@@ -68,6 +68,9 @@ def setup_driver():
     chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+
+    temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
+    chrome_options.add_argument(f"--user-data-dir={temp_profile}")
     
     try:
         # Suppress stderr messages from Chrome

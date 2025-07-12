@@ -27,12 +27,15 @@ jobs:
           pip install selenium
           pip install webdriver-manager
       
-      - name: Install Chrome and ChromeDriver
-        run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+
+      - name: Install Chromedriver
+        uses: nanasess/setup-chromedriver@v1
+        with:
+          chrome-version: stable
       
       - name: Run mobiles.py script
         run: |

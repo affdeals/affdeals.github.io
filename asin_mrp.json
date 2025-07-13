@@ -5,9 +5,10 @@
       "unique_id": "asus_rog_phone_5s_5g_12gb_ram_256gb",
       "name": "Asus ROG Phone 5s 5G (12GB RAM + 256GB)",
       "smartprix_url": "https://www.smartprix.com/mobiles/asus-rog-phone-5s-5g-12gb-ram-256gb-ppd10rvpyj1d",
-      "asin": "B09T3GYPWC",
-      "mrp": "₹63,999",
-      "amazon_found": true
+      "asin": null,
+      "mrp": null,
+      "amazon_found": false,
+      "error": "Amazon link not found or ASIN could not be extracted"
     }
   ]
 }

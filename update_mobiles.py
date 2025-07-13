@@ -24,6 +24,7 @@ import contextlib
 from PIL import Image, ImageDraw
 import io
 import base64
+import tempfile
 
 
 @contextlib.contextmanager
@@ -115,6 +116,9 @@ def setup_driver():
     chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+
+    temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
+    chrome_options.add_argument(f"--user-data-dir={temp_profile}")
     
     try:
         # Suppress stderr messages from Chrome

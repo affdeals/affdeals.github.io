@@ -24,23 +24,7 @@ import contextlib
 from PIL import Image, ImageDraw
 import io
 import base64
-import tempfile
 
-# Try to import undetected_chromedriver if available (for better anti-detection)
-try:
-    import undetected_chromedriver as uc
-    UNDETECTED_AVAILABLE = True
-except ImportError:
-    UNDETECTED_AVAILABLE = False
-    print("undetected_chromedriver not available, using standard selenium")
-
-# Try to import fake_useragent if available (for better user agent rotation)
-try:
-    from fake_useragent import UserAgent
-    FAKE_UA_AVAILABLE = True
-except ImportError:
-    FAKE_UA_AVAILABLE = False
-    print("fake_useragent not available, using hardcoded user agent")
 
 @contextlib.contextmanager
 def suppress_stderr():
@@ -92,153 +76,53 @@ def clean_unicode_text(text):
         return text
 
 
-def force_amazon_india_access():
-    """Configure system to force Amazon India access"""
-    try:
-        # Check if we're running in a GitHub Actions environment
-        if os.environ.get('GITHUB_ACTIONS') == 'true':
-            print("Running in GitHub Actions environment, applying special configurations...")
-            
-            # Set environment variables for India
-            os.environ['LANG'] = 'en_IN.UTF-8'
-            os.environ['LC_ALL'] = 'en_IN.UTF-8'
-            os.environ['TZ'] = 'Asia/Kolkata'
-            
-            print("Set environment variables for Indian locale and timezone")
-        
-        return True
-    except Exception as e:
-        print(f"Error configuring system for Amazon India access: {e}")
-        return False
-
-
 def setup_driver():
-    """Setup Chrome WebDriver with options optimized for Amazon India access"""
-    # First, try to force Amazon India access at the system level
-    force_amazon_india_access()
+    """Setup Chrome WebDriver with options (same as original script)"""
     chrome_options = Options()
-    
-    # Use headless=new for better stealth (less detectable as automation)
-    chrome_options.add_argument("--headless=new")
-    
-    # Basic setup
+    chrome_options.add_argument("--headless")  # Run in background
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-webgl")
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--disable-3d-apis")
+    chrome_options.add_argument("--disable-background-timer-throttling")
+    chrome_options.add_argument("--disable-backgrounding-occluded-windows")
+    chrome_options.add_argument("--disable-renderer-backgrounding")
+    chrome_options.add_argument("--disable-features=TranslateUI")
+    chrome_options.add_argument("--disable-ipc-flooding-protection")
+    chrome_options.add_argument("--log-level=3")  # Suppress INFO, WARNING, ERROR
+    chrome_options.add_argument("--silent")  # Suppress console output
+    chrome_options.add_argument("--disable-logging")  # Disable logging
+    chrome_options.add_argument("--disable-gpu-logging")  # Disable GPU logging
+    chrome_options.add_argument("--disable-extensions")  # Disable extensions
+    chrome_options.add_argument("--disable-plugins")  # Disable plugins
+    # Note: NOT disabling images as we need to scrape them
+    chrome_options.add_argument("--disable-web-security")  # Disable web security
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")  # Disable compositor
+    chrome_options.add_argument("--disable-background-networking")  # Disable background networking
+    chrome_options.add_argument("--disable-default-apps")  # Disable default apps
+    chrome_options.add_argument("--disable-sync")  # Disable sync
+    chrome_options.add_argument("--disable-translate")  # Disable translate
+    chrome_options.add_argument("--hide-scrollbars")  # Hide scrollbars
+    chrome_options.add_argument("--mute-audio")  # Mute audio
     chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--force-device-scale-factor=1")  # Ensure consistent scaling
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
     
-    # Disable automation flags to avoid detection
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # Suppress DevTools listening message
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
-    # Set a realistic user agent for an Indian user
-    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-    
-    # Set language and locale preferences for India
-    chrome_options.add_argument("--lang=en-IN")
-    chrome_options.add_argument("--accept-lang=en-IN,en;q=0.9,hi;q=0.8")
-    
-    # Add geolocation and other preferences for India
-    chrome_options.add_experimental_option("prefs", {
-        "profile.default_content_setting_values.geolocation": 1,  # Allow geolocation
-        "intl.accept_languages": "en-IN,en,hi",
-        "profile.content_settings.exceptions.geolocation": {
-            "*": {"setting": 1}  # Allow geolocation for all sites
-        },
-        # Set address and payment preferences to India
-        "autofill.profile_enabled": True,
-        "profile.country_code_on_startup": "IN",
-        # Set currency to INR
-        "intl.selected_currency": "INR"
-    })
-    
-    # Create a temporary profile directory
-    temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
-    chrome_options.add_argument(f"--user-data-dir={temp_profile}")
-    
-    # Suppress logging
-    chrome_options.add_argument("--log-level=3")
-    chrome_options.add_argument("--silent")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-    os.environ['WDM_LOG_LEVEL'] = '0'
-    
     try:
+        # Suppress stderr messages from Chrome
+        os.environ['WDM_LOG_LEVEL'] = '0'
+        
         # Create driver with suppressed stderr
         with suppress_stderr():
             driver = webdriver.Chrome(options=chrome_options)
-            
-            # Set additional preferences after driver is created
-            try:
-                # Set geolocation to India (New Delhi)
-                driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
-                    'latitude': 28.6139,
-                    'longitude': 77.2090,
-                    'accuracy': 1
-                })
-                
-                # Set locale to India
-                driver.execute_cdp_cmd('Emulation.setLocaleOverride', {
-                    'locale': 'en-IN'
-                })
-                
-                # Set timezone to India
-                driver.execute_cdp_cmd('Emulation.setTimezoneOverride', {
-                    'timezoneId': 'Asia/Kolkata'
-                })
-                
-                # Set HTTP headers to appear as an Indian user
-                driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
-                    'headers': {
-                        'Accept-Language': 'en-IN,en;q=0.9,hi;q=0.8',
-                        'Accept-Country': 'IN',
-                        'Sec-CH-UA-Platform': 'Windows',
-                        'Sec-CH-UA': '"Google Chrome";v="120", "Chromium";v="120"',
-                        'Sec-CH-UA-Mobile': '?0',
-                        'Sec-CH-UA-Platform-Version': '10.0.0',
-                        'Sec-CH-Prefers-Color-Scheme': 'light',
-                        'Sec-CH-UA-Arch': 'x86',
-                        'Sec-CH-UA-Bitness': '64',
-                        'Sec-CH-UA-Full-Version': '120.0.6099.130',
-                        'Sec-CH-UA-Full-Version-List': '"Google Chrome";v="120.0.6099.130", "Chromium";v="120.0.6099.130"'
-                    }
-                })
-                
-                # Set cookies for Amazon India
-                driver.execute_cdp_cmd('Network.setCookie', {
-                    'name': 'session-id',
-                    'value': '123456789',
-                    'domain': '.amazon.in',
-                    'path': '/'
-                })
-                
-                driver.execute_cdp_cmd('Network.setCookie', {
-                    'name': 'i18n-prefs',
-                    'value': 'INR',
-                    'domain': '.amazon.in',
-                    'path': '/'
-                })
-                
-                driver.execute_cdp_cmd('Network.setCookie', {
-                    'name': 'lc-acbin',
-                    'value': 'en_IN',
-                    'domain': '.amazon.in',
-                    'path': '/'
-                })
-                
-                # Set country preference
-                driver.execute_cdp_cmd('Network.setCookie', {
-                    'name': 'country',
-                    'value': 'IN',
-                    'domain': '.amazon.in',
-                    'path': '/'
-                })
-                
-                print("Successfully configured browser for Indian location and preferences")
-                
-            except Exception as e:
-                print(f"Warning: Could not set some location preferences: {e}")
-                
         return driver
     except Exception as e:
         print(f"Error setting up Chrome driver: {e}")
@@ -1066,7 +950,7 @@ def append_product_to_json(product_data, json_file_path):
 
 
 def extract_asin_from_amazon_url(url):
-    """Extract ASIN from Amazon URL (works with both amazon.in and amazon.com)"""
+    """Extract ASIN from Amazon URL"""
     try:
         # Common Amazon ASIN patterns
         patterns = [
@@ -1074,19 +958,13 @@ def extract_asin_from_amazon_url(url):
             r'/product/([A-Z0-9]{10})',
             r'/gp/product/([A-Z0-9]{10})',
             r'asin=([A-Z0-9]{10})',
-            r'ASIN=([A-Z0-9]{10})',
-            r'amazon\.[a-z\.]+/.*?/([A-Z0-9]{10})/',  # More general pattern for various Amazon domains
-            r'amazon\.[a-z\.]+.*?/([A-Z0-9]{10})(?:/|$)'  # Even more general pattern
+            r'ASIN=([A-Z0-9]{10})'
         ]
         
         for pattern in patterns:
             match = re.search(pattern, url)
             if match:
-                asin = match.group(1)
-                # Validate ASIN format (10 alphanumeric characters)
-                if re.match(r'^[A-Z0-9]{10}$', asin):
-                    print(f"    Valid ASIN extracted: {asin}")
-                    return asin
+                return match.group(1)
         return None
     except Exception as e:
         print(f"    Error extracting ASIN from URL: {e}")
@@ -1536,272 +1414,17 @@ def scrape_store_links(driver, product_url, retries=3):
 
 
 def get_amazon_mrp_from_asin(driver, asin):
-    """Extract MRP by navigating directly to Amazon using ASIN with enhanced anti-redirect measures"""
+    """Extract MRP by navigating directly to Amazon using ASIN"""
     try:
-        # First, try to directly access the Amazon India mobile site which might be less likely to redirect
+        # Navigate directly to Amazon product page using ASIN
         amazon_url = f"https://www.amazon.in/dp/{asin}/"
-        print(f"    Navigating directly to Amazon India: {amazon_url}")
+        print(f"    Navigating directly to Amazon: {amazon_url}")
         
-        # Refresh cookies and headers before each navigation attempt
-        # Set cookies to force Amazon India
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'i18n-prefs',
-            'value': 'INR',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'lc-acbin',
-            'value': 'en_IN',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'session-id-time',
-            'value': '2082787201l',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        # Set country preference
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'country',
-            'value': 'IN',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        # Set geolocation to India
-        driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
-            'latitude': 28.6139,  # New Delhi coordinates
-            'longitude': 77.2090,
-            'accuracy': 1
-        })
-        
-        # Set HTTP headers to appear as an Indian user
-        driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
-            'headers': {
-                'Accept-Language': 'en-IN,en;q=0.9,hi;q=0.8',
-                'Accept-Country': 'IN',
-                'Sec-CH-UA-Platform': 'Windows',
-                'Sec-CH-UA': '"Google Chrome";v="120", "Chromium";v="120"',
-                'Sec-CH-UA-Mobile': '?0',
-                'Sec-CH-UA-Platform-Version': '10.0.0',
-                'Sec-CH-Prefers-Color-Scheme': 'light',
-                'Sec-CH-UA-Arch': 'x86',
-                'Sec-CH-UA-Bitness': '64',
-                'Sec-CH-UA-Full-Version': '120.0.6099.130',
-                'Sec-CH-UA-Full-Version-List': '"Google Chrome";v="120.0.6099.130", "Chromium";v="120.0.6099.130"'
-            }
-        })
-        
-        # Try to navigate to the Amazon India URL
         driver.get(amazon_url)
         time.sleep(5)  # Wait for page to load
         
-        # Check if we're on amazon.in
-        current_url = driver.current_url
-        print(f"    Current URL after navigation: {current_url}")
-        
-        # If redirected to amazon.com, try alternative approaches
-        if 'amazon.com' in current_url and 'amazon.in' not in current_url:
-            print(f"    Redirected to amazon.com, trying alternative approach 1...")
-            
-            # Clear cookies and try again with more forceful approach
-            driver.delete_all_cookies()
-            
-            # Try with a different URL format
-            amazon_url = f"https://www.amazon.in/gp/product/{asin}/"
-            print(f"    Trying alternative URL: {amazon_url}")
-            
-            # Set cookies again
-            driver.execute_cdp_cmd('Network.setCookie', {
-                'name': 'i18n-prefs',
-                'value': 'INR',
-                'domain': '.amazon.in',
-                'path': '/'
-            })
-            
-            driver.execute_cdp_cmd('Network.setCookie', {
-                'name': 'lc-acbin',
-                'value': 'en_IN',
-                'domain': '.amazon.in',
-                'path': '/'
-            })
-            
-            # Try to navigate to the alternative URL
-            driver.get(amazon_url)
-            time.sleep(5)
-            
-            # Check if we're still being redirected
-            current_url = driver.current_url
-            print(f"    Current URL after alternative approach 1: {current_url}")
-            
-            # If still redirected, try a more aggressive approach
-            if 'amazon.com' in current_url and 'amazon.in' not in current_url:
-                print(f"    Still redirected to amazon.com, trying alternative approach 2...")
-                
-                # Try using the mobile site which might have different redirect rules
-                amazon_url = f"https://www.amazon.in/gp/aw/d/{asin}/"
-                print(f"    Trying mobile site URL: {amazon_url}")
-                
-                # Set a mobile user agent
-                driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-                    'userAgent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
-                    'platform': 'iPhone',
-                    'acceptLanguage': 'en-IN,en;q=0.9,hi;q=0.8'
-                })
-                
-                # Try to navigate to the mobile site
-                driver.get(amazon_url)
-                time.sleep(5)
-                
-                # Check if we're still being redirected
-                current_url = driver.current_url
-                print(f"    Current URL after alternative approach 2: {current_url}")
-                
-                # If still redirected, try one last approach - use a direct product search
-                if 'amazon.com' in current_url and 'amazon.in' not in current_url:
-                    print(f"    Still redirected, trying direct product search...")
-                    
-                    # Reset user agent to desktop
-                    driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-                        'userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                        'platform': 'Windows',
-                        'acceptLanguage': 'en-IN,en;q=0.9,hi;q=0.8'
-                    })
-                    
-                    # Go to Amazon India homepage first
-                    driver.get("https://www.amazon.in/")
-                    time.sleep(3)
-                    
-                    # Check if we're on amazon.in
-                    current_url = driver.current_url
-                    print(f"    Current URL after homepage navigation: {current_url}")
-                    
-                    # If we successfully reached amazon.in homepage, search for the ASIN
-                    if 'amazon.in' in current_url:
-                        print(f"    Successfully reached Amazon India homepage, searching for ASIN...")
-                        
-                        try:
-                            # Find the search box and enter the ASIN
-                            search_box = driver.find_element(By.ID, "twotabsearchtextbox")
-                            search_box.clear()
-                            search_box.send_keys(asin)
-                            search_box.send_keys(Keys.RETURN)
-                            time.sleep(3)
-                            
-                            # Look for product links containing the ASIN
-                            product_links = driver.find_elements(By.XPATH, f"//a[contains(@href, '{asin}')]")
-                            
-                            if product_links:
-                                print(f"    Found product link in search results, clicking...")
-                                product_links[0].click()
-                                time.sleep(5)
-                            else:
-                                print(f"    No product links found in search results")
-                        except Exception as e:
-                            print(f"    Error during product search: {e}")
-        
         # Use the same get_amazon_mrp function to extract MRP
-        mrp = get_amazon_mrp(driver)
-        
-        # If we couldn't get the MRP, try one last approach - use a proxy service
-        if not mrp:
-            print(f"    Could not extract MRP, using fallback approach...")
-            
-            # Try to extract price directly and use it as MRP if available
-            try:
-                print("    Attempting to extract current price as fallback...")
-                price_selectors = [
-                    "span.a-price span.a-offscreen",
-                    ".a-price .a-offscreen",
-                    "#priceblock_ourprice",
-                    "#priceblock_dealprice",
-                    ".a-price",
-                    ".a-color-price"
-                ]
-                
-                for selector in price_selectors:
-                    try:
-                        elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                        if elements:
-                            for element in elements:
-                                price_text = element.get_attribute("innerHTML").strip()
-                                if not price_text:
-                                    price_text = element.text.strip()
-                                
-                                if price_text and '₹' in price_text:
-                                    print(f"    ✓ Found current price: {price_text}")
-                                    # Add a small premium to the current price to estimate MRP
-                                    # Extract the numeric part
-                                    price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
-                                    if price_match:
-                                        price_str = price_match.group(1).replace(',', '')
-                                        try:
-                                            price_value = float(price_str)
-                                            # Add 10% premium to estimate MRP
-                                            mrp_value = price_value * 1.1
-                                            # Format back to string with ₹ symbol
-                                            mrp = f"₹{int(mrp_value):,}"
-                                            print(f"    Estimated MRP from price: {mrp}")
-                                            return mrp
-                                        except ValueError:
-                                            print(f"    Could not convert price to number: {price_str}")
-                    except Exception as e:
-                        print(f"    Error with price selector '{selector}': {e}")
-            except Exception as e:
-                print(f"    Error extracting current price: {e}")
-            
-            # Try a different URL format as a last resort
-            amazon_url = f"https://www.amazon.in/s?k={asin}"
-            print(f"    Trying search URL: {amazon_url}")
-            driver.get(amazon_url)
-            time.sleep(5)
-            
-            # Screenshot saving removed
-            
-            # Try to find the product in search results
-            try:
-                product_links = driver.find_elements(By.XPATH, f"//a[contains(@href, '{asin}')]")
-                if product_links:
-                    print(f"    Found product link in search results, clicking...")
-                    product_links[0].click()
-                    time.sleep(5)
-                    
-                    # Try to extract MRP again
-                    mrp = get_amazon_mrp(driver)
-            except Exception as e:
-                print(f"    Error during fallback search: {e}")
-            
-            # If still no MRP, try to extract it from the product title or description
-            if not mrp:
-                try:
-                    print("    Attempting to extract MRP from product title or description...")
-                    page_text = driver.find_element(By.TAG_NAME, "body").text
-                    
-                    # Look for patterns like "MRP: ₹1,999" or "M.R.P.: ₹1,999"
-                    mrp_patterns = [
-                        r'MRP:?\s*(₹[\d,]+(?:\.\d+)?)',
-                        r'M\.R\.P\.:\s*(₹[\d,]+(?:\.\d+)?)',
-                        r'Maximum Retail Price:?\s*(₹[\d,]+(?:\.\d+)?)',
-                        r'List Price:?\s*(₹[\d,]+(?:\.\d+)?)'
-                    ]
-                    
-                    for pattern in mrp_patterns:
-                        matches = re.findall(pattern, page_text)
-                        if matches:
-                            mrp = matches[0]
-                            print(f"    ✓ Found MRP in text: {mrp}")
-                            return mrp
-                except Exception as e:
-                    print(f"    Error extracting MRP from text: {e}")
-        
-        # Debug mode section removed
-        
-        return mrp
+        return get_amazon_mrp(driver)
             
     except Exception as e:
         print(f"    ✗ Error navigating to Amazon or extracting MRP: {e}")
@@ -1809,161 +1432,34 @@ def get_amazon_mrp_from_asin(driver, asin):
 
 
 def get_amazon_mrp(driver):
-    """Extract MRP from Amazon.in product page using multiple selectors and approaches"""
+    """Extract MRP from Amazon.in product page using class-based selector with data-a-size='s'"""
     try:
-        # Wait for page to load properly - increase wait time for GitHub Actions
-        time.sleep(5)
+        # Wait for page to load properly
+        time.sleep(3)
         
         print("    Attempting to extract MRP from Amazon page...")
         
-        # Debugging code removed
+        # Use the class-based selector with data-a-size="s" as specified by user
+        mrp_selector = "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'] span.a-offscreen"
         
-        # Try multiple selectors for MRP - Amazon's structure can vary
-        mrp_selectors = [
-            # Original selector
-            "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'] span.a-offscreen",
-            # Alternative selectors that might work in different layouts
-            "span.a-price.a-text-price span.a-offscreen",
-            ".a-text-price[data-a-strike='true']",
-            ".a-text-price",
-            ".a-price.a-text-price",
-            "span.priceBlockStrikePriceString",
-            "#priceBlockStrikePriceString",
-            ".a-text-strike",
-            ".a-price[data-a-strike='true']",
-            "span[data-a-strike='true']",
-            ".a-text-price:not(.a-price-fraction)"
-        ]
-        
-        # Try each selector
-        for selector in mrp_selectors:
-            try:
-                print(f"    Trying selector: {selector}")
-                elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                
-                if elements:
-                    for element in elements:
-                        try:
-                            # Try different ways to extract the text
-                            mrp_text = element.get_attribute("innerHTML").strip()
-                            if not mrp_text or '₹' not in mrp_text:
-                                mrp_text = element.text.strip()
-                            if not mrp_text or '₹' not in mrp_text:
-                                mrp_text = element.get_attribute("textContent").strip()
-                                
-                            # Clean up the text
-                            mrp_text = mrp_text.replace("M.R.P.: ", "").strip()
-                            
-                            if mrp_text and '₹' in mrp_text:
-                                print(f"    ✓ Found MRP with selector '{selector}': {mrp_text}")
-                                return mrp_text
-                        except Exception as e:
-                            print(f"    Error extracting text from element: {e}")
-                            continue
-            except Exception as e:
-                print(f"    Error with selector '{selector}': {e}")
-                continue
-        
-        # If we couldn't find MRP with selectors, try using XPath
-        xpath_selectors = [
-            "//span[contains(@class, 'a-text-price')]//span[contains(@class, 'a-offscreen')]",
-            "//span[contains(@class, 'a-price') and contains(@class, 'a-text-price')]",
-            "//span[contains(@data-a-strike, 'true')]",
-            "//div[contains(text(), 'M.R.P.') or contains(text(), 'MRP')]",
-            "//span[contains(text(), 'M.R.P.') or contains(text(), 'MRP')]"
-        ]
-        
-        for xpath in xpath_selectors:
-            try:
-                print(f"    Trying XPath: {xpath}")
-                elements = driver.find_elements(By.XPATH, xpath)
-                
-                if elements:
-                    for element in elements:
-                        try:
-                            mrp_text = element.text.strip()
-                            if not mrp_text:
-                                mrp_text = element.get_attribute("textContent").strip()
-                                
-                            # Clean up the text
-                            if "M.R.P.:" in mrp_text:
-                                mrp_text = mrp_text.split("M.R.P.:")[1].strip()
-                                
-                            if mrp_text and '₹' in mrp_text:
-                                print(f"    ✓ Found MRP with XPath '{xpath}': {mrp_text}")
-                                return mrp_text
-                        except Exception as e:
-                            print(f"    Error extracting text from XPath element: {e}")
-                            continue
-            except Exception as e:
-                print(f"    Error with XPath '{xpath}': {e}")
-                continue
-        
-        # If still not found, try JavaScript execution to extract MRP
         try:
-            print("    Trying JavaScript extraction...")
-            js_script = """
-            // Try to find MRP using various methods
-            function findMRP() {
-                // Look for elements with price strike-through
-                var strikeElements = document.querySelectorAll('[data-a-strike="true"]');
-                for (var i = 0; i < strikeElements.length; i++) {
-                    var text = strikeElements[i].textContent || strikeElements[i].innerText;
-                    if (text && text.includes('₹')) return text.trim();
-                }
-                
-                // Look for elements with "M.R.P." text
-                var allElements = document.querySelectorAll('*');
-                for (var i = 0; i < allElements.length; i++) {
-                    var text = allElements[i].textContent || allElements[i].innerText;
-                    if (text && text.includes('M.R.P.') && text.includes('₹')) {
-                        return text.trim();
-                    }
-                }
-                
-                // Look for any price with strike-through style
-                var styledElements = Array.from(document.querySelectorAll('*')).filter(el => {
-                    var style = window.getComputedStyle(el);
-                    return style.textDecoration.includes('line-through');
-                });
-                
-                for (var i = 0; i < styledElements.length; i++) {
-                    var text = styledElements[i].textContent || styledElements[i].innerText;
-                    if (text && text.includes('₹')) return text.trim();
-                }
-                
-                return '';
-            }
+            # Try to find the MRP element using CSS selector
+            mrp_element = driver.find_element(By.CSS_SELECTOR, mrp_selector)
+            mrp_text = mrp_element.get_attribute("innerHTML").strip()
             
-            return findMRP();
-            """
-            
-            mrp_text = driver.execute_script(js_script)
             if mrp_text and '₹' in mrp_text:
-                # Clean up the text - extract just the price part
-                mrp_match = re.search(r'₹[\d,]+(?:\.\d+)?', mrp_text)
-                if mrp_match:
-                    mrp_text = mrp_match.group(0)
-                    print(f"    ✓ Found MRP with JavaScript: {mrp_text}")
-                    return mrp_text
-        except Exception as e:
-            print(f"    Error with JavaScript extraction: {e}")
-        
-        # If we still couldn't find the MRP, look for any text containing "M.R.P." in the page
-        try:
-            print("    Searching for 'M.R.P.' text in page...")
-            page_text = driver.find_element(By.TAG_NAME, "body").text
-            mrp_matches = re.findall(r'M\.R\.P\.:\s*(₹[\d,]+(?:\.\d+)?)', page_text)
-            
-            if mrp_matches:
-                mrp_text = mrp_matches[0]
-                print(f"    ✓ Found MRP in page text: {mrp_text}")
+                print(f"    ✓ Found MRP: {mrp_text}")
                 return mrp_text
+            else:
+                print("    MRP element found but text is empty or invalid")
+                return ""
+                
+        except NoSuchElementException:
+            print("    ✗ MRP element not found (MRP likely same as current price)")
+            return ""
         except Exception as e:
-            print(f"    Error searching page text: {e}")
-        
-        print("    ✗ MRP not found with any method (MRP likely same as current price)")
-        return ""
+            print(f"    Error accessing MRP element: {e}")
+            return ""
         
     except Exception as e:
         print(f"    ✗ Error extracting MRP: {e}")
@@ -1985,41 +1481,7 @@ def find_amazon_link_and_extract_asin(driver, store_links):
     
     print(f"  Found {len(potential_amazon_links)} potential Amazon links")
     
-    # Set cookies and headers to force Amazon India before visiting any links
-    try:
-        # Set cookies to prefer India
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'i18n-prefs',
-            'value': 'INR',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        driver.execute_cdp_cmd('Network.setCookie', {
-            'name': 'lc-acbin',
-            'value': 'en_IN',
-            'domain': '.amazon.in',
-            'path': '/'
-        })
-        
-        # Set geolocation to India
-        driver.execute_cdp_cmd('Emulation.setGeolocationOverride', {
-            'latitude': 28.6139,  # New Delhi coordinates
-            'longitude': 77.2090,
-            'accuracy': 1
-        })
-        
-        # Set Accept-Language header to prefer Indian English
-        driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
-            'headers': {
-                'Accept-Language': 'en-IN,en;q=0.9',
-                'Accept-Country': 'IN'
-            }
-        })
-    except Exception as e:
-        print(f"    Warning: Could not set location preferences: {e}")
-    
-    # Try each potential Amazon link to see which one redirects to amazon.in or amazon.com
+    # Try each potential Amazon link to see which one redirects to amazon.in
     for i, amazon_link in enumerate(potential_amazon_links):
         try:
             print(f"    Checking link {i+1}: {amazon_link}")
@@ -2028,80 +1490,25 @@ def find_amazon_link_and_extract_asin(driver, store_links):
             driver.get(amazon_link)
             time.sleep(5)  # Give more time for redirects
             
-            # Check if we're on amazon.in or amazon.com
+            # Check if we're on amazon.in
             current_url = driver.current_url
             print(f"    Redirected to: {current_url}")
             
-            # Check for both amazon.in and amazon.com since we'll handle amazon.com redirects
-            if 'amazon.in' in current_url or 'amazon.com' in current_url:
-                if 'amazon.in' in current_url:
-                    print(f"    Found Amazon.in redirect!")
-                else:
-                    print(f"    Found Amazon.com redirect - will attempt to extract ASIN and use with amazon.in")
+            if 'amazon.in' in current_url:
+                print(f"    Found Amazon.in redirect!")
                 
                 # Extract ASIN from the URL
                 asin = extract_asin_from_amazon_url(current_url)
                 if asin:
                     print(f"    Extracted ASIN: {asin}")
                     
-                    # If we're on amazon.com, we need to use the ASIN with amazon.in
-                    if 'amazon.com' in current_url:
-                        print(f"    Redirecting to Amazon.in with extracted ASIN...")
-                        mrp = get_amazon_mrp_from_asin(driver, asin)
-                    else:
-                        # Try to extract MRP from current page first
-                        mrp = get_amazon_mrp(driver)
-                        
-                        # If MRP not found on redirect page, try navigating directly to Amazon
-                        if not mrp:
-                            print(f"    MRP not found via redirect, trying direct navigation...")
-                            mrp = get_amazon_mrp_from_asin(driver, asin)
+                    # Try to extract MRP from current page first
+                    mrp = get_amazon_mrp(driver)
                     
-                    # If still no MRP, try to estimate it from the current price
+                    # If MRP not found on redirect page, try navigating directly to Amazon
                     if not mrp:
-                        try:
-                            print(f"    MRP not found, attempting to estimate from current price...")
-                            # Try to find the current price
-                            price_selectors = [
-                                "span.a-price span.a-offscreen",
-                                ".a-price .a-offscreen",
-                                "#priceblock_ourprice",
-                                "#priceblock_dealprice",
-                                ".a-color-price"
-                            ]
-                            
-                            for selector in price_selectors:
-                                try:
-                                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                                    if elements:
-                                        for element in elements:
-                                            price_text = element.get_attribute("innerHTML").strip()
-                                            if not price_text:
-                                                price_text = element.text.strip()
-                                            
-                                            if price_text and '₹' in price_text:
-                                                print(f"    Found current price: {price_text}")
-                                                # Extract the numeric part
-                                                price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
-                                                if price_match:
-                                                    price_str = price_match.group(1).replace(',', '')
-                                                    try:
-                                                        price_value = float(price_str)
-                                                        # Add 15% premium to estimate MRP (common in Indian retail)
-                                                        mrp_value = price_value * 1.15
-                                                        # Format back to string with ₹ symbol
-                                                        mrp = f"₹{int(mrp_value):,}"
-                                                        print(f"    Estimated MRP from price: {mrp}")
-                                                        break
-                                                    except ValueError:
-                                                        print(f"    Could not convert price to number: {price_str}")
-                                        if mrp:
-                                            break
-                                except Exception as e:
-                                    print(f"    Error with price selector '{selector}': {e}")
-                                    continue
-                        except Exception as e:
-                            print(f"    Error estimating MRP from price: {e}")
+                        print(f"    MRP not found via redirect, trying direct navigation...")
+                        mrp = get_amazon_mrp_from_asin(driver, asin)
                     
                     return {"asin": asin, "mrp": mrp}, True
                 else:
@@ -2124,52 +1531,6 @@ def find_amazon_link_and_extract_asin(driver, store_links):
                                         print(f"    MRP not found on current page, trying direct navigation...")
                                         mrp = get_amazon_mrp_from_asin(driver, asin)
                                     
-                                    # If still no MRP, try to estimate it from the current price
-                                    if not mrp:
-                                        try:
-                                            print(f"    MRP not found, attempting to estimate from current price...")
-                                            # Try to find the current price
-                                            price_selectors = [
-                                                "span.a-price span.a-offscreen",
-                                                ".a-price .a-offscreen",
-                                                "#priceblock_ourprice",
-                                                "#priceblock_dealprice",
-                                                ".a-color-price"
-                                            ]
-                                            
-                                            for selector in price_selectors:
-                                                try:
-                                                    elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                                                    if elements:
-                                                        for element in elements:
-                                                            price_text = element.get_attribute("innerHTML").strip()
-                                                            if not price_text:
-                                                                price_text = element.text.strip()
-                                                            
-                                                            if price_text and '₹' in price_text:
-                                                                print(f"    Found current price: {price_text}")
-                                                                # Extract the numeric part
-                                                                price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
-                                                                if price_match:
-                                                                    price_str = price_match.group(1).replace(',', '')
-                                                                    try:
-                                                                        price_value = float(price_str)
-                                                                        # Add 15% premium to estimate MRP (common in Indian retail)
-                                                                        mrp_value = price_value * 1.15
-                                                                        # Format back to string with ₹ symbol
-                                                                        mrp = f"₹{int(mrp_value):,}"
-                                                                        print(f"    Estimated MRP from price: {mrp}")
-                                                                        break
-                                                                    except ValueError:
-                                                                        print(f"    Could not convert price to number: {price_str}")
-                                                        if mrp:
-                                                            break
-                                                except Exception as e:
-                                                    print(f"    Error with price selector '{selector}': {e}")
-                                                    continue
-                                        except Exception as e:
-                                            print(f"    Error estimating MRP from price: {e}")
-                                    
                                     return {"asin": asin, "mrp": mrp}, True
                         
                         # Try alternative methods to find ASIN
@@ -2189,52 +1550,6 @@ def find_amazon_link_and_extract_asin(driver, store_links):
                                         if not mrp:
                                             print(f"    MRP not found on current page, trying direct navigation...")
                                             mrp = get_amazon_mrp_from_asin(driver, asin)
-                                        
-                                        # If still no MRP, try to estimate it from the current price
-                                        if not mrp:
-                                            try:
-                                                print(f"    MRP not found, attempting to estimate from current price...")
-                                                # Try to find the current price
-                                                price_selectors = [
-                                                    "span.a-price span.a-offscreen",
-                                                    ".a-price .a-offscreen",
-                                                    "#priceblock_ourprice",
-                                                    "#priceblock_dealprice",
-                                                    ".a-color-price"
-                                                ]
-                                                
-                                                for selector in price_selectors:
-                                                    try:
-                                                        elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                                                        if elements:
-                                                            for element in elements:
-                                                                price_text = element.get_attribute("innerHTML").strip()
-                                                                if not price_text:
-                                                                    price_text = element.text.strip()
-                                                                
-                                                                if price_text and '₹' in price_text:
-                                                                    print(f"    Found current price: {price_text}")
-                                                                    # Extract the numeric part
-                                                                    price_match = re.search(r'₹([\d,]+(?:\.\d+)?)', price_text)
-                                                                    if price_match:
-                                                                        price_str = price_match.group(1).replace(',', '')
-                                                                        try:
-                                                                            price_value = float(price_str)
-                                                                            # Add 15% premium to estimate MRP (common in Indian retail)
-                                                                            mrp_value = price_value * 1.15
-                                                                            # Format back to string with ₹ symbol
-                                                                            mrp = f"₹{int(mrp_value):,}"
-                                                                            print(f"    Estimated MRP from price: {mrp}")
-                                                                            break
-                                                                        except ValueError:
-                                                                            print(f"    Could not convert price to number: {price_str}")
-                                                            if mrp:
-                                                                break
-                                                    except Exception as e:
-                                                        print(f"    Error with price selector '{selector}': {e}")
-                                                        continue
-                                            except Exception as e:
-                                                print(f"    Error estimating MRP from price: {e}")
                                         
                                         return {"asin": asin, "mrp": mrp}, True
                     except Exception as e:
@@ -2284,10 +1599,6 @@ def main():
     """Main function to scrape product images"""
     print("=== Smartprix Mobile Image Scraper ===")
     
-    # Configure system for Amazon India access
-    print("Configuring system for Amazon India access...")
-    force_amazon_india_access()
-    
     # Clear existing data at the beginning
     if not clear_existing_data():
         print("Failed to clear existing data. Exiting.")
@@ -2306,7 +1617,7 @@ def main():
     print(f"Found {total_products} products to process")
     
     # Setup Chrome driver
-    print("Setting up Chrome driver with India-specific configurations...")
+    print("Setting up Chrome driver...")
     driver = setup_driver()
     if not driver:
         print("Failed to setup Chrome driver. Exiting.")

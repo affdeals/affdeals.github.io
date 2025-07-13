@@ -1,5 +1,5 @@
 {
-  "total_mobile_phones": 3,
+  "total_mobile_phones": 118,
   "products": [
     {
       "count": 1,
@@ -7,6 +7,825 @@
       "name": "Samsung Galaxy M36 5G",
       "price": "₹17,499",
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m36-5g-ppd1negtlorc"
+    },
+    {
+      "count": 2,
+      "unique_id": "samsung_galaxy_s24_ultra",
+      "name": "Samsung Galaxy S24 Ultra",
+      "price": "₹74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-ppd1iyi3f6js"
+    },
+    {
+      "count": 3,
+      "unique_id": "samsung_galaxy_s24_fe_5g",
+      "name": "Samsung Galaxy S24 FE 5G",
+      "price": "₹35,500",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-fe-ppd1o1zy1v5x"
+    },
+    {
+      "count": 4,
+      "unique_id": "samsung_galaxy_z_fold_7",
+      "name": "Samsung Galaxy Z Fold 7",
+      "price": "₹1,74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-7-ppd1h0forpp0"
+    },
+    {
+      "count": 5,
+      "unique_id": "samsung_galaxy_m55s",
+      "name": "Samsung Galaxy M55s",
+      "price": "₹16,000",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55s-ppd1afgkxdis"
+    },
+    {
+      "count": 6,
+      "unique_id": "samsung_galaxy_a35_5g",
+      "name": "Samsung Galaxy A35 5G",
+      "price": "₹20,489",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a35-5g-ppd10kgb4go2"
+    },
+    {
+      "count": 7,
+      "unique_id": "samsung_galaxy_a55_5g",
+      "name": "Samsung Galaxy A55 5G",
+      "price": "₹24,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-ppd1j932nh5d"
+    },
+    {
+      "count": 8,
+      "unique_id": "samsung_galaxy_s24_5g",
+      "name": "Samsung Galaxy S24 5G",
+      "price": "₹48,650",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ppd1rhc5ozwd"
+    },
+    {
+      "count": 9,
+      "unique_id": "samsung_galaxy_s25_ultra",
+      "name": "Samsung Galaxy S25 Ultra",
+      "price": "₹1,17,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-ultra-ppd1p8z4fzt4"
+    },
+    {
+      "count": 10,
+      "unique_id": "samsung_galaxy_m35_5g",
+      "name": "Samsung Galaxy M35 5G",
+      "price": "₹13,699",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m35-ppd1u8vfoq3e"
+    },
+    {
+      "count": 11,
+      "unique_id": "samsung_galaxy_a56_5g",
+      "name": "Samsung Galaxy A56 5G",
+      "price": "₹38,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a56-ppd184axqm2x"
+    },
+    {
+      "count": 12,
+      "unique_id": "samsung_galaxy_s25_5g",
+      "name": "Samsung Galaxy S25 5G",
+      "price": "₹80,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-ppd10ss8kmvt"
+    },
+    {
+      "count": 13,
+      "unique_id": "samsung_galaxy_s24_plus",
+      "name": "Samsung Galaxy S24 Plus",
+      "price": "₹57,990",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-plus-ppd1dbt0q4j6"
+    },
+    {
+      "count": 14,
+      "unique_id": "samsung_galaxy_a36_5g",
+      "name": "Samsung Galaxy A36 5G",
+      "price": "₹30,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a36-5g-ppd1qiu79bmo"
+    },
+    {
+      "count": 15,
+      "unique_id": "samsung_galaxy_m56_5g",
+      "name": "Samsung Galaxy M56 5G",
+      "price": "₹24,937",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m56-ppd1fqb2pvjf"
+    },
+    {
+      "count": 16,
+      "unique_id": "samsung_galaxy_z_fold_7_12gb_ram_512gb",
+      "name": "Samsung Galaxy Z Fold 7 (12GB RAM + 512GB)",
+      "price": "₹1,74,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-7-12gb-ram-512gb-ppd1r7536yik"
+    },
+    {
+      "count": 17,
+      "unique_id": "samsung_galaxy_a16_5g",
+      "name": "Samsung Galaxy A16 5G",
+      "price": "₹17,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a16-ppd1s5naykym"
+    },
+    {
+      "count": 18,
+      "unique_id": "samsung_galaxy_s24_fe_256gb",
+      "name": "Samsung Galaxy S24 FE (256GB)",
+      "price": "₹42,799",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-fe-256gb-ppd1w5k845s5"
+    },
+    {
+      "count": 19,
+      "unique_id": "samsung_galaxy_f16_5g",
+      "name": "Samsung Galaxy F16 5G",
+      "price": "₹10,749",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f16-5g-ppd14hjpb30z"
+    },
+    {
+      "count": 20,
+      "unique_id": "samsung_galaxy_f12",
+      "name": "Samsung Galaxy F12",
+      "price": "₹5,000",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f12-ppd1y3uxeu9u"
+    },
+    {
+      "count": 21,
+      "unique_id": "samsung_galaxy_f06_5g",
+      "name": "Samsung Galaxy F06 5G",
+      "price": "₹8,780",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f06-ppd18k9xb18v"
+    },
+    {
+      "count": 22,
+      "unique_id": "samsung_galaxy_m35_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy M35 5G (8GB RAM + 128GB)",
+      "price": "₹18,498",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m35-5g-8gb-ram-128gb-ppd1z49xm56y"
+    },
+    {
+      "count": 23,
+      "unique_id": "samsung_galaxy_a35_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A35 5G (8GB RAM + 256GB)",
+      "price": "₹22,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a35-5g-8gb-ram-256gb-ppd18ubjdtj2"
+    },
+    {
+      "count": 24,
+      "unique_id": "samsung_galaxy_s24_ultra_12gb_ram_512gb",
+      "name": "Samsung Galaxy S24 Ultra (12GB RAM + 512GB)",
+      "price": "₹99,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-12gb-ram-512gb-ppd1x08dfro0"
+    },
+    {
+      "count": 25,
+      "unique_id": "samsung_galaxy_m05",
+      "name": "Samsung Galaxy M05",
+      "price": "₹6,249",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m05-ppd1mzoxd0wa"
+    },
+    {
+      "count": 26,
+      "unique_id": "samsung_galaxy_z_fold_6",
+      "name": "Samsung Galaxy Z Fold 6",
+      "price": "₹1,38,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-6-ppd1saehyfns"
+    },
+    {
+      "count": 27,
+      "unique_id": "samsung_galaxy_s23_ultra_5g",
+      "name": "Samsung Galaxy S23 Ultra 5G",
+      "price": "₹81,688",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s23-ultra-5g-ppd1q5mbifnl"
+    },
+    {
+      "count": 28,
+      "unique_id": "samsung_galaxy_a06_5g_4gb_ram_128gb",
+      "name": "Samsung Galaxy A06 5G (4GB RAM + 128GB)",
+      "price": "₹9,399",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a06-5g-4gb-ram-128gb-ppd1wfqerty8"
+    },
+    {
+      "count": 29,
+      "unique_id": "samsung_galaxy_z_flip_7_5g",
+      "name": "Samsung Galaxy Z Flip 7 5G",
+      "price": "₹1,09,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-7-ppd1m1sy6edn"
+    },
+    {
+      "count": 30,
+      "unique_id": "samsung_galaxy_m06_5g",
+      "name": "Samsung Galaxy M06 5G",
+      "price": "₹8,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m06-ppd1e0j4ujzx"
+    },
+    {
+      "count": 31,
+      "unique_id": "samsung_galaxy_a55_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A55 5G (8GB RAM + 256GB)",
+      "price": "₹26,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-8gb-ram-256gb-ppd10l49lwem"
+    },
+    {
+      "count": 32,
+      "unique_id": "samsung_galaxy_f55_5g",
+      "name": "Samsung Galaxy F55 5G",
+      "price": "₹18,128",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f55-5g-ppd1uaidnnwr"
+    },
+    {
+      "count": 33,
+      "unique_id": "samsung_galaxy_m16_5g",
+      "name": "Samsung Galaxy M16 5G",
+      "price": "₹10,749",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m16-ppd12564oxos"
+    },
+    {
+      "count": 34,
+      "unique_id": "samsung_galaxy_a26_5g",
+      "name": "Samsung Galaxy A26 5G",
+      "price": "₹21,892",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a26-5g-ppd1elqtrqik"
+    },
+    {
+      "count": 35,
+      "unique_id": "samsung_galaxy_s24_8gb_ram_128gb",
+      "name": "Samsung Galaxy S24 (8GB RAM + 128GB)",
+      "price": "₹43,734",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-8gb-ram-256gb-ppd1z9j7hz4z"
+    },
+    {
+      "count": 36,
+      "unique_id": "samsung_galaxy_z_flip_7_fe_8gb_ram_256gb",
+      "name": "Samsung Galaxy Z Flip 7 FE (8GB RAM + 256GB)",
+      "price": "₹89,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-7-fe-8gb-ram-256gb-ppd1ipt9yezb"
+    },
+    {
+      "count": 37,
+      "unique_id": "samsung_galaxy_f16_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy F16 5G (6GB RAM + 128GB)",
+      "price": "₹12,609",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f16-5g-6gb-ram-128gb-ppd1qvyimb8p"
+    },
+    {
+      "count": 38,
+      "unique_id": "samsung_galaxy_s22_ultra_5g",
+      "name": "Samsung Galaxy S22 Ultra 5G",
+      "price": "₹62,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s22-ultra-5g-ppd1ovlxy9nr"
+    },
+    {
+      "count": 39,
+      "unique_id": "samsung_galaxy_z_flip_7_5g_12gb_ram512gb",
+      "name": "Samsung Galaxy Z Flip 7 5G (12GB RAM+512GB)",
+      "price": "₹1,09,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-7-5g-12gb-ram-512gb-ppd1rvr56b6a"
+    },
+    {
+      "count": 40,
+      "unique_id": "samsung_galaxy_s23_5g",
+      "name": "Samsung Galaxy S23 5G",
+      "price": "₹48,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s23-ppd1b28a9gw2"
+    },
+    {
+      "count": 41,
+      "unique_id": "samsung_galaxy_m06_4gb_ram_64gb",
+      "name": "Samsung Galaxy M06 (4GB RAM + 64GB)",
+      "price": "₹7,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m06-4gb-ram-64gb-ppd1w239n0qe"
+    },
+    {
+      "count": 42,
+      "unique_id": "samsung_galaxy_a06_5g",
+      "name": "Samsung Galaxy A06 5G",
+      "price": "₹9,395",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a06-5g-ppd1nhte88uy"
+    },
+    {
+      "count": 43,
+      "unique_id": "samsung_galaxy_f55_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy F55 5G (8GB RAM + 256GB)",
+      "price": "₹19,529",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f55-5g-8gb-ram-256gb-ppd1gu2lr26t"
+    },
+    {
+      "count": 44,
+      "unique_id": "samsung_galaxy_m35_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy M35 5G (8GB RAM + 256GB)",
+      "price": "₹21,498",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m35-5g-8gb-ram-256gb-ppd1m4y5tmkn"
+    },
+    {
+      "count": 45,
+      "unique_id": "samsung_galaxy_m16_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy M16 5G (6GB RAM + 128GB)",
+      "price": "₹11,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m16-5g-6gb-ram-128gb-ppd1uaek4l1g"
+    },
+    {
+      "count": 46,
+      "unique_id": "samsung_galaxy_a55_5g_12gb_ram_256gb",
+      "name": "Samsung Galaxy A55 5G (12GB RAM + 256GB)",
+      "price": "₹29,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-12gb-ram-256gb-ppd1mf1b6068"
+    },
+    {
+      "count": 47,
+      "unique_id": "samsung_galaxy_m06_6gb_ram_128gb",
+      "name": "Samsung Galaxy M06 (6GB RAM + 128GB)",
+      "price": "₹9,799",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m06-6gb-ram-128gb-ppd1iotfzisc"
+    },
+    {
+      "count": 48,
+      "unique_id": "samsung_galaxy_m55_12gb_ram_256gb",
+      "name": "Samsung Galaxy M55 (12GB RAM + 256GB)",
+      "price": "₹25,555",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55-12gb-ram-256gb-ppd15q0mga70"
+    },
+    {
+      "count": 49,
+      "unique_id": "samsung_galaxy_s23_fe_5g",
+      "name": "Samsung Galaxy S23 FE 5G",
+      "price": "₹37,998",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s23-fe-5g-ppd15cnh89yk"
+    },
+    {
+      "count": 50,
+      "unique_id": "samsung_galaxy_s25_edge",
+      "name": "Samsung Galaxy S25 Edge",
+      "price": "₹1,09,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-edge-ppd1zfdnebky"
+    },
+    {
+      "count": 51,
+      "unique_id": "samsung_galaxy_s25_ultra_12gb_ram_512gb",
+      "name": "Samsung Galaxy S25 Ultra (12GB RAM + 512GB)",
+      "price": "₹1,29,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-ultra-12gb-ram-512gb-ppd1cfld2504"
+    },
+    {
+      "count": 52,
+      "unique_id": "samsung_galaxy_s25_plus",
+      "name": "Samsung Galaxy S25 Plus",
+      "price": "₹99,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-plus-ppd1qwvxiy4n"
+    },
+    {
+      "count": 53,
+      "unique_id": "samsung_galaxy_a06_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy A06 5G (6GB RAM + 128GB)",
+      "price": "₹11,498",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a06-5g-6gb-ram-128gb-ppd1986yoj8g"
+    },
+    {
+      "count": 54,
+      "unique_id": "samsung_galaxy_z_flip_7_fe_5g",
+      "name": "Samsung Galaxy Z Flip 7 FE 5G",
+      "price": "₹89,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-7-fe-ppd1a81nbt99"
+    },
+    {
+      "count": 55,
+      "unique_id": "samsung_galaxy_m55s_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy M55s 5G (8GB RAM + 256GB)",
+      "price": "₹18,880",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55s-5g-8gb-ram-256gb-ppd1mzhtmsh0"
+    },
+    {
+      "count": 56,
+      "unique_id": "samsung_galaxy_z_flip_6_5g",
+      "name": "Samsung Galaxy Z Flip 6 5G",
+      "price": "₹73,950",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-6-ppd1t5275osz"
+    },
+    {
+      "count": 57,
+      "unique_id": "samsung_galaxy_a56_5g_12gb_ram_256gb",
+      "name": "Samsung Galaxy A56 5G (12GB RAM + 256GB)",
+      "price": "₹44,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a56-5g-12gb-ram-256gb-ppd1cbfsvy8y"
+    },
+    {
+      "count": 58,
+      "unique_id": "samsung_galaxy_a16_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy A16 5G (6GB RAM + 128GB)",
+      "price": "₹15,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a16-5g-6gb-ram-128gb-ppd19qsrgtzo"
+    },
+    {
+      "count": 59,
+      "unique_id": "samsung_galaxy_m36_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy M36 5G (8GB RAM + 128GB)",
+      "price": "₹18,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m36-5g-8gb-ram-128gb-ppd1hiasxnst"
+    },
+    {
+      "count": 60,
+      "unique_id": "samsung_galaxy_a36_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A36 5G (8GB RAM + 256GB)",
+      "price": "₹33,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a36-5g-8gb-ram-256gb-ppd1p8hml74p"
+    },
+    {
+      "count": 61,
+      "unique_id": "samsung_galaxy_f06_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy F06 5G (6GB RAM + 128GB)",
+      "price": "₹9,799",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f06-5g-6gb-ram-128gb-ppd183pmu1qy"
+    },
+    {
+      "count": 62,
+      "unique_id": "samsung_galaxy_s25_ultra_12gb_ram_1tb",
+      "name": "Samsung Galaxy S25 Ultra (12GB RAM + 1TB)",
+      "price": "₹1,65,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-ultra-16gb-ram-1tb-ppd1fr93hm0p"
+    },
+    {
+      "count": 63,
+      "unique_id": "samsung_galaxy_f05",
+      "name": "Samsung Galaxy F05",
+      "price": "₹6,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f05-ppd1u4z3r099"
+    },
+    {
+      "count": 64,
+      "unique_id": "samsung_galaxy_f15_5g_6gb_ram_128gb",
+      "name": "Samsung Galaxy F15 5G (6GB RAM + 128GB)",
+      "price": "₹12,990",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f15-5g-6gb-ram-128gb-ppd1zlgkeo46"
+    },
+    {
+      "count": 65,
+      "unique_id": "samsung_galaxy_a54_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A54 5G (8GB RAM + 256GB)",
+      "price": "₹28,905",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a54-5g-8gb-ram-256gb-ppd1d1p0urxw"
+    },
+    {
+      "count": 66,
+      "unique_id": "samsung_galaxy_a15_5g",
+      "name": "Samsung Galaxy A15 5G",
+      "price": "₹17,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a15-5g-ppd104i76pui"
+    },
+    {
+      "count": 67,
+      "unique_id": "samsung_galaxy_m55",
+      "name": "Samsung Galaxy M55",
+      "price": "₹20,990",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55-ppd1o4lqf013"
+    },
+    {
+      "count": 68,
+      "unique_id": "samsung_galaxy_a26_8gb_ram_256gb",
+      "name": "Samsung Galaxy A26 (8GB RAM + 256GB)",
+      "price": "₹24,876",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a26-8gb-ram-256gb-ppd1d6ejrlf9"
+    },
+    {
+      "count": 69,
+      "unique_id": "samsung_galaxy_a56_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A56 5G (8GB RAM + 256GB)",
+      "price": "₹41,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a56-5g-8gb-ram-256gb-ppd1dd1sxxit"
+    },
+    {
+      "count": 70,
+      "unique_id": "samsung_galaxy_f15_5g",
+      "name": "Samsung Galaxy F15 5G",
+      "price": "₹11,400",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f15-ppd1qh4x283r"
+    },
+    {
+      "count": 71,
+      "unique_id": "samsung_galaxy_a36_5g_12gb_ram_256gb",
+      "name": "Samsung Galaxy A36 5G (12GB RAM + 256GB)",
+      "price": "₹36,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a36-5g-12gb-ram-256gb-ppd198jdokmh"
+    },
+    {
+      "count": 72,
+      "unique_id": "samsung_galaxy_a16_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A16 5G (8GB RAM + 256GB)",
+      "price": "₹20,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a16-5g-8gb-ram-256gb-ppd1c3s7czya"
+    },
+    {
+      "count": 73,
+      "unique_id": "samsung_galaxy_a54_5g",
+      "name": "Samsung Galaxy A54 5G",
+      "price": "₹26,799",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a54-5g-ppd11iyr3lfa"
+    },
+    {
+      "count": 74,
+      "unique_id": "samsung_galaxy_s22_plus_5g",
+      "name": "Samsung Galaxy S22 Plus 5G",
+      "price": "₹34,000",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s22-plus-5g-ppd1ucszgjsa"
+    },
+    {
+      "count": 75,
+      "unique_id": "samsung_galaxy_a26_6gb_ram_128gb",
+      "name": "Samsung Galaxy A26 (6GB RAM + 128GB)",
+      "price": "₹20,950",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a26-6gb-ram-128gb-ppd13rm0rp9i"
+    },
+    {
+      "count": 76,
+      "unique_id": "samsung_galaxy_z_flip_6_512gb",
+      "name": "Samsung Galaxy Z Flip 6 (512GB)",
+      "price": "₹77,535",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-6-512gb-ppd1boah98qz"
+    },
+    {
+      "count": 77,
+      "unique_id": "samsung_galaxy_m55_8gb_ram_256gb",
+      "name": "Samsung Galaxy M55 (8GB RAM + 256GB)",
+      "price": "₹22,791",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55-8gb-ram-256gb-ppd1tw8l8h90"
+    },
+    {
+      "count": 78,
+      "unique_id": "samsung_galaxy_z_fold_5_12gb_ram_512gb",
+      "name": "Samsung Galaxy Z Fold 5 (12GB RAM + 512GB)",
+      "price": "₹1,14,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-5-12gb-ram-512gb-ppd151t08070"
+    },
+    {
+      "count": 79,
+      "unique_id": "samsung_galaxy_z_fold_4",
+      "name": "Samsung Galaxy Z Fold 4",
+      "price": "₹89,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-4-5g-ppd1g96fhmu3"
+    },
+    {
+      "count": 80,
+      "unique_id": "samsung_galaxy_a53_5g",
+      "name": "Samsung Galaxy A53 5G",
+      "price": "₹23,990",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a53-5g-ppd1st0brwuw"
+    },
+    {
+      "count": 81,
+      "unique_id": "samsung_galaxy_s25_edge_12gb_ram_512gb",
+      "name": "Samsung Galaxy S25 Edge (12GB RAM + 512GB)",
+      "price": "₹1,21,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-edge-12gb-ram-512gb-ppd1bpm52ro1"
+    },
+    {
+      "count": 82,
+      "unique_id": "samsung_galaxy_s25_12gb_ram_512gb",
+      "name": "Samsung Galaxy S25 (12GB RAM + 512GB)",
+      "price": "₹92,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-12gb-ram-512gb-ppd1ycos6ic5"
+    },
+    {
+      "count": 83,
+      "unique_id": "samsung_galaxy_s25_plus_12gb_ram_512gb",
+      "name": "Samsung Galaxy S25 Plus (12GB RAM + 512GB)",
+      "price": "₹1,11,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s25-plus-12gb-ram-512gb-ppd1ywfbcvmg"
+    },
+    {
+      "count": 84,
+      "unique_id": "samsung_galaxy_m15_5g_prime_edition_8gb_ram_128gb",
+      "name": "Samsung Galaxy M15 5G Prime Edition (8GB RAM +128GB)",
+      "price": "₹14,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m15-5g-prime-edition-8gb-ram-ppd1bem7wpw3"
+    },
+    {
+      "count": 85,
+      "unique_id": "samsung_galaxy_a15_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A15 5G (8GB RAM + 256GB)",
+      "price": "₹19,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a15-5g-8gb-ram-256gb-ppd1lm90xdg4"
+    },
+    {
+      "count": 86,
+      "unique_id": "samsung_galaxy_s23_fe_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy S23 FE 5G (8GB RAM + 256GB)",
+      "price": "₹44,994",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s23-fe-5g-8gb-ram-256gb-ppd1sz9f301y"
+    },
+    {
+      "count": 87,
+      "unique_id": "samsung_galaxy_a25_5g",
+      "name": "Samsung Galaxy A25 5G",
+      "price": "₹19,899",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a25-5g-ppd1i5pkjvsh"
+    },
+    {
+      "count": 88,
+      "unique_id": "samsung_galaxy_z_fold_5",
+      "name": "Samsung Galaxy Z Fold 5",
+      "price": "₹1,02,222",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-5-ppd1hk5sl0sk"
+    },
+    {
+      "count": 89,
+      "unique_id": "samsung_galaxy_f14_4g",
+      "name": "Samsung Galaxy F14 4G",
+      "price": "₹8,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f14-ppd1h84o5kt4"
+    },
+    {
+      "count": 90,
+      "unique_id": "samsung_galaxy_a14_5g",
+      "name": "Samsung Galaxy A14 5G",
+      "price": "₹16,498",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a14-ppd1tpcg7uoq"
+    },
+    {
+      "count": 91,
+      "unique_id": "samsung_galaxy_a05",
+      "name": "Samsung Galaxy A05",
+      "price": "₹9,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a05-ppd1078kc4yy"
+    },
+    {
+      "count": 92,
+      "unique_id": "samsung_galaxy_a33_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy A33 5G (8GB RAM + 128GB)",
+      "price": "₹28,500",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a33-5g-8gb-ram-128gb-ppd1e5rw01ob"
+    },
+    {
+      "count": 93,
+      "unique_id": "samsung_galaxy_m15_5g_prime_edition_6gb_ram_128gb",
+      "name": "Samsung Galaxy M15 5G Prime Edition (6GB RAM +128GB)",
+      "price": "₹14,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m15-5g-prime-edition-6gb-ram-ppd1vfsdr4zk"
+    },
+    {
+      "count": 94,
+      "unique_id": "samsung_galaxy_f15_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy F15 5G (8GB RAM + 128GB)",
+      "price": "₹17,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f15-5g-8gb-ram-128gb-ppd1no07dp1r"
+    },
+    {
+      "count": 95,
+      "unique_id": "samsung_galaxy_m14_4g",
+      "name": "Samsung Galaxy M14 4G",
+      "price": "₹9,895",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m14-4g-ppd15714ke1z"
+    },
+    {
+      "count": 96,
+      "unique_id": "samsung_galaxy_a25_5g_8gb_ram_256gb",
+      "name": "Samsung Galaxy A25 5G (8GB RAM + 256GB)",
+      "price": "₹20,220",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a25-5g-8gb-ram-256gb-ppd1f0uk0cg2"
+    },
+    {
+      "count": 97,
+      "unique_id": "samsung_galaxy_z_flip_5_8gb_ram_512gb",
+      "name": "Samsung Galaxy Z Flip 5 (8GB RAM + 512GB)",
+      "price": "₹61,690",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-5-8gb-ram-512gb-ppd1opa1bn6e"
+    },
+    {
+      "count": 98,
+      "unique_id": "samsung_galaxy_m15_5g",
+      "name": "Samsung Galaxy M15 5G",
+      "price": "₹11,899",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m15-ppd1q5dgt52q"
+    },
+    {
+      "count": 99,
+      "unique_id": "samsung_galaxy_s23_plus_8gb_ram_512gb",
+      "name": "Samsung Galaxy S23 Plus (8GB RAM + 512GB)",
+      "price": "₹64,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s23-plus-8gb-ram-512gb-ppd18apn2w6y"
+    },
+    {
+      "count": 100,
+      "unique_id": "samsung_galaxy_z_flip_5",
+      "name": "Samsung Galaxy Z Flip 5",
+      "price": "₹63,988",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-flip-5-ppd12rq6l3gw"
+    },
+    {
+      "count": 101,
+      "unique_id": "samsung_galaxy_a13",
+      "name": "Samsung Galaxy A13",
+      "price": "₹10,900",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a13-ppd1o5x46qxw"
+    },
+    {
+      "count": 102,
+      "unique_id": "samsung_galaxy_z_fold_3_5g_12gb_ram_512gb",
+      "name": "Samsung Galaxy Z Fold 3 5G (12GB RAM + 512GB)",
+      "price": "₹84,899",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-3-5g-12gb-ram-512gb-ppd16gy79699"
+    },
+    {
+      "count": 103,
+      "unique_id": "samsung_galaxy_f02s",
+      "name": "Samsung Galaxy F02s",
+      "price": "₹6,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f02s-ppd12uwmpbaj"
+    },
+    {
+      "count": 104,
+      "unique_id": "samsung_galaxy_a04_3gb_ram_32gb",
+      "name": "Samsung Galaxy A04 (3GB RAM + 32GB)",
+      "price": "₹6,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a04-3gb-ram-32gb-ppd19zlj70ib"
+    },
+    {
+      "count": 105,
+      "unique_id": "samsung_galaxy_m14_4g_6gb_ram_128gb",
+      "name": "Samsung Galaxy M14 4G (6GB RAM + 128GB)",
+      "price": "₹12,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m14-4g-6gb-ram-128gb-ppd1kgsnidoo"
+    },
+    {
+      "count": 106,
+      "unique_id": "samsung_galaxy_a14_4g_4gb_ram_128_gb",
+      "name": "Samsung Galaxy A14 4G (4GB RAM + 128 GB)",
+      "price": "₹14,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a14-4g-4gb-ram-128-gb-ppd16c660z8v"
+    },
+    {
+      "count": 107,
+      "unique_id": "samsung_galaxy_a14_4g",
+      "name": "Samsung Galaxy A14 4G",
+      "price": "₹9,450",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a14-4g-ppd1mnzhhcyy"
+    },
+    {
+      "count": 108,
+      "unique_id": "samsung_galaxy_a04s_4gb_ram_128gb",
+      "name": "Samsung Galaxy A04s (4GB RAM + 128GB)",
+      "price": "₹10,360",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a04s-4gb-ram-128gb-ppd1bvzibvgz"
+    },
+    {
+      "count": 109,
+      "unique_id": "samsung_galaxy_a04e_3gb_ram_64gb",
+      "name": "Samsung Galaxy A04e (3GB RAM + 64GB)",
+      "price": "₹7,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a04e-3gb-ram-64gb-ppd1fxzcs94x"
+    },
+    {
+      "count": 110,
+      "unique_id": "samsung_galaxy_a04e",
+      "name": "Samsung Galaxy A04e",
+      "price": "₹7,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a04e-ppd1q166bgfg"
+    },
+    {
+      "count": 111,
+      "unique_id": "samsung_galaxy_z_fold_4_12gb_ram_512gb",
+      "name": "Samsung Galaxy Z Fold 4 (12GB RAM + 512GB)",
+      "price": "₹94,990",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-z-fold-4-12gb-ram-512gb-ppd19txeowz1"
+    },
+    {
+      "count": 112,
+      "unique_id": "samsung_galaxy_m13_5g_4gb_ram_64gb",
+      "name": "Samsung Galaxy M13 5G (4GB RAM + 64GB)",
+      "price": "₹16,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m13-5g-4gb-ram-64gb-ppd1hpspwn1f"
+    },
+    {
+      "count": 113,
+      "unique_id": "samsung_galaxy_a04",
+      "name": "Samsung Galaxy A04",
+      "price": "₹7,699",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a04-ppd1tnkbb8ym"
+    },
+    {
+      "count": 114,
+      "unique_id": "samsung_galaxy_m53_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy M53 5G (8GB RAM + 128GB)",
+      "price": "₹25,499",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m53-5g-8gb-ram-128gb-ppd1rjg0o9xi"
+    },
+    {
+      "count": 115,
+      "unique_id": "samsung_galaxy_a23_8gb_ram_128gb",
+      "name": "Samsung Galaxy A23 (8GB RAM + 128GB)",
+      "price": "₹20,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a23-8gb-ram-128gb-ppd1ktgvlpkg"
+    },
+    {
+      "count": 116,
+      "unique_id": "samsung_galaxy_a03_core",
+      "name": "Samsung Galaxy A03 Core",
+      "price": "₹7,500",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a03-core-ppd1nkxgpa9j"
+    },
+    {
+      "count": 117,
+      "unique_id": "samsung_galaxy_f42_5g_8gb_ram_128gb",
+      "name": "Samsung Galaxy F42 5G (8GB RAM + 128GB)",
+      "price": "₹16,490",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-f42-5g-8gb-ram-128gb-ppd18xlzopnr"
+    },
+    {
+      "count": 118,
+      "unique_id": "samsung_galaxy_m11",
+      "name": "Samsung Galaxy M11",
+      "price": "₹12,900",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m11-ppd1i7gfweuj"
     }
   ]
 }

@@ -1408,7 +1408,7 @@ def normalize_price(price_str):
     return ""
 
 
-def compare_prices(price1, price2, tolerance_percent=0):
+def compare_prices(price1, price2, tolerance_percent=5):
     """Compare two prices with tolerance for slight variations"""
     try:
         # Normalize both prices
@@ -1953,6 +1953,9 @@ def main():
             "interrupted": True
         }
         time_manager.log_final_summary(stats)
+        
+        # Exit the program immediately
+        sys.exit(0)
     
     except Exception as e:
         print(f"❌ Error during scraping: {e}")

@@ -1091,7 +1091,7 @@
     {
       "id": "oppo_reno_14_pro_5g",
       "name": "OPPO Reno 14 Pro 5G",
-      "listed": "no",
+      "listed": "yes",
       "price": "₹49,999",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/oppo-reno-14-pro-5g-ppd159386vd3",
@@ -1111,7 +1111,7 @@
           "price": "₹54,999"
         }
       ],
-      "asin": null,
+      "asin": "B0FCTHQS2L",
       "spec_score": "90",
       "features": {
         "GENERAL": [
@@ -1469,7 +1469,7 @@
     {
       "id": "oppo_reno_14_5g",
       "name": "OPPO Reno 14 5G",
-      "listed": "no",
+      "listed": "yes",
       "price": "₹37,999",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/oppo-reno-14-5g-ppd16yet8j4z",
@@ -1498,7 +1498,7 @@
           "price": "₹42,999"
         }
       ],
-      "asin": null,
+      "asin": "B0FCTS8CVJ",
       "spec_score": "88",
       "features": {
         "GENERAL": [

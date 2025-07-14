@@ -4,7 +4,7 @@
       "id": "oneplus_nord_ce_5_5g",
       "name": "OnePlus Nord CE 5 5G",
       "count": 1,
-      "listed": "yes",
+      "listed": "no",
       "price": "₹24,998",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1",
@@ -28,7 +28,7 @@
           "price": "₹28,998"
         }
       ],
-      "asin": "B0FC6XHHSV",
+      "asin": null,
       "spec_score": "83",
       "features": {
         "GENERAL": [

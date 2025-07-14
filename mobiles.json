@@ -1,12 +1,26 @@
 {
-  "total_mobile_phones": 1,
+  "total_mobile_phones": 900,
   "products": [
     {
       "count": 1,
-      "unique_id": "asus_rog_phone_5s_5g_12gb_ram_256gb",
-      "name": "Asus ROG Phone 5s 5G (12GB RAM + 256GB)",
-      "price": "₹39,599",
-      "url": "https://www.smartprix.com/mobiles/asus-rog-phone-5s-5g-12gb-ram-256gb-ppd10rvpyj1d"
+      "unique_id": "oneplus_nord_ce_5_5g",
+      "name": "OnePlus Nord CE 5 5G",
+      "price": "₹24,998",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1"
+    },
+    {
+      "count": 2,
+      "unique_id": "vivo_x200_fe",
+      "name": "Vivo X200 FE",
+      "price": "₹54,999",
+      "url": "https://www.smartprix.com/mobiles/vivo-x200-fe-ppd1plhdfvpr"
+    },
+    {
+      "count": 3,
+      "unique_id": "oneplus_nord_5_5g",
+      "name": "OnePlus Nord 5 5G",
+      "price": "₹31,999",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-5-ppd1aage1z7d"
     }
   ]
 }

@@ -1359,15 +1359,16 @@ def get_amazon_mrp_from_asin(driver, asin):
 
 
 def get_amazon_mrp(driver):
-    """Extract MRP from Amazon.in product page using class-based selector with data-a-size='s'"""
+    """Extract MRP from Amazon.in product page using specific selector with all required attributes"""
     try:
         # Wait for page to load properly
         time.sleep(3)
         
         print("    Attempting to extract MRP from Amazon page...")
         
-        # Use the class-based selector with data-a-size="s" as specified by user
-        mrp_selector = "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'] span.a-offscreen"
+        # Use the class-based selector with all required attributes to find the correct MRP element
+        # Must match: class="a-price a-text-price" data-a-size="s" data-a-strike="true" data-a-color="secondary"
+        mrp_selector = "span.a-price.a-text-price[data-a-size='s'][data-a-strike='true'][data-a-color='secondary'] span.a-offscreen"
         
         try:
             # Try to find the MRP element using CSS selector
@@ -1382,7 +1383,7 @@ def get_amazon_mrp(driver):
                 return ""
                 
         except NoSuchElementException:
-            print("    ✗ MRP element not found (MRP likely same as current price)")
+            print("    ✗ MRP element with data-a-color='secondary' not found (MRP likely same as current price)")
             return ""
         except Exception as e:
             print(f"    Error accessing MRP element: {e}")
@@ -1410,7 +1411,7 @@ def normalize_price(price_str):
     return ""
 
 
-def compare_prices(price1, price2, tolerance_percent=10):
+def compare_prices(price1, price2, tolerance_percent=0):
     """Compare two prices with tolerance for slight variations"""
     try:
         # Normalize both prices
@@ -1505,14 +1506,42 @@ def search_amazon_for_product(driver, product_name, expected_price):
                         if compare_prices(expected_price, amazon_price):
                             print(f"      ✓ Price match found! Navigating to product page...")
                             
-                            # Navigate to product page to get detailed info
-                            driver.get(product_url)
-                            time.sleep(5)
+                            # Navigate to product page to get detailed info with retry mechanism
+                            max_retries = 3
+                            retry_count = 0
+                            navigation_success = False
                             
-                            # Extract MRP from product page
-                            mrp = get_amazon_mrp(driver)
+                            while retry_count < max_retries and not navigation_success:
+                                try:
+                                    if retry_count > 0:
+                                        print(f"        Retry {retry_count}/{max_retries-1} for navigation...")
+                                    
+                                    driver.get(product_url)
+                                    time.sleep(5)
+                                    
+                                    # Verify we're on the correct product page by checking URL contains the ASIN
+                                    current_url = driver.current_url
+                                    if asin in current_url:
+                                        navigation_success = True
+                                        print(f"        ✓ Successfully navigated to product page for ASIN: {asin}")
+                                    else:
+                                        raise Exception(f"Navigation failed - URL does not contain ASIN {asin}. Current URL: {current_url}")
+                                    
+                                except Exception as nav_error:
+                                    retry_count += 1
+                                    print(f"        Navigation attempt {retry_count} failed: {nav_error}")
+                                    
+                                    if retry_count < max_retries:
+                                        print(f"        Retrying navigation in 3 seconds...")
+                                        time.sleep(3)
+                                    else:
+                                        print(f"        All navigation attempts failed after {max_retries} retries")
+                                        raise nav_error
                             
-                            return {"asin": asin, "mrp": mrp}, True
+                            if navigation_success:
+                                # Extract MRP from product page
+                                mrp = get_amazon_mrp(driver)
+                                return {"asin": asin, "mrp": mrp}, True
                         else:
                             print(f"      ✗ Price mismatch, continuing search...")
                     else:

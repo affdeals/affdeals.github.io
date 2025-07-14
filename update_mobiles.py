@@ -1452,13 +1452,31 @@ def search_amazon_for_product(driver, product_name, expected_price):
         
         # Find search box and search for the product
         try:
-            search_box = driver.find_element(By.ID, "twotabsearchtextbox")
-            search_box.clear()
-            search_box.send_keys(product_name)
-            search_box.send_keys(Keys.RETURN)
-            time.sleep(5)
+            search_box = None
             
-            print(f"    Search completed for: {product_name}")
+            # First try CSS selector
+            try:
+                search_box = driver.find_element(By.CSS_SELECTOR, "#twotabsearchtextbox")
+                print(f"    Found search box using CSS selector")
+            except:
+                # If CSS selector fails, try XPath as fallback
+                try:
+                    search_box = driver.find_element(By.XPATH, '//*[@id="twotabsearchtextbox"]')
+                    print(f"    Found search box using XPath fallback")
+                except:
+                    print(f"    Error: Could not find Amazon search box using either CSS selector or XPath")
+                    return None, False
+            
+            if search_box:
+                search_box.clear()
+                search_box.send_keys(product_name)
+                search_box.send_keys(Keys.RETURN)
+                time.sleep(5)
+                
+                print(f"    Search completed for: {product_name}")
+            else:
+                print(f"    Error: Search box not found")
+                return None, False
             
         except Exception as e:
             print(f"    Error searching on Amazon: {e}")

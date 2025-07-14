@@ -1,4 +1,4 @@
-name: Run Update Mobiles Script
+name: Run Update Mobiles Script with Time Management
 
 on:
   schedule:
@@ -22,6 +22,18 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
       
+      - name: Read time configuration
+        id: time_config
+        run: |
+          if [ -f "time.json" ]; then
+            TIME_VALUE=$(jq -r '.[0].time' time.json)
+            echo "time_limit=${TIME_VALUE}" >> $GITHUB_OUTPUT
+            echo "⏱️  Time limit loaded from time.json: ${TIME_VALUE}"
+          else
+            echo "time_limit=05:00" >> $GITHUB_OUTPUT
+            echo "⚠️  time.json not found, using default: 05:00"
+          fi
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -41,24 +53,96 @@ jobs:
           chrome-version: stable
           install-chromedriver: true
       
-      - name: Run update_mobiles.py script
+      - name: Run update_mobiles.py script with time management
+        id: run_script
         run: |
+          echo "🚀 Starting update_mobiles.py with time limit: ${{ steps.time_config.outputs.time_limit }}"
+          echo "⏱️  Workflow started at: $(date)"
+          
+          # Run the script with time management
           python update_mobiles.py
+          
+          echo "✅ Script completed at: $(date)"
+          
+          # Check if files were updated
+          if [ -f "update_mobiles.json" ]; then
+            echo "files_updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "files_updated=false" >> $GITHUB_OUTPUT
+          fi
       
-      - name: Commit and push if changes
+      - name: Create execution summary
+        if: always()
+        run: |
+          echo "📊 WORKFLOW EXECUTION SUMMARY"
+          echo "=================================================="
+          echo "⏱️  Time Limit: ${{ steps.time_config.outputs.time_limit }}"
+          echo "🗓️  Execution Date: $(date)"
+          echo "💾 Files Updated: ${{ steps.run_script.outputs.files_updated }}"
+          echo "🔄 Workflow Status: ${{ job.status }}"
+          
+          # Show file sizes if they exist
+          if [ -f "update_mobiles.json" ]; then
+            echo "📄 update_mobiles.json size: $(du -h update_mobiles.json | cut -f1)"
+          fi
+          
+          if [ -f "mobiles.json" ]; then
+            echo "📄 mobiles.json size: $(du -h mobiles.json | cut -f1)"
+          fi
+          
+          if [ -d "images" ]; then
+            echo "📁 images folder size: $(du -hs images | cut -f1)"
+          fi
+          
+          echo "=================================================="
+      
+      - name: Commit and push changes (with time management)
+        if: always()
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           
           # Add files only if they exist
-          if [ -f update_mobiles.json ]; then git add update_mobiles.json; fi
-          if [ -f mobiles.json ]; then git add mobiles.json; fi
-          if [ -d images ]; then git add images/; fi
+          files_added=false
+          if [ -f update_mobiles.json ]; then 
+            git add update_mobiles.json
+            files_added=true
+            echo "✅ Added update_mobiles.json"
+          fi
+          if [ -f mobiles.json ]; then 
+            git add mobiles.json
+            files_added=true
+            echo "✅ Added mobiles.json"
+          fi
+          if [ -d images ]; then 
+            git add images/
+            files_added=true
+            echo "✅ Added images directory"
+          fi
           
-          # Commit only if there are changes
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update mobiles data [automated]")
-          
-          # Set the remote URL with PAT for authentication
-          # Using the format username:token for better authentication with organizations
-          git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/affdeals/affdeals.github.io.git
-          git push
+          # Check if there are any changes to commit
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "💾 No changes to commit"
+          else
+            # Determine commit message based on time limit status
+            time_limit="${{ steps.time_config.outputs.time_limit }}"
+            
+            # Create appropriate commit message
+            if [ "${{ steps.run_script.outputs.files_updated }}" = "true" ]; then
+              if [ "${{ job.status }}" = "success" ]; then
+                commit_msg="Update mobiles data [automated] - Time limit: ${time_limit}"
+              else
+                commit_msg="Update mobiles data [automated] - Partial update due to time limit: ${time_limit}"
+              fi
+            else
+              commit_msg="Update mobiles data [automated] - No changes needed - Time limit: ${time_limit}"
+            fi
+            
+            git commit -m "${commit_msg}"
+            echo "✅ Committed with message: ${commit_msg}"
+            
+            # Set the remote URL with PAT for authentication
+            git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/affdeals/affdeals.github.io.git
+            git push
+            echo "✅ Changes pushed to repository"
+          fi

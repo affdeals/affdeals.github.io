@@ -25,6 +25,7 @@ from PIL import Image, ImageDraw
 import io
 import base64
 import tempfile
+from time_manager import TimeManager
 
 
 @contextlib.contextmanager
@@ -1723,8 +1724,12 @@ def update_existing_product(product_data, product_index, json_file_path):
 
 
 def main():
-    """Main function to scrape product images"""
-    print("=== Smartprix Mobile Image Scraper ===")
+    """Main function to scrape product images with time management"""
+    print("=== Smartprix Mobile Image Scraper with Time Management ===")
+    
+    # Initialize time manager
+    time_manager = TimeManager()
+    print(f"⏱️  Workflow time limit: {time_manager.format_time(time_manager.time_limit_seconds)}")
     
     print("Loading existing mobiles data...")
     
@@ -1767,11 +1772,25 @@ def main():
         skipped_count = 0
         
         for i, product in enumerate(products, 1):
+            # Check time limit before processing each product
+            if not time_manager.should_continue_processing():
+                print(f"\n🚨 Time limit approaching! Starting graceful shutdown...")
+                print(f"⏱️  Processed {processed_count + updated_count}/{total_products} products before timeout")
+                break
+            
             unique_id = product.get("unique_id")
             product_name = product.get("name", "Unknown")
             current_price = product.get("price", "")
             
             print(f"\nProcessing product {i}/{total_products}: {product_name}")
+            
+            # Log time status periodically (every 10 products)
+            if i % 10 == 0 or i == 1:
+                time_manager.log_time_status(
+                    current_item=f"Product {i}: {product_name}",
+                    total_items=total_products,
+                    processed_items=processed_count + updated_count
+                )
             
             # Check if this product already exists in update_mobiles.json
             existing_product = existing_products.get(unique_id)
@@ -1891,10 +1910,20 @@ def main():
                 else:
                     print(f"  Failed to append product {i}/{total_products} to JSON")
             
-            # Add small delay between requests
-            time.sleep(1)
+            # Add small delay between requests (with timeout checking)
+            if not time_manager.wait_with_timeout_check(1):
+                print(f"🚨 Time limit reached during processing delay. Starting graceful shutdown...")
+                break
         
-        print(f"\nProcessing complete!")
+        # Determine if processing was completed or interrupted
+        was_interrupted = not time_manager.should_continue_processing()
+        
+        if was_interrupted:
+            print(f"\n🚨 Processing interrupted due to time limit!")
+            print(f"⏱️  Completed {processed_count + updated_count}/{total_products} products")
+        else:
+            print(f"\n✅ Processing complete!")
+        
         print(f"✅ New products added: {processed_count}")
         print(f"🔄 Existing products updated: {updated_count}")
         print(f"⚠️  Skipped (no changes): {skipped_count} products")
@@ -1909,17 +1938,56 @@ def main():
         except:
             pass
         
-        if processed_count > 0 or updated_count > 0:
-            print(f"Changes made to update_mobiles.json!")
+        changes_made = processed_count > 0 or updated_count > 0
+        if changes_made:
+            print(f"💾 Changes made to update_mobiles.json!")
         else:
-            print("No changes needed - all products are up to date.")
+            print("💾 No changes needed - all processed products are up to date.")
+        
+        # Log final summary with time management
+        stats = {
+            "total_items": total_products,
+            "processed_items": processed_count + updated_count,
+            "new_items": processed_count,
+            "updated_items": updated_count,
+            "skipped_items": skipped_count,
+            "changes_saved": changes_made,
+            "interrupted": was_interrupted
+        }
+        time_manager.log_final_summary(stats)
     
     except KeyboardInterrupt:
-        print("\nScript interrupted by user. Current progress is already saved in update_mobiles.json")
+        print("\n🚨 Script interrupted by user.")
+        print("💾 Current progress is already saved in update_mobiles.json")
+        
+        # Log interruption summary
+        stats = {
+            "total_items": total_products,
+            "processed_items": processed_count + updated_count,
+            "new_items": processed_count,
+            "updated_items": updated_count,
+            "skipped_items": skipped_count,
+            "changes_saved": True,
+            "interrupted": True
+        }
+        time_manager.log_final_summary(stats)
     
     except Exception as e:
-        print(f"Error during scraping: {e}")
-        print("Current progress is already saved in update_mobiles.json")
+        print(f"❌ Error during scraping: {e}")
+        print("💾 Current progress is already saved in update_mobiles.json")
+        
+        # Log error summary
+        stats = {
+            "total_items": total_products,
+            "processed_items": processed_count + updated_count,
+            "new_items": processed_count,
+            "updated_items": updated_count,
+            "skipped_items": skipped_count,
+            "changes_saved": True,
+            "interrupted": True,
+            "error": str(e)
+        }
+        time_manager.log_final_summary(stats)
     
     finally:
         # Close the driver

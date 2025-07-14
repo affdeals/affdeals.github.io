@@ -1,0 +1,85 @@
+name: Delete Pages Build Deployment Tasks
+
+on:
+  schedule:
+    # Run every day at 6 AM IST (12:30 AM UTC)
+    - cron: '30 0 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  delete-pages-builds:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+      
+      - name: Delete pages-build-deployment workflow runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          # Get the repository info
+          REPO_OWNER=$(echo ${{ github.repository }} | cut -d'/' -f1)
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          
+          echo "Searching for pages-build-deployment workflow runs..."
+          
+          # Get all workflow runs for pages-build-deployment
+          WORKFLOW_RUNS=$(gh api repos/$REPO_OWNER/$REPO_NAME/actions/runs \
+            --jq '.workflow_runs[] | select(.name == "pages-build-deployment") | .id' \
+            --paginate)
+          
+          if [ -z "$WORKFLOW_RUNS" ]; then
+            echo "No pages-build-deployment workflow runs found."
+            exit 0
+          fi
+          
+          echo "Found workflow runs to delete:"
+          echo "$WORKFLOW_RUNS"
+          
+          # Delete each workflow run
+          for run_id in $WORKFLOW_RUNS; do
+            echo "Deleting workflow run: $run_id"
+            gh api repos/$REPO_OWNER/$REPO_NAME/actions/runs/$run_id -X DELETE
+            if [ $? -eq 0 ]; then
+              echo "Successfully deleted workflow run: $run_id"
+            else
+              echo "Failed to delete workflow run: $run_id"
+            fi
+            # Small delay to avoid rate limiting
+            sleep 1
+          done
+          
+          echo "Cleanup completed!"
+      
+      - name: Delete pages-build-deployment workflow (if exists)
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          # Get the repository info
+          REPO_OWNER=$(echo ${{ github.repository }} | cut -d'/' -f1)
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          
+          echo "Checking for pages-build-deployment workflow file..."
+          
+          # Try to find and delete the workflow file itself
+          WORKFLOW_ID=$(gh api repos/$REPO_OWNER/$REPO_NAME/actions/workflows \
+            --jq '.workflows[] | select(.name == "pages-build-deployment") | .id' 2>/dev/null || echo "")
+          
+          if [ -n "$WORKFLOW_ID" ]; then
+            echo "Found pages-build-deployment workflow with ID: $WORKFLOW_ID"
+            
+            # Disable the workflow first
+            gh api repos/$REPO_OWNER/$REPO_NAME/actions/workflows/$WORKFLOW_ID/disable -X PUT
+            echo "Workflow disabled"
+            
+            # Note: GitHub doesn't allow deleting workflows via API
+            # The workflow file would need to be removed from the repository manually
+            echo "Note: To completely remove the workflow, delete the workflow file from .github/workflows/"
+          else
+            echo "No pages-build-deployment workflow found."
+          fi

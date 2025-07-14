@@ -12,7 +12,7 @@ import requests
 import re
 import shutil
 import unicodedata
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote_plus
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -1443,41 +1443,18 @@ def search_amazon_for_product(driver, product_name, expected_price):
     try:
         print(f"  Searching Amazon.in for product: {product_name}")
         
-        # Navigate to Amazon.in
-        driver.get("https://www.amazon.in")
-        time.sleep(3)
+        # Create direct search URL by properly encoding the product name
+        # Use quote_plus to handle spaces and special characters properly
+        search_query = quote_plus(product_name)
+        search_url = f"https://www.amazon.in/s?k={search_query}"
         
-        # Find search box and search for the product
-        try:
-            search_box = None
-            
-            # First try CSS selector
-            try:
-                search_box = driver.find_element(By.CSS_SELECTOR, "#twotabsearchtextbox")
-                print(f"    Found search box using CSS selector")
-            except:
-                # If CSS selector fails, try XPath as fallback
-                try:
-                    search_box = driver.find_element(By.XPATH, '//*[@id="twotabsearchtextbox"]')
-                    print(f"    Found search box using XPath fallback")
-                except:
-                    print(f"    Error: Could not find Amazon search box using either CSS selector or XPath")
-                    return None, False
-            
-            if search_box:
-                search_box.clear()
-                search_box.send_keys(product_name)
-                search_box.send_keys(Keys.RETURN)
-                time.sleep(5)
-                
-                print(f"    Search completed for: {product_name}")
-            else:
-                print(f"    Error: Search box not found")
-                return None, False
-            
-        except Exception as e:
-            print(f"    Error searching on Amazon: {e}")
-            return None, False
+        print(f"    Using direct search URL: {search_url}")
+        
+        # Navigate directly to search results
+        driver.get(search_url)
+        time.sleep(5)  # Wait for search results to load
+        
+        print(f"    Search completed for: {product_name}")
         
         # Look for product results
         try:
@@ -1600,7 +1577,7 @@ def find_amazon_product_by_search(driver, product_name, expected_price):
 
 
 def get_existing_products():
-    """Get dictionary of existing products from update_mobiles.json with their prices"""
+    """Get dictionary of existing products from update_mobiles.json with their prices and listed status"""
     try:
         with open("update_mobiles.json", "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -1610,6 +1587,7 @@ def get_existing_products():
             if product.get("id"):
                 existing_products[product["id"]] = {
                     "price": product.get("price", ""),
+                    "listed": product.get("listed", "no"),  # Include listed status
                     "index": data["products"].index(product)  # Store index for updating
                 }
         
@@ -1747,7 +1725,7 @@ def main():
     if not cleanup_discontinued_products(mobiles_data):
         print("Warning: Failed to cleanup discontinued products. Continuing...")
     
-    # Get existing products to check for duplicates and price changes
+    # Get existing products to check for duplicates, price changes, and listed status
     print("Checking for existing products in update_mobiles.json...")
     existing_products = get_existing_products()
     print(f"Found {len(existing_products)} existing products in update_mobiles.json")
@@ -1799,12 +1777,16 @@ def main():
             
             if existing_product:
                 existing_price = existing_product.get("price", "")
+                existing_listed = existing_product.get("listed", "no")
                 product_index = existing_product.get("index")
                 
-                if current_price == existing_price:
-                    print(f"  ⚠️  Product '{unique_id}' already exists with same price ({current_price}) - skipping")
+                if current_price == existing_price and existing_listed != "no":
+                    print(f"  ⚠️  Product '{unique_id}' already exists with same price ({current_price}) and listed status is '{existing_listed}' - skipping")
                     skipped_count += 1
                     continue
+                elif current_price == existing_price and existing_listed == "no":
+                    print(f"  🔄 Product '{unique_id}' exists with same price ({current_price}) but listed status is 'no' - re-scraping")
+                    should_update = True
                 else:
                     print(f"  🔄 Product '{unique_id}' exists but price changed: '{existing_price}' -> '{current_price}' - updating")
                     should_update = True

@@ -27,11 +27,15 @@ jobs:
         run: |
           if [ -f "time.json" ]; then
             TIME_VALUE=$(jq -r '.[0].time' time.json)
+            GRACE_VALUE=$(jq -r '.[0].grace // "00:05"' time.json)
             echo "time_limit=${TIME_VALUE}" >> $GITHUB_OUTPUT
+            echo "grace_period=${GRACE_VALUE}" >> $GITHUB_OUTPUT
             echo "⏱️  Time limit loaded from time.json: ${TIME_VALUE}"
+            echo "⏱️  Grace period loaded from time.json: ${GRACE_VALUE}"
           else
             echo "time_limit=05:00" >> $GITHUB_OUTPUT
-            echo "⚠️  time.json not found, using default: 05:00"
+            echo "grace_period=00:05" >> $GITHUB_OUTPUT
+            echo "⚠️  time.json not found, using defaults: time=05:00, grace=00:05"
           fi
       
       - name: Set up Python
@@ -57,6 +61,7 @@ jobs:
         id: run_script
         run: |
           echo "🚀 Starting update_mobiles.py with time limit: ${{ steps.time_config.outputs.time_limit }}"
+          echo "⏱️  Grace period: ${{ steps.time_config.outputs.grace_period }}"
           echo "⏱️  Workflow started at: $(date)"
           
           # Run the script with time management
@@ -77,6 +82,7 @@ jobs:
           echo "📊 WORKFLOW EXECUTION SUMMARY"
           echo "=================================================="
           echo "⏱️  Time Limit: ${{ steps.time_config.outputs.time_limit }}"
+          echo "⏱️  Grace Period: ${{ steps.time_config.outputs.grace_period }}"
           echo "🗓️  Execution Date: $(date)"
           echo "💾 Files Updated: ${{ steps.run_script.outputs.files_updated }}"
           echo "🔄 Workflow Status: ${{ job.status }}"
@@ -126,16 +132,17 @@ jobs:
           else
             # Determine commit message based on time limit status
             time_limit="${{ steps.time_config.outputs.time_limit }}"
+            grace_period="${{ steps.time_config.outputs.grace_period }}"
             
             # Create appropriate commit message
             if [ "${{ steps.run_script.outputs.files_updated }}" = "true" ]; then
               if [ "${{ job.status }}" = "success" ]; then
-                commit_msg="Update mobiles data [automated] - Time limit: ${time_limit}"
+                commit_msg="Update mobiles data [automated] - Time: ${time_limit}, Grace: ${grace_period}"
               else
-                commit_msg="Update mobiles data [automated] - Partial update due to time limit: ${time_limit}"
+                commit_msg="Update mobiles data [automated] - Partial update - Time: ${time_limit}, Grace: ${grace_period}"
               fi
             else
-              commit_msg="Update mobiles data [automated] - No changes needed - Time limit: ${time_limit}"
+              commit_msg="Update mobiles data [automated] - No changes needed - Time: ${time_limit}, Grace: ${grace_period}"
             fi
             
             git commit -m "${commit_msg}"

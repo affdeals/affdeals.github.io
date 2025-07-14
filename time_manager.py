@@ -19,7 +19,7 @@ class TimeManager:
         self.time_config_file = time_config_file
         self.start_time = time.time()
         self.time_limit_seconds = 0
-        self.grace_period_seconds = 300  # 5 minutes grace period for graceful shutdown
+        self.grace_period_seconds = 0  # Will be loaded from time.json
         self.shutdown_requested = False
         
         # Load time configuration
@@ -45,30 +45,53 @@ class TimeManager:
         """Load time configuration from time.json"""
         try:
             if not os.path.exists(self.time_config_file):
-                print(f"Warning: {self.time_config_file} not found. Using default 5 hours.")
-                self.time_limit_seconds = 5 * 3600  # 5 hours default
+                print(f"Warning: {self.time_config_file} not found. Using defaults.")
+                self.time_limit_seconds = self._parse_time_string("05:00")  # 5 hours default
+                self.grace_period_seconds = self._parse_time_string("00:05")  # 5 minutes default
                 return False
             
             with open(self.time_config_file, 'r', encoding='utf-8') as f:
                 config = json.load(f)
             
             if not isinstance(config, list) or len(config) == 0:
-                print(f"Warning: Invalid format in {self.time_config_file}. Using default 5 hours.")
-                self.time_limit_seconds = 5 * 3600
+                print(f"Warning: Invalid format in {self.time_config_file}. Using defaults.")
+                self.time_limit_seconds = self._parse_time_string("05:00")
+                self.grace_period_seconds = self._parse_time_string("00:05")
                 return False
             
+            # Load time limit
             time_str = config[0].get("time", "05:00")
-            hours, minutes = map(int, time_str.split(':'))
-            self.time_limit_seconds = (hours * 3600) + (minutes * 60)
+            self.time_limit_seconds = self._parse_time_string(time_str)
             
-            print(f"✅ Time limit loaded: {hours}h {minutes}m ({self.time_limit_seconds} seconds)")
+            # Load grace period
+            grace_str = config[0].get("grace", "00:05")
+            self.grace_period_seconds = self._parse_time_string(grace_str)
+            
+            # Display loaded configuration
+            time_hours, time_minutes = divmod(self.time_limit_seconds, 3600)
+            time_minutes = time_minutes // 60
+            grace_hours, grace_minutes = divmod(self.grace_period_seconds, 3600)
+            grace_minutes = grace_minutes // 60
+            
+            print(f"✅ Time limit loaded: {time_hours}h {time_minutes}m ({self.time_limit_seconds} seconds)")
+            print(f"✅ Grace period loaded: {grace_hours}h {grace_minutes}m ({self.grace_period_seconds} seconds)")
             return True
             
         except Exception as e:
             print(f"Error loading time config: {e}")
-            print("Using default 5 hours.")
-            self.time_limit_seconds = 5 * 3600
+            print("Using defaults.")
+            self.time_limit_seconds = self._parse_time_string("05:00")
+            self.grace_period_seconds = self._parse_time_string("00:05")
             return False
+    
+    def _parse_time_string(self, time_str: str) -> int:
+        """Parse time string in HH:MM format to seconds"""
+        try:
+            hours, minutes = map(int, time_str.split(':'))
+            return (hours * 3600) + (minutes * 60)
+        except Exception as e:
+            print(f"Error parsing time string '{time_str}': {e}")
+            return 0
     
     def get_elapsed_time(self) -> float:
         """Get elapsed time since workflow start in seconds"""

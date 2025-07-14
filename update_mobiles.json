@@ -4,9 +4,9 @@
       "id": "asus_rog_phone_5s_5g_12gb_ram_256gb",
       "name": "Asus ROG Phone 5s 5G (12GB RAM + 256GB)",
       "count": 1,
-      "listed": "no",
-      "price": "₹3,599",
-      "mrp": "",
+      "listed": "yes",
+      "price": "₹39,599",
+      "mrp": "₹63,999",
       "url": "https://www.smartprix.com/mobiles/asus-rog-phone-5s-5g-12gb-ram-256gb-ppd10rvpyj1d",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/asus_rog_phone_5s_5g_12gb_ram_256gb/image_1.jpg",
@@ -27,7 +27,7 @@
           "price": "₹39,599"
         }
       ],
-      "asin": null,
+      "asin": "B09T3GYPWC",
       "spec_score": "86",
       "features": {
         "GENERAL": [

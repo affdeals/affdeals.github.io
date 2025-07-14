@@ -1337,84 +1337,7 @@ def scrape_spec_score(driver, product_url, retries=3):
     return None
 
 
-def scrape_store_links(driver, product_url, retries=3):
-    """Scrape store links from product page using specific XPath patterns"""
-    for attempt in range(retries):
-        try:
-            print(f"  Scraping store links from: {product_url}")
-            driver.get(product_url)
-            
-            # Wait for page to load
-            wait = WebDriverWait(driver, 10)
-            wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-            time.sleep(3)
-            
-            store_links = []
-            
-            # Try the specific XPath patterns provided
-            xpath_patterns = [
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/div[1]/a[1]",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[1]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[2]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[3]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[4]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[5]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[6]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[7]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[8]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[9]/a",
-                "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[10]/a"
-            ]
-            
-            for i, xpath in enumerate(xpath_patterns):
-                try:
-                    element = driver.find_element(By.XPATH, xpath)
-                    href = element.get_attribute("href")
-                    if href:
-                        store_links.append(href)
-                        print(f"    Found store link {i+1}: {href}")
-                except NoSuchElementException:
-                    continue
-                except Exception as e:
-                    print(f"    Error finding element with XPath {xpath}: {e}")
-                    continue
-            
-            # Try to find more store links dynamically if the specific ones don't work
-            if not store_links:
-                print("    No store links found with specific XPaths, trying alternative patterns...")
-                alternative_xpaths = [
-                    "//div[contains(@class, 'store')]//a[@href]",
-                    "//div[contains(@class, 'buy')]//a[@href]",
-                    "//div[contains(@class, 'shop')]//a[@href]",
-                    "//a[contains(@href, 'amazon')]",
-                    "//a[contains(@href, 'flipkart')]",
-                    "//a[contains(@href, 'myntra')]",
-                    "//a[contains(@href, 'ajio')]"
-                ]
-                
-                for alt_xpath in alternative_xpaths:
-                    try:
-                        elements = driver.find_elements(By.XPATH, alt_xpath)
-                        for element in elements[:10]:  # Limit to first 10 to avoid too many links
-                            href = element.get_attribute("href")
-                            if href and href not in store_links:
-                                store_links.append(href)
-                                print(f"    Found alternative store link: {href}")
-                    except Exception as e:
-                        continue
-            
-            print(f"  Found {len(store_links)} total store links")
-            return store_links
-            
-        except Exception as e:
-            print(f"  Error scraping store links (attempt {attempt + 1}/{retries}): {e}")
-            if attempt < retries - 1:
-                time.sleep(2)
-            else:
-                print(f"  Failed to scrape store links after {retries} attempts")
-                return []
-    
-    return []
+
 
 
 def get_amazon_mrp_from_asin(driver, asin):
@@ -1470,106 +1393,166 @@ def get_amazon_mrp(driver):
         return ""
 
 
-def find_amazon_link_and_extract_asin(driver, store_links):
-    """Find Amazon.in link from store links and extract ASIN"""
-    potential_amazon_links = []
+def normalize_price(price_str):
+    """Normalize price string for comparison"""
+    if not price_str:
+        return ""
     
-    # Filter for potential Amazon links (including smartprix redirect links)
-    for link in store_links:
-        if 'amazon' in link.lower() or 'l.smartprix.com' in link.lower():
-            potential_amazon_links.append(link)
-    
-    if not potential_amazon_links:
-        print("  No potential Amazon links found in store links")
-        return None, False
-    
-    print(f"  Found {len(potential_amazon_links)} potential Amazon links")
-    
-    # Try each potential Amazon link to see which one redirects to amazon.in
-    for i, amazon_link in enumerate(potential_amazon_links):
+    # Remove currency symbols and common formatting
+    normalized = price_str.strip()
+    # Remove commas and spaces
+    normalized = normalized.replace(',', '').replace(' ', '')
+    # Extract only numbers and decimal point
+    import re
+    numbers = re.findall(r'[\d.]+', normalized)
+    if numbers:
+        return numbers[0]
+    return ""
+
+
+def compare_prices(price1, price2, tolerance_percent=10):
+    """Compare two prices with tolerance for slight variations"""
+    try:
+        # Normalize both prices
+        norm_price1 = normalize_price(price1)
+        norm_price2 = normalize_price(price2)
+        
+        if not norm_price1 or not norm_price2:
+            return False
+        
+        # Convert to float for comparison
+        float_price1 = float(norm_price1)
+        float_price2 = float(norm_price2)
+        
+        # Calculate percentage difference
+        avg_price = (float_price1 + float_price2) / 2
+        if avg_price == 0:
+            return False
+        
+        percent_diff = abs(float_price1 - float_price2) / avg_price * 100
+        
+        print(f"    Price comparison: {price1} vs {price2} (difference: {percent_diff:.1f}%)")
+        
+        return percent_diff <= tolerance_percent
+        
+    except Exception as e:
+        print(f"    Error comparing prices: {e}")
+        return False
+
+
+def search_amazon_for_product(driver, product_name, expected_price):
+    """Search Amazon.in for product by name and verify by price matching"""
+    try:
+        print(f"  Searching Amazon.in for product: {product_name}")
+        
+        # Navigate to Amazon.in
+        driver.get("https://www.amazon.in")
+        time.sleep(3)
+        
+        # Find search box and search for the product
         try:
-            print(f"    Checking link {i+1}: {amazon_link}")
+            search_box = driver.find_element(By.ID, "twotabsearchtextbox")
+            search_box.clear()
+            search_box.send_keys(product_name)
+            search_box.send_keys(Keys.RETURN)
+            time.sleep(5)
             
-            # Visit the link
-            driver.get(amazon_link)
-            time.sleep(5)  # Give more time for redirects
+            print(f"    Search completed for: {product_name}")
             
-            # Check if we're on amazon.in
-            current_url = driver.current_url
-            print(f"    Redirected to: {current_url}")
+        except Exception as e:
+            print(f"    Error searching on Amazon: {e}")
+            return None, False
+        
+        # Look for product results
+        try:
+            # Try to find product results
+            product_elements = driver.find_elements(By.XPATH, "//div[@data-component-type='s-search-result']")
             
-            if 'amazon.in' in current_url:
-                print(f"    Found Amazon.in redirect!")
-                
-                # Extract ASIN from the URL
-                asin = extract_asin_from_amazon_url(current_url)
-                if asin:
-                    print(f"    Extracted ASIN: {asin}")
+            if not product_elements:
+                print("    No search results found")
+                return None, False
+            
+            print(f"    Found {len(product_elements)} search results")
+            
+            # Check first few results for price matching
+            for i, product_element in enumerate(product_elements[:5]):  # Check first 5 results
+                try:
+                    print(f"    Checking result {i+1}...")
                     
-                    # Try to extract MRP from current page first
-                    mrp = get_amazon_mrp(driver)
+                    # Get the product link
+                    product_link = product_element.find_element(By.XPATH, ".//a[contains(@href, '/dp/')]")
+                    product_url = product_link.get_attribute("href")
                     
-                    # If MRP not found on redirect page, try navigating directly to Amazon
-                    if not mrp:
-                        print(f"    MRP not found via redirect, trying direct navigation...")
-                        mrp = get_amazon_mrp_from_asin(driver, asin)
-                    
-                    return {"asin": asin, "mrp": mrp}, True
-                else:
-                    print(f"    Could not extract ASIN from URL, trying to find ASIN in page content...")
-                    # Try to find ASIN in page content
-                    try:
-                        # Look for products with ASIN in the page
-                        asin_elements = driver.find_elements(By.XPATH, "//div[@data-asin]")
-                        if asin_elements:
-                            for element in asin_elements:
-                                asin = element.get_attribute("data-asin")
-                                if asin and len(asin) == 10:  # ASIN is typically 10 characters
-                                    print(f"    Found ASIN in page data: {asin}")
-                                    
-                                    # Try to extract MRP from current page first
-                                    mrp = get_amazon_mrp(driver)
-                                    
-                                    # If MRP not found, try navigating directly to Amazon
-                                    if not mrp:
-                                        print(f"    MRP not found on current page, trying direct navigation...")
-                                        mrp = get_amazon_mrp_from_asin(driver, asin)
-                                    
-                                    return {"asin": asin, "mrp": mrp}, True
-                        
-                        # Try alternative methods to find ASIN
-                        asin_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/dp/')]")
-                        if asin_links:
-                            for link in asin_links[:3]:  # Check first 3 links
-                                href = link.get_attribute("href")
-                                if href:
-                                    asin = extract_asin_from_amazon_url(href)
-                                    if asin:
-                                        print(f"    Found ASIN in product link: {asin}")
-                                        
-                                        # Try to extract MRP from current page first
-                                        mrp = get_amazon_mrp(driver)
-                                        
-                                        # If MRP not found, try navigating directly to Amazon
-                                        if not mrp:
-                                            print(f"    MRP not found on current page, trying direct navigation...")
-                                            mrp = get_amazon_mrp_from_asin(driver, asin)
-                                        
-                                        return {"asin": asin, "mrp": mrp}, True
-                    except Exception as e:
-                        print(f"    Error finding ASIN in page: {e}")
+                    if not product_url:
                         continue
                     
-                    print(f"    Could not extract ASIN from page content")
-            else:
-                print(f"    Link does not redirect to amazon.in")
-                
+                    # Extract ASIN from URL
+                    asin = extract_asin_from_amazon_url(product_url)
+                    if not asin:
+                        continue
+                    
+                    # Get price from search results
+                    price_elements = product_element.find_elements(By.XPATH, ".//span[@class='a-price-whole']")
+                    if not price_elements:
+                        # Try alternative price selectors
+                        price_elements = product_element.find_elements(By.XPATH, ".//span[contains(@class, 'a-price') and contains(@class, 'a-text-price')]//span[@class='a-offscreen']")
+                    
+                    if price_elements:
+                        amazon_price = price_elements[0].text.strip()
+                        print(f"      Found product with price: {amazon_price}")
+                        
+                        # Compare prices
+                        if compare_prices(expected_price, amazon_price):
+                            print(f"      ✓ Price match found! Navigating to product page...")
+                            
+                            # Navigate to product page to get detailed info
+                            driver.get(product_url)
+                            time.sleep(5)
+                            
+                            # Extract MRP from product page
+                            mrp = get_amazon_mrp(driver)
+                            
+                            return {"asin": asin, "mrp": mrp}, True
+                        else:
+                            print(f"      ✗ Price mismatch, continuing search...")
+                    else:
+                        print(f"      No price found for this result")
+                        
+                except Exception as e:
+                    print(f"      Error checking result {i+1}: {e}")
+                    continue
+            
+            print("    No price-matched products found in search results")
+            return None, False
+            
         except Exception as e:
-            print(f"    Error checking link {i+1}: {e}")
-            continue
+            print(f"    Error processing search results: {e}")
+            return None, False
+            
+    except Exception as e:
+        print(f"    Error searching Amazon for product: {e}")
+        return None, False
+
+
+def find_amazon_product_by_search(driver, product_name, expected_price):
+    """Find Amazon product by searching and verifying price match"""
+    print(f"  Searching Amazon.in independently for: {product_name}")
+    print(f"  Expected price for verification: {expected_price}")
     
-    print("  No valid Amazon.in links found or ASIN could not be extracted")
-    return None, False
+    # Search Amazon.in for the product
+    amazon_data, found = search_amazon_for_product(driver, product_name, expected_price)
+    
+    if found and amazon_data:
+        print(f"  ✓ Found verified Amazon product!")
+        print(f"  ASIN: {amazon_data['asin']}")
+        if amazon_data['mrp']:
+            print(f"  MRP: {amazon_data['mrp']}")
+        else:
+            print(f"  MRP not found (might be same as current price)")
+        return amazon_data, True
+    else:
+        print(f"  ✗ No verified Amazon product found")
+        return None, False
 
 
 def clear_existing_data():
@@ -1691,24 +1674,23 @@ def main():
                 else:
                     print("  No Features found")
                 
-                # Scrape store links and extract Amazon ASIN and MRP
-                print("  Scraping store links to find Amazon ASIN...")
-                store_links = scrape_store_links(driver, product["url"])
-                if store_links:
-                    amazon_data, amazon_found = find_amazon_link_and_extract_asin(driver, store_links)
-                    if amazon_found and amazon_data:
-                        updated_product["listed"] = "yes"
-                        updated_product["asin"] = amazon_data["asin"]
-                        updated_product["mrp"] = amazon_data["mrp"]
-                        print(f"  Added ASIN: {amazon_data['asin']}")
-                        if amazon_data["mrp"]:
-                            print(f"  Added MRP: {amazon_data['mrp']}")
-                        else:
-                            print(f"  MRP not found (might be same as current price)")
+                # Search Amazon.in independently and verify by price matching
+                print("  Searching Amazon.in independently for product...")
+                amazon_data, amazon_found = find_amazon_product_by_search(driver, product["name"], product["price"])
+                if amazon_found and amazon_data:
+                    updated_product["listed"] = "yes"
+                    updated_product["asin"] = amazon_data["asin"]
+                    updated_product["mrp"] = amazon_data["mrp"]
+                    print(f"  Added ASIN: {amazon_data['asin']}")
+                    if amazon_data["mrp"]:
+                        print(f"  Added MRP: {amazon_data['mrp']}")
                     else:
-                        print("  No Amazon ASIN found")
+                        print(f"  MRP not found (might be same as current price)")
                 else:
-                    print("  No store links found")
+                    updated_product["listed"] = "no"
+                    updated_product["asin"] = None
+                    updated_product["mrp"] = ""
+                    print("  No verified Amazon product found - marked as not listed")
             else:
                 print("  No URL or unique_id found for this product")
             

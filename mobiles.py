@@ -132,6 +132,16 @@ def generate_unique_id(product_name):
     return unique_id
 
 
+def clear_json_file(json_file_path):
+    """Clear the content of the JSON file at the start of the scraping process"""
+    try:
+        with open(json_file_path, "w", encoding="utf-8") as f:
+            f.write("")  # Clear the file content
+        print(f"Cleared content of {json_file_path}")
+    except Exception as e:
+        print(f"Error clearing content of {json_file_path}: {e}")
+
+
 def initialize_json_file(total_count, json_file_path):
     """Initialize JSON file with total count and empty products array"""
     initial_data = {
@@ -408,6 +418,9 @@ def scrape_smartprix_mobiles(debug_mode=False):
     total_count_xpath = "/html/body/div[1]/main/div[1]/div[2]/div[1]/div/div[1]"
     load_more_xpath = "/html/body/div[1]/main/div[1]/div[2]/div[3]"
     json_file_path = "mobiles.json"
+    
+    # Clear the JSON file at the beginning of the run
+    clear_json_file(json_file_path)
     
     # Setup driver
     driver = setup_driver()

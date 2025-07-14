@@ -5043,9 +5043,9 @@
     {
       "id": "iqoo_neo_10r",
       "name": "iQOO Neo 10R",
-      "listed": "no",
+      "listed": "yes",
       "price": "₹26,998",
-      "mrp": "",
+      "mrp": "₹31,999",
       "url": "https://www.smartprix.com/mobiles/iqoo-neo-10r-ppd1bm0myepb",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10r/image_1.jpg",
@@ -5070,7 +5070,7 @@
           "price": "₹30,998"
         }
       ],
-      "asin": null,
+      "asin": "B0DW478NDF",
       "spec_score": "82",
       "features": {
         "GENERAL": [
@@ -5421,6 +5421,1129 @@
           {
             "specification": "Reverse Charging",
             "value": "Yes, 7.5W Reverse Charging"
+          }
+        ]
+      }
+    },
+    {
+      "id": "iqoo_neo_10",
+      "name": "iQOO Neo 10",
+      "listed": "no",
+      "price": "₹31,998",
+      "mrp": "",
+      "url": "https://www.smartprix.com/mobiles/iqoo-neo-10-ppd1z84s265q",
+      "images": [
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_1.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_2.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_3.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_4.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_5.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_6.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/iqoo_neo_10/image_7.jpg"
+      ],
+      "variants": [
+        {
+          "size": "8GB+128GB",
+          "price": "₹31,998"
+        },
+        {
+          "size": "8GB+256GB",
+          "price": "₹33,998"
+        },
+        {
+          "size": "12GB+256GB",
+          "price": "₹35,998"
+        }
+      ],
+      "asin": null,
+      "spec_score": "84",
+      "features": {
+        "GENERAL": [
+          {
+            "specification": "Country of Origin",
+            "value": "India"
+          },
+          {
+            "specification": "Model",
+            "value": "V2453A"
+          },
+          {
+            "specification": "Sim Type",
+            "value": "Dual Sim, GSM+GSM (Hybrid Slot)"
+          },
+          {
+            "specification": "Dual Sim",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sim Size",
+            "value": "Nano SIM"
+          },
+          {
+            "specification": "Device Type",
+            "value": "Smartphone"
+          },
+          {
+            "specification": "OS Updates",
+            "value": "3 years"
+          },
+          {
+            "specification": "Security Updates",
+            "value": "4 years"
+          },
+          {
+            "specification": "Release Date",
+            "value": "May 26, 2025"
+          }
+        ],
+        "DESIGN": [
+          {
+            "specification": "Dimensions",
+            "value": "75.88 x 163.72 x 8.09 mm"
+          },
+          {
+            "specification": "Weight",
+            "value": "206 g"
+          },
+          {
+            "specification": "Bezel less",
+            "value": "No"
+          },
+          {
+            "specification": "Colors",
+            "value": "Inferno Red, Titanium Chrome"
+          }
+        ],
+        "DISPLAY": [
+          {
+            "specification": "Type",
+            "value": "Color AMOLED Screen (1B Colors)"
+          },
+          {
+            "specification": "Touch",
+            "value": "Yes, 360 Hz Touch Sampling Rate"
+          },
+          {
+            "specification": "Size",
+            "value": "6.78 inches, 1260 x 2800 pixels, 144 Hz"
+          },
+          {
+            "specification": "Aspect Ratio",
+            "value": "20:9"
+          },
+          {
+            "specification": "PPI",
+            "value": "~ 453 PPI"
+          },
+          {
+            "specification": "Screen to Body Ratio",
+            "value": "~ 89.3%"
+          },
+          {
+            "specification": "Brightness",
+            "value": "5500 nits (peak), 2000nits Global"
+          },
+          {
+            "specification": "Features",
+            "value": "Always-on display, 3000Hz Instant Touch Sampling Rate, 4320hz PWM Dimming"
+          },
+          {
+            "specification": "Notch",
+            "value": "Yes, Punch Hole"
+          }
+        ],
+        "MEMORY": [
+          {
+            "specification": "RAM",
+            "value": "8 GB"
+          },
+          {
+            "specification": "RAM Type",
+            "value": "LPDDR5X Ultra"
+          },
+          {
+            "specification": "Storage",
+            "value": "128 GB"
+          },
+          {
+            "specification": "Storage Type",
+            "value": "UFS"
+          }
+        ],
+        "CONNECTIVITY": [
+          {
+            "specification": "GPRS",
+            "value": "Yes"
+          },
+          {
+            "specification": "EDGE",
+            "value": "Yes"
+          },
+          {
+            "specification": "3G",
+            "value": "Yes"
+          },
+          {
+            "specification": "4G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G Bands",
+            "value": "5G NSA:n1/n3/n5/n7/n8/n20/n28A/n28B/n38/n40/n41/n77/n78: 5G SA: n1/n3/n5/n7/n8/n18/n20/n26/n28A/n28B/n38/n40/n41/n48/n77/n78"
+          },
+          {
+            "specification": "VoLTE",
+            "value": "Yes, Dual Stand-By"
+          },
+          {
+            "specification": "Wifi",
+            "value": "Yes, with wifi-hotspot"
+          },
+          {
+            "specification": "Wifi Version",
+            "value": "Wi-Fi 802.11 a/b/g/n/ac/6/7, dual-band"
+          },
+          {
+            "specification": "Bluetooth",
+            "value": "Yes, v5.4, A2DP, LE, aptX HD"
+          },
+          {
+            "specification": "USB",
+            "value": "Yes, USB-C v2.0"
+          },
+          {
+            "specification": "USB Features",
+            "value": "USB Tethering, USB on-the-go, USB Charging"
+          },
+          {
+            "specification": "IR Blaster",
+            "value": "Yes"
+          }
+        ],
+        "PERFORMANCE": [
+          {
+            "specification": "AnTuTu Score",
+            "value": "1,960,780 (Total) (v10)\n452,848 (CPU)\n796,246 (GPU)\n394,474 (Memory)\n317,212 (UX)"
+          },
+          {
+            "specification": "AnTuTu Storage Score",
+            "value": "187,414"
+          },
+          {
+            "specification": "Geekbench Score",
+            "value": "6,541 (Multi Core) (v6)\n2,064 (Single Core)\n13,920 (OpenCL)\n18,816 (Vulkan)"
+          },
+          {
+            "specification": "3DMark Score",
+            "value": "3,499 (Wild Life Extreme)"
+          }
+        ],
+        "EXTRA": [
+          {
+            "specification": "GPS",
+            "value": "GPS; GLONASS; GALILEO; BeiDou; NavIC; GNSS, QZSS"
+          },
+          {
+            "specification": "Fingerprint Sensor",
+            "value": "Yes, In Display"
+          },
+          {
+            "specification": "Face Unlock",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sensors",
+            "value": "Accelerometer, Ambient Light Sensor, Proximity Sensor, E-compass, Gyroscope Sensor"
+          },
+          {
+            "specification": "3.5mm Headphone Jack",
+            "value": "No"
+          },
+          {
+            "specification": "NFC",
+            "value": "Yes"
+          },
+          {
+            "specification": "AI Features",
+            "value": "AI Erase, Circle to Search, AI Image Expander, AI Photo Enhance, Live Call Translation, AI Note Assist"
+          },
+          {
+            "specification": "Water Resistance",
+            "value": "Yes"
+          },
+          {
+            "specification": "IP Rating",
+            "value": "IP65"
+          },
+          {
+            "specification": "Dust Resistant",
+            "value": "Yes"
+          },
+          {
+            "specification": "Extra Features",
+            "value": "iQOO Q1 Supercomputing Chip, Bypass Charging, Game Customized Sound Effects, X-Axis Linear Motor"
+          }
+        ],
+        "CAMERA": [
+          {
+            "specification": "Rear Camera",
+            "value": "50 MP ƒ/1.79 (Wide Angle)\n8 MP ƒ/2.2 (Ultra Wide)"
+          },
+          {
+            "specification": "Camera Sensor",
+            "value": "Sony"
+          },
+          {
+            "specification": "OIS",
+            "value": "Yes"
+          },
+          {
+            "specification": "Auto Focus",
+            "value": "Yes"
+          },
+          {
+            "specification": "Features",
+            "value": "Snapshot, Night, Portrait, Photo, Video,50MP, Panorama, Slow Motion, Time Lapse, Pro, Supermoon, Ultra HD Document, Long Exposure, Live Photo, Fish Eye"
+          },
+          {
+            "specification": "Video Recording",
+            "value": "4K @ 60 fps UHD, 1080p @ 60 fps FHD"
+          },
+          {
+            "specification": "Flash",
+            "value": "Yes, LED"
+          },
+          {
+            "specification": "Front Camera",
+            "value": "32 MP ƒ/2.45 (Wide Angle)\nPunch Hole, Screen Flash"
+          },
+          {
+            "specification": "Front Video Recording",
+            "value": "1080p @ 60 fps FHD, 4K @ 60 fps UHD"
+          }
+        ],
+        "TECHNICAL": [
+          {
+            "specification": "OS",
+            "value": "Android v15"
+          },
+          {
+            "specification": "Custom UI",
+            "value": "Funtouch OS 15"
+          },
+          {
+            "specification": "Chipset",
+            "value": "Qualcomm Snapdragon 8s Gen4"
+          },
+          {
+            "specification": "CPU",
+            "value": "3.2 GHz, Octa Core Processor"
+          },
+          {
+            "specification": "Core Details",
+            "value": "1xCortex-X4@ 3.20 GHz & 3xCortex-A720@3.00 GHz& 2xA720 @2.80 GHz, & 2xA720@2.02 GHz"
+          },
+          {
+            "specification": "GPU",
+            "value": "Adreno 825"
+          },
+          {
+            "specification": "Java",
+            "value": "No"
+          },
+          {
+            "specification": "Browser",
+            "value": "Yes"
+          }
+        ],
+        "MULTIMEDIA": [
+          {
+            "specification": "Email",
+            "value": "Yes"
+          },
+          {
+            "specification": "Music",
+            "value": "AAC, MIDI, OGG, FLAC, WMA, WAV, APE, MP3"
+          },
+          {
+            "specification": "Video",
+            "value": "MP4, 3GP, AVI"
+          },
+          {
+            "specification": "FM Radio",
+            "value": "No"
+          },
+          {
+            "specification": "Speaker Type",
+            "value": "Dual Stereo"
+          },
+          {
+            "specification": "Audio Jack Type",
+            "value": "USB Type-C"
+          },
+          {
+            "specification": "Document Reader",
+            "value": "Yes"
+          }
+        ],
+        "BATTERY": [
+          {
+            "specification": "Type",
+            "value": "Non-Removable Battery"
+          },
+          {
+            "specification": "Size",
+            "value": "7000 mAh, Silicon BlueVolt Battery"
+          },
+          {
+            "specification": "Fast Charging",
+            "value": "Yes, 120W Flash Charge"
+          },
+          {
+            "specification": "Reverse Charging",
+            "value": "Yes, 7.5W"
+          },
+          {
+            "specification": "Video Playback Time",
+            "value": "23 hours"
+          }
+        ]
+      }
+    },
+    {
+      "id": "oneplus_nord_ce_5_5g_8gb_ram_256gb",
+      "name": "OnePlus Nord CE 5 5G (8GB RAM + 256GB)",
+      "listed": "yes",
+      "price": "₹26,998",
+      "mrp": "",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-8gb-ram-256gb-ppd1qyk0ajaa",
+      "images": [
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g_8gb_ram_256gb/image_1.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g_8gb_ram_256gb/image_2.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g_8gb_ram_256gb/image_3.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/oneplus_nord_ce_5_5g_8gb_ram_256gb/image_4.jpg"
+      ],
+      "variants": [
+        {
+          "size": "8GB+128GB",
+          "price": "₹24,998"
+        },
+        {
+          "size": "8GB+256GB",
+          "price": "₹26,998"
+        },
+        {
+          "size": "12GB+256GB",
+          "price": "₹28,998"
+        }
+      ],
+      "asin": "B0FCMKNCJ4",
+      "spec_score": "83",
+      "features": {
+        "GENERAL": [
+          {
+            "specification": "Country of Origin",
+            "value": "India"
+          },
+          {
+            "specification": "Model",
+            "value": "Nord CE 5 5G"
+          },
+          {
+            "specification": "Sim Type",
+            "value": "Dual Sim, GSM+GSM (Hybrid Slot)"
+          },
+          {
+            "specification": "Dual Sim",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sim Size",
+            "value": "Nano+Nano SIM"
+          },
+          {
+            "specification": "Device Type",
+            "value": "Smartphone"
+          },
+          {
+            "specification": "Release Date",
+            "value": "July 08, 2025"
+          },
+          {
+            "specification": "In The Box",
+            "value": "OnePlus Nord CE5, 80W SUPERVOOC Power Adapter, Type-A to C Cable, Quick Guide, Protective Case, Screen Protector (pre-applied), SIM Tray Ejector"
+          }
+        ],
+        "DESIGN": [
+          {
+            "specification": "Dimensions",
+            "value": "76.02 x 163.6 x 8.2 mm"
+          },
+          {
+            "specification": "Weight",
+            "value": "199 g"
+          },
+          {
+            "specification": "Colors",
+            "value": "Marble Mist, Black Infinity, Nexus Blue"
+          }
+        ],
+        "DISPLAY": [
+          {
+            "specification": "Type",
+            "value": "Color AMOLED Screen (1B Colors)"
+          },
+          {
+            "specification": "Touch",
+            "value": "Yes, 300 Hz Touch Sampling Rate"
+          },
+          {
+            "specification": "Size",
+            "value": "6.77 inches, 1080 x 2392 pixels, 120 Hz"
+          },
+          {
+            "specification": "Aspect Ratio",
+            "value": "19.9:9"
+          },
+          {
+            "specification": "PPI",
+            "value": "~ 387 PPI"
+          },
+          {
+            "specification": "Screen to Body Ratio",
+            "value": "~ 94.1%"
+          },
+          {
+            "specification": "Brightness",
+            "value": "HBM: 1300 nits, Peak Brightness: 1430 nits, Typical brightness: 800 nits"
+          },
+          {
+            "specification": "Features",
+            "value": "Eye Comfort / Night Mode, Screen Colour Mode, Screen Colour Temperature, Auto Brightness, Manual Brightness, Bed time mode, Dark Mode, Support sRGB, Display P3, 10-bit Color Depth, HDR10+, Netflix HD & HDR Certified, Amazon Prime Video HD & HDR Certified"
+          },
+          {
+            "specification": "Notch",
+            "value": "Yes, Punch Hole"
+          }
+        ],
+        "MEMORY": [
+          {
+            "specification": "RAM",
+            "value": "8 GB"
+          },
+          {
+            "specification": "RAM Type",
+            "value": "LPDDR5X"
+          },
+          {
+            "specification": "Expandable RAM",
+            "value": "Upto 8 GB Extra Virtual RAM"
+          },
+          {
+            "specification": "Storage",
+            "value": "256 GB"
+          },
+          {
+            "specification": "Storage Type",
+            "value": "UFS 3.1"
+          },
+          {
+            "specification": "Card Slot",
+            "value": "Yes, (Hybrid Slot), upto 1 TB"
+          }
+        ],
+        "CONNECTIVITY": [
+          {
+            "specification": "GPRS",
+            "value": "Yes"
+          },
+          {
+            "specification": "EDGE",
+            "value": "Yes"
+          },
+          {
+            "specification": "3G",
+            "value": "Yes"
+          },
+          {
+            "specification": "4G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G Bands",
+            "value": "NR: n1/n3/n5/n8/n28B/n38/n40/n41/n77/n78"
+          },
+          {
+            "specification": "VoLTE",
+            "value": "Yes, Dual Stand-By"
+          },
+          {
+            "specification": "Wifi",
+            "value": "Yes, with wifi-hotspot"
+          },
+          {
+            "specification": "Wifi Version",
+            "value": "WiFi2.4G, WiFi5G, WiFi 6 (802.11ax), WiFi 5 (802.11ac), 802.11b/g/a/n, WLAN Display, WLAN tethering,Wi-Fi 2.4GHz 20M, Wi-Fi 2.4GHz 40M, Wi-Fi 5GHz 20M, Wi-Fi 5GHz 40M, Wi-Fi 5GHz 80M, Wi-Fi 5GHz 160M, 2x2 MIMO"
+          },
+          {
+            "specification": "Bluetooth",
+            "value": "Yes, v5.4, support SBC/AAC/aptX HD/aptX/LDAC/LHDC 5.0"
+          },
+          {
+            "specification": "USB",
+            "value": "Yes, USB-C v2.0"
+          },
+          {
+            "specification": "USB Features",
+            "value": "USB on-the-go"
+          },
+          {
+            "specification": "IR Blaster",
+            "value": "Yes"
+          }
+        ],
+        "PERFORMANCE": [
+          {
+            "specification": "AnTuTu Score",
+            "value": "1,411,250 (Total) (v10)\n306,528 (CPU)\n556,883 (GPU)\n268,763 (Memory)\n279,076 (UX)"
+          },
+          {
+            "specification": "AnTuTu Storage Score",
+            "value": "143,478"
+          },
+          {
+            "specification": "Geekbench Score",
+            "value": "4,047 (Multi Core) (v6)\n1,313 (Single Core)\n7,438 (OpenCL)\n8,528 (Vulkan)"
+          },
+          {
+            "specification": "3DMark Score",
+            "value": "3,080 (Wild Life Extreme)"
+          }
+        ],
+        "EXTRA": [
+          {
+            "specification": "GPS",
+            "value": "with GPS, A-GPS, GLONASS, Galileo, Beidou, QZSS"
+          },
+          {
+            "specification": "Fingerprint Sensor",
+            "value": "Yes, In Display"
+          },
+          {
+            "specification": "Face Unlock",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sensors",
+            "value": "Proximity, Ambient Light, E-compass, Accelerometer, Gyroscope"
+          },
+          {
+            "specification": "3.5mm Headphone Jack",
+            "value": "No"
+          },
+          {
+            "specification": "AI Features",
+            "value": "AI Eraser, AI Perfect Shot, AI Reflection Remover, AI Reframe, Dual intelligence, Google Gemini, AI VoiceScribe, AI Translation, AI Call Assistant"
+          },
+          {
+            "specification": "Splash Resistant",
+            "value": "Yes"
+          },
+          {
+            "specification": "IP Rating",
+            "value": "IP65"
+          },
+          {
+            "specification": "Dust Resistant",
+            "value": "Yes"
+          },
+          {
+            "specification": "Extra Features",
+            "value": "Super Linear Speaker, Noise Cancellation Support"
+          }
+        ],
+        "CAMERA": [
+          {
+            "specification": "Rear Camera",
+            "value": "50 MP ƒ/1.8 (Wide Angle)\nSony LYT-600, Sensor Size: 1/1.95\", Focal Length: 26mm (wide), 1/1.95\", 0.8μm, PDAF, OIS\n8 MP ƒ/2.2 (Ultra Wide)\nOmniVision OV08D10"
+          },
+          {
+            "specification": "OIS",
+            "value": "Yes"
+          },
+          {
+            "specification": "Auto Focus",
+            "value": "Yes"
+          },
+          {
+            "specification": "Features",
+            "value": "Photo, Video, Portrait, Night, PRO, Panorama, SLO-MO, Dual-view video, Time-lapse, Hi-Res Scan, Tilt-Shift, 0.6x-20x digital zoom for photos 0.6x-10x digital zoom for video"
+          },
+          {
+            "specification": "Video Recording",
+            "value": "4K @ 60 fps UHD, 1080p @ 60 fps FHD, 720p"
+          },
+          {
+            "specification": "Flash",
+            "value": "Yes, LED"
+          },
+          {
+            "specification": "Front Camera",
+            "value": "16 MP ƒ/2.4 (Wide Angle)\nSony IMX480, Focal Length: 23 mm, EIS Supported\nPunch Hole, Screen Flash"
+          },
+          {
+            "specification": "Front Video Recording",
+            "value": "1080p @ 30 fps FHD"
+          }
+        ],
+        "TECHNICAL": [
+          {
+            "specification": "OS",
+            "value": "Android v15"
+          },
+          {
+            "specification": "Custom UI",
+            "value": "OxygenOS 15"
+          },
+          {
+            "specification": "Chipset",
+            "value": "Mediatek Dimensity 8350 Apex"
+          },
+          {
+            "specification": "CPU",
+            "value": "3.35 GHz, Octa Core Processor"
+          },
+          {
+            "specification": "Core Details",
+            "value": "Arm cortex 1xA715@3.35GHZ, Arm cortex 3xA715@3.2GHZ, Arm cortex 4xA510@2.2GHZ"
+          },
+          {
+            "specification": "Fabrication Node",
+            "value": "4nm"
+          },
+          {
+            "specification": "GPU",
+            "value": "Mali G615-MC6"
+          },
+          {
+            "specification": "Java",
+            "value": "No"
+          },
+          {
+            "specification": "Browser",
+            "value": "Yes, supports HTML5"
+          }
+        ],
+        "MULTIMEDIA": [
+          {
+            "specification": "Email",
+            "value": "Yes"
+          },
+          {
+            "specification": "Music",
+            "value": "3GPP, ALAC, AMR, APE, FLAC, G711-ALAW, G711-MLAW, GSM, MP3, OPUS, RAW, VORBIS, PCM, WMA, AAC"
+          },
+          {
+            "specification": "Video",
+            "value": "3GPP, AV1, H263, H264, H265, MP4V, MPEG2, WMV, VP8, VP9"
+          },
+          {
+            "specification": "FM Radio",
+            "value": "No"
+          },
+          {
+            "specification": "Speaker Type",
+            "value": "Mono"
+          },
+          {
+            "specification": "Document Reader",
+            "value": "Yes"
+          }
+        ],
+        "BATTERY": [
+          {
+            "specification": "Type",
+            "value": "Non-Removable Battery"
+          },
+          {
+            "specification": "Size",
+            "value": "7100 mAh, Li-Po Battery"
+          },
+          {
+            "specification": "Fast Charging",
+            "value": "Yes, 80W SUPERVOOC Charging"
+          },
+          {
+            "specification": "Reverse Charging",
+            "value": "Yes"
+          }
+        ]
+      }
+    },
+    {
+      "id": "samsung_galaxy_a55_5g",
+      "name": "Samsung Galaxy A55 5G",
+      "listed": "yes",
+      "price": "₹28,999",
+      "mrp": "₹42,999",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-ppd1j932nh5d",
+      "images": [
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_1.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_2.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_3.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_4.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_5.jpg",
+        "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_6.jpg"
+      ],
+      "variants": [
+        {
+          "size": "8GB+128GB",
+          "price": "₹28,999"
+        },
+        {
+          "size": "8GB+256GB",
+          "price": "₹30,999"
+        },
+        {
+          "size": "12GB+256GB",
+          "price": "₹33,999"
+        }
+      ],
+      "asin": "B0CWPC2W5V",
+      "spec_score": "85",
+      "features": {
+        "GENERAL": [
+          {
+            "specification": "Model",
+            "value": "SM-A556V, SM-A556B, SM-A556B/DS, SM-A556E, SM-A556E/DS, SM-A5560"
+          },
+          {
+            "specification": "Sim Type",
+            "value": "Dual Sim, GSM+GSM (Hybrid Slot)"
+          },
+          {
+            "specification": "Dual Sim",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sim Size",
+            "value": "Nano+Nano SIM"
+          },
+          {
+            "specification": "Device Type",
+            "value": "Smartphone"
+          },
+          {
+            "specification": "Release Date",
+            "value": "March 11, 2024"
+          },
+          {
+            "specification": "In The Box",
+            "value": "Handset, Data Cable (USB Type C to C), Ejection pin, Quick Start Guide"
+          }
+        ],
+        "DESIGN": [
+          {
+            "specification": "Dimensions",
+            "value": "77.4 x 161.1 x 8.2 mm"
+          },
+          {
+            "specification": "Weight",
+            "value": "213 g"
+          },
+          {
+            "specification": "Colors",
+            "value": "Iceblue, Lilac, Navy, Lemon"
+          }
+        ],
+        "DISPLAY": [
+          {
+            "specification": "Type",
+            "value": "Color Super AMOLED Screen (16M Colors)"
+          },
+          {
+            "specification": "Touch",
+            "value": "Yes"
+          },
+          {
+            "specification": "Size",
+            "value": "6.6 inches, 1080 x 2340 pixels, 120 Hz"
+          },
+          {
+            "specification": "Aspect Ratio",
+            "value": "20:9"
+          },
+          {
+            "specification": "PPI",
+            "value": "~ 390 PPI"
+          },
+          {
+            "specification": "Screen to Body Ratio",
+            "value": "~ 85.8%"
+          },
+          {
+            "specification": "Glass Type",
+            "value": "Corning Gorilla Glass Victus Plus"
+          },
+          {
+            "specification": "Features",
+            "value": "HDR10+, 1000 nits Brightness"
+          },
+          {
+            "specification": "Notch",
+            "value": "Yes, Punch Hole"
+          }
+        ],
+        "MEMORY": [
+          {
+            "specification": "RAM",
+            "value": "8 GB"
+          },
+          {
+            "specification": "Storage",
+            "value": "128 GB"
+          },
+          {
+            "specification": "Card Slot",
+            "value": "Yes, (Hybrid Slot), upto 1 TB"
+          }
+        ],
+        "CONNECTIVITY": [
+          {
+            "specification": "GPRS",
+            "value": "Yes"
+          },
+          {
+            "specification": "EDGE",
+            "value": "Yes"
+          },
+          {
+            "specification": "3G",
+            "value": "Yes"
+          },
+          {
+            "specification": "4G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G",
+            "value": "Yes"
+          },
+          {
+            "specification": "5G Bands",
+            "value": "FDD Sub6: N1(2100), N3(1800), N5(850), N7(2600), N8(900), N26(850), N28(700), N66(AWS-3), TDD Sub6 N40(2300), N41(2500), N77(3700), N78(3500)"
+          },
+          {
+            "specification": "VoLTE",
+            "value": "Yes, Dual Stand-By"
+          },
+          {
+            "specification": "Wifi",
+            "value": "Yes, with wifi-hotspot"
+          },
+          {
+            "specification": "Wifi Version",
+            "value": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz, HE80, MIMO, 1024-QAM"
+          },
+          {
+            "specification": "Bluetooth",
+            "value": "Yes, v5.3, A2DP, LE"
+          },
+          {
+            "specification": "USB",
+            "value": "Yes, USB-C v2.0"
+          },
+          {
+            "specification": "USB Features",
+            "value": "USB on-the-go"
+          }
+        ],
+        "PERFORMANCE": [
+          {
+            "specification": "AnTuTu Score",
+            "value": "712,992 (Total) (v10)\n225,413 (CPU)\n167,758 (GPU)\n145,378 (Memory)\n174,443 (UX)"
+          },
+          {
+            "specification": "Geekbench Score",
+            "value": "3,454 (Multi Core) (v6)\n1,161 (Single Core)\n3,999 (OpenCL)\n4,168 (Vulkan)"
+          },
+          {
+            "specification": "3DMark Score",
+            "value": "1,017 (Wild Life Extreme)"
+          },
+          {
+            "specification": "Camera Score",
+            "value": "108 (DxOMark)"
+          },
+          {
+            "specification": "Speaker Score",
+            "value": "76 (Very Good)"
+          },
+          {
+            "specification": "Battery Test Result",
+            "value": "13 hours"
+          }
+        ],
+        "EXTRA": [
+          {
+            "specification": "GPS",
+            "value": "Yes, with A-GPS, GLONASS, GALILEO, BDS"
+          },
+          {
+            "specification": "Fingerprint Sensor",
+            "value": "Yes, In Display"
+          },
+          {
+            "specification": "Face Unlock",
+            "value": "Yes"
+          },
+          {
+            "specification": "Sensors",
+            "value": "Accelerometer, Gyro Sensor, Geomagnetic Sensor, Hall Sensor, Light Sensor, Virtual Proximity Sensing"
+          },
+          {
+            "specification": "3.5mm Headphone Jack",
+            "value": "No"
+          },
+          {
+            "specification": "NFC",
+            "value": "Yes"
+          },
+          {
+            "specification": "Water Resistance",
+            "value": "Yes, 1 m upto 30 min"
+          },
+          {
+            "specification": "IP Rating",
+            "value": "IP67"
+          },
+          {
+            "specification": "Dust Resistant",
+            "value": "Yes"
+          },
+          {
+            "specification": "Extra Features",
+            "value": "4 Generations of OS Upgrades and up to 5 Years of Security Updates, Samsung Knox Vault, E-sim"
+          }
+        ],
+        "CAMERA": [
+          {
+            "specification": "Rear Camera",
+            "value": "50 MP ƒ/1.8 (Wide Angle)\n12 MP ƒ/2.2 (Ultra Wide)\n5 MP ƒ/2.4 (Macro)"
+          },
+          {
+            "specification": "OIS",
+            "value": "Yes"
+          },
+          {
+            "specification": "Auto Focus",
+            "value": "Yes"
+          },
+          {
+            "specification": "Features",
+            "value": "Portrait, Panorama, HDR"
+          },
+          {
+            "specification": "Video Recording",
+            "value": "4K @ 30 fps UHD, 1080p @ 30 fps FHD"
+          },
+          {
+            "specification": "Flash",
+            "value": "Yes, LED"
+          },
+          {
+            "specification": "Front Camera",
+            "value": "32 MP ƒ/2.2 (Wide Angle)\nPunch Hole"
+          },
+          {
+            "specification": "Front Video Recording",
+            "value": "4K @ 30 fps UHD, 1080p @ 30 fps FHD"
+          }
+        ],
+        "TECHNICAL": [
+          {
+            "specification": "OS",
+            "value": "Android v14"
+          },
+          {
+            "specification": "Custom UI",
+            "value": "OneUI 6"
+          },
+          {
+            "specification": "Chipset",
+            "value": "Samsung Exynos 1480"
+          },
+          {
+            "specification": "CPU",
+            "value": "2.7 GHz, Octa Core Processor"
+          },
+          {
+            "specification": "Core Details",
+            "value": "4xCortex-A78@ 2.7 GHz & 4xCortex-A55@2.0 GHz"
+          },
+          {
+            "specification": "Java",
+            "value": "No"
+          },
+          {
+            "specification": "Browser",
+            "value": "Yes"
+          }
+        ],
+        "MULTIMEDIA": [
+          {
+            "specification": "Email",
+            "value": "Yes"
+          },
+          {
+            "specification": "Music",
+            "value": "MP3, M4A, 3GA, AAC, OGG, OGA, WAV, AMR, AWB, FLAC, MID, MIDI, XMF, MXMF, IMY, RTTTL, RTX, OTA"
+          },
+          {
+            "specification": "Video",
+            "value": "MP4, M4V, 3GP, 3G2, AVI, FLV, MKV, WEBM"
+          },
+          {
+            "specification": "FM Radio",
+            "value": "No"
+          },
+          {
+            "specification": "Speaker Type",
+            "value": "Stereo"
+          },
+          {
+            "specification": "Document Reader",
+            "value": "Yes"
+          }
+        ],
+        "BATTERY": [
+          {
+            "specification": "Type",
+            "value": "Non-Removable Battery"
+          },
+          {
+            "specification": "Size",
+            "value": "5000 mAh, Li-Po Battery"
+          },
+          {
+            "specification": "Fast Charging",
+            "value": "Yes, 25W Fast Charging"
+          },
+          {
+            "specification": "Video Playback Time",
+            "value": "28 hours"
+          },
+          {
+            "specification": "Music Playback Time",
+            "value": "79 hours"
           }
         ]
       }

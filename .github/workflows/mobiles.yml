@@ -2,8 +2,8 @@ name: Run Mobiles Script
 
 on:
   schedule:
-    # Run every Saturday at 12 AM IST (6:30 PM UTC on Friday)
-    - cron: '30 18 * * 5'
+    # Run every day at 12 AM IST (6:30 PM UTC previous day)
+    - cron: '30 18 * * *'
   
   # Allow manual trigger
   workflow_dispatch:

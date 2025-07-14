@@ -924,7 +924,7 @@ def save_updated_mobiles_data(data, json_file_path):
 
 
 def append_product_to_json(product_data, json_file_path):
-    """Append a single product to the JSON file with correct count (serial number)"""
+    """Append a single product to the JSON file"""
     try:
         # Load existing data
         try:
@@ -935,10 +935,6 @@ def append_product_to_json(product_data, json_file_path):
             data = {
                 "products": []
             }
-        
-        # Set the count as the next serial number (number of existing products + 1)
-        next_count = len(data["products"]) + 1
-        product_data["count"] = next_count
         
         # Add the new product
         data["products"].append(product_data)
@@ -1602,41 +1598,133 @@ def find_amazon_product_by_search(driver, product_name, expected_price):
         return None, False
 
 
-def clear_existing_data():
-    """Clear update_mobiles.json and empty images folder"""
+def get_existing_products():
+    """Get dictionary of existing products from update_mobiles.json with their prices"""
     try:
-        # Clear update_mobiles.json
-        print("Clearing update_mobiles.json...")
-        with open("update_mobiles.json", "w", encoding="utf-8") as f:
-            json.dump({
-                "products": []
-            }, f, indent=2, ensure_ascii=False)
+        with open("update_mobiles.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
         
-        # Clear images folder
-        print("Clearing images folder...")
+        existing_products = {}
+        for product in data.get("products", []):
+            if product.get("id"):
+                existing_products[product["id"]] = {
+                    "price": product.get("price", ""),
+                    "index": data["products"].index(product)  # Store index for updating
+                }
+        
+        return existing_products
+    except (FileNotFoundError, json.JSONDecodeError):
+        # If file doesn't exist or is corrupted, return empty dict
+        return {}
+    except Exception as e:
+        print(f"Error reading existing products: {e}")
+        return {}
+
+
+def ensure_images_folder_exists():
+    """Ensure the images folder exists"""
+    try:
         images_dir = "images"
-        if os.path.exists(images_dir):
-            shutil.rmtree(images_dir)
-        
-        # Recreate empty images folder
-        os.makedirs(images_dir, exist_ok=True)
-        
-        print("Successfully cleared existing data and images.")
-        print("Products will be appended to update_mobiles.json as they are processed.")
+        if not os.path.exists(images_dir):
+            os.makedirs(images_dir)
+            print(f"Created images folder: {images_dir}")
         return True
     except Exception as e:
-        print(f"Error clearing existing data: {e}")
+        print(f"Error creating images folder: {e}")
+        return False
+
+
+def cleanup_discontinued_products(mobiles_data):
+    """Remove products from update_mobiles.json that don't exist in mobiles.json"""
+    try:
+        print("Checking for discontinued products in update_mobiles.json...")
+        
+        # Get all unique_ids from mobiles.json
+        valid_unique_ids = set()
+        for product in mobiles_data.get("products", []):
+            if product.get("unique_id"):
+                valid_unique_ids.add(product["unique_id"])
+        
+        print(f"Found {len(valid_unique_ids)} valid products in mobiles.json")
+        
+        # Load update_mobiles.json
+        try:
+            with open("update_mobiles.json", "r", encoding="utf-8") as f:
+                update_data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("update_mobiles.json not found or corrupted - no cleanup needed")
+            return True
+        
+        # Find products to remove
+        original_products = update_data.get("products", [])
+        products_to_keep = []
+        removed_count = 0
+        
+        for product in original_products:
+            product_id = product.get("id")
+            if product_id and product_id in valid_unique_ids:
+                products_to_keep.append(product)
+            else:
+                removed_count += 1
+                product_name = product.get("name", "Unknown")
+                print(f"  🗑️  Removing discontinued product: {product_name} (ID: {product_id})")
+                
+                # Also remove the product's image folder if it exists
+                try:
+                    product_image_dir = os.path.join("images", product_id)
+                    if os.path.exists(product_image_dir):
+                        shutil.rmtree(product_image_dir)
+                        print(f"    🗑️  Removed image folder: {product_image_dir}")
+                except Exception as e:
+                    print(f"    ⚠️  Could not remove image folder for {product_id}: {e}")
+        
+        # Update the data
+        update_data["products"] = products_to_keep
+        
+        # Save the updated file
+        with open("update_mobiles.json", "w", encoding="utf-8") as f:
+            json.dump(update_data, f, indent=2, ensure_ascii=False)
+        
+        if removed_count > 0:
+            print(f"✅ Removed {removed_count} discontinued products from update_mobiles.json")
+            print(f"✅ Kept {len(products_to_keep)} current products")
+        else:
+            print("✅ No discontinued products found - all products are current")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Error during cleanup: {e}")
+        return False
+
+
+def update_existing_product(product_data, product_index, json_file_path):
+    """Update an existing product in the JSON file at the specified index"""
+    try:
+        # Load existing data
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        # Update the product at the specified index
+        if 0 <= product_index < len(data["products"]):
+            # Update the product
+            data["products"][product_index] = product_data
+            
+            # Save updated data
+            with open(json_file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            
+            return True
+        else:
+            print(f"Invalid product index: {product_index}")
+            return False
+    except Exception as e:
+        print(f"Error updating existing product: {e}")
         return False
 
 
 def main():
     """Main function to scrape product images"""
     print("=== Smartprix Mobile Image Scraper ===")
-    
-    # Clear existing data at the beginning
-    if not clear_existing_data():
-        print("Failed to clear existing data. Exiting.")
-        return
     
     print("Loading existing mobiles data...")
     
@@ -1650,6 +1738,21 @@ def main():
     total_products = len(products)
     print(f"Found {total_products} products to process")
     
+    # Clean up discontinued products from update_mobiles.json
+    if not cleanup_discontinued_products(mobiles_data):
+        print("Warning: Failed to cleanup discontinued products. Continuing...")
+    
+    # Get existing products to check for duplicates and price changes
+    print("Checking for existing products in update_mobiles.json...")
+    existing_products = get_existing_products()
+    print(f"Found {len(existing_products)} existing products in update_mobiles.json")
+    
+    # Ensure images folder exists
+    print("Ensuring images folder exists...")
+    if not ensure_images_folder_exists():
+        print("Failed to ensure images folder exists. Exiting.")
+        return
+    
     # Setup Chrome driver
     print("Setting up Chrome driver...")
     driver = setup_driver()
@@ -1659,14 +1762,38 @@ def main():
     
     try:
         # Process each product
+        processed_count = 0
+        updated_count = 0
+        skipped_count = 0
+        
         for i, product in enumerate(products, 1):
-            print(f"\nProcessing product {i}/{total_products}: {product.get('name', 'Unknown')}")
+            unique_id = product.get("unique_id")
+            product_name = product.get("name", "Unknown")
+            current_price = product.get("price", "")
+            
+            print(f"\nProcessing product {i}/{total_products}: {product_name}")
+            
+            # Check if this product already exists in update_mobiles.json
+            existing_product = existing_products.get(unique_id)
+            should_update = False
+            product_index = None
+            
+            if existing_product:
+                existing_price = existing_product.get("price", "")
+                product_index = existing_product.get("index")
+                
+                if current_price == existing_price:
+                    print(f"  ⚠️  Product '{unique_id}' already exists with same price ({current_price}) - skipping")
+                    skipped_count += 1
+                    continue
+                else:
+                    print(f"  🔄 Product '{unique_id}' exists but price changed: '{existing_price}' -> '{current_price}' - updating")
+                    should_update = True
             
             # Create updated product data in the new format
             updated_product = {
-                "id": product.get("unique_id"),
-                "name": product.get("name"),
-                "count": 1,  # This will be updated to correct serial number in append_product_to_json
+                "id": unique_id,
+                "name": product_name,
                 "listed": "no",  # Initialize as "no", will be updated if Amazon link is found
                 "price": product.get("price"),
                 "mrp": "",  # Initialize MRP field as empty
@@ -1741,17 +1868,51 @@ def main():
             else:
                 print("  No URL or unique_id found for this product")
             
-            # Append product to JSON file immediately after processing
-            print(f"  Appending product to update_mobiles.json...")
-            if append_product_to_json(updated_product, "update_mobiles.json"):
-                print(f"  Successfully appended product {i}/{total_products} to JSON")
+            # Save product to JSON file immediately after processing
+            if should_update:
+                print(f"  Updating existing product in update_mobiles.json...")
+                if update_existing_product(updated_product, product_index, "update_mobiles.json"):
+                    print(f"  Successfully updated product {i}/{total_products} in JSON")
+                    updated_count += 1
+                    # Update the existing_products dict to reflect the new price
+                    existing_products[unique_id]["price"] = current_price
+                else:
+                    print(f"  Failed to update product {i}/{total_products} in JSON")
             else:
-                print(f"  Failed to append product {i}/{total_products} to JSON")
+                print(f"  Appending new product to update_mobiles.json...")
+                if append_product_to_json(updated_product, "update_mobiles.json"):
+                    print(f"  Successfully appended product {i}/{total_products} to JSON")
+                    processed_count += 1
+                    # Add the product to existing_products to avoid duplicates in current session
+                    existing_products[unique_id] = {
+                        "price": current_price,
+                        "index": len(existing_products)  # Approximation, will be corrected if needed
+                    }
+                else:
+                    print(f"  Failed to append product {i}/{total_products} to JSON")
             
             # Add small delay between requests
             time.sleep(1)
         
-        print(f"\nAll products processed and appended to update_mobiles.json!")
+        print(f"\nProcessing complete!")
+        print(f"✅ New products added: {processed_count}")
+        print(f"🔄 Existing products updated: {updated_count}")
+        print(f"⚠️  Skipped (no changes): {skipped_count} products")
+        print(f"📊 Total products in mobiles.json: {total_products}")
+        
+        # Show final count in update_mobiles.json
+        try:
+            with open("update_mobiles.json", "r", encoding="utf-8") as f:
+                final_data = json.load(f)
+            final_count = len(final_data.get("products", []))
+            print(f"📊 Total products in update_mobiles.json: {final_count}")
+        except:
+            pass
+        
+        if processed_count > 0 or updated_count > 0:
+            print(f"Changes made to update_mobiles.json!")
+        else:
+            print("No changes needed - all products are up to date.")
     
     except KeyboardInterrupt:
         print("\nScript interrupted by user. Current progress is already saved in update_mobiles.json")

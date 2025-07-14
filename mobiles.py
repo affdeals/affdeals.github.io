@@ -180,9 +180,8 @@ def scrape_product_details(driver, product_xpath, retries=5):
             wait = WebDriverWait(driver, 5)
             product_element = wait.until(EC.presence_of_element_located((By.XPATH, product_xpath)))
             
-            # Initialize product data (count will be set later)
+            # Initialize product data
             product_data = {
-                "count": 0,  # Will be set when product is successfully saved
                 "unique_id": None,
                 "name": None,
                 "price": None,
@@ -449,157 +448,179 @@ def scrape_smartprix_mobiles(debug_mode=False):
         # Track unique IDs to avoid duplicates
         unique_ids_seen = set()
         total_scraped = 0
-        product_count = 0  # Counter for product numbering
         current_product_position = 1  # Track current product position on the page
         
         # Scraping loop
         while total_scraped < total_mobile_count:
-            # Try to scrape 20 products in current batch
-            products_scraped_in_batch = 0
-            batch_start = current_product_position
-            batch_end = current_product_position + 19  # 20 products per batch
-            
-            print(f"Scraping products from position {batch_start} to {batch_end}")
-            
-            # First, check how many products are actually available on the page
-            total_products_on_page = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
-            print(f"Total products currently on page: {total_products_on_page}")
-            
-            # Adjust batch_end if we don't have enough products on the page
-            actual_batch_end = min(batch_end, total_products_on_page)
-            
-            for i in range(batch_start, actual_batch_end + 1):
+            try:
+                # Try to scrape 20 products in current batch
+                products_scraped_in_batch = 0
+                batch_start = current_product_position
+                batch_end = current_product_position + 19  # 20 products per batch
+                
+                print(f"Scraping products from position {batch_start} to {batch_end}")
+                
+                # First, check how many products are actually available on the page
+                total_products_on_page = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
+                print(f"Total products currently on page: {total_products_on_page}")
+                
+                # Adjust batch_end if we don't have enough products on the page
+                actual_batch_end = min(batch_end, total_products_on_page)
+                
+                for i in range(batch_start, actual_batch_end + 1):
+                    if total_scraped >= total_mobile_count:
+                        break
+                        
+                    product_xpath = f"/html/body/div[1]/main/div[1]/div[2]/div[2]/div[{i}]"
+                    
+                    # Try to scrape product
+                    product_data = scrape_product_details(driver, product_xpath)
+                    
+                    if product_data and product_data["unique_id"]:
+                        # Check for duplicate unique_id
+                        if product_data["unique_id"] not in unique_ids_seen:
+                            unique_ids_seen.add(product_data["unique_id"])
+                            
+                            # Append to JSON immediately
+                            if append_product_to_json(product_data, json_file_path):
+                                total_scraped += 1
+                                products_scraped_in_batch += 1
+                                print(f"Scraped product {total_scraped}: {product_data['name']}")
+                        else:
+                            # Handle duplicate by appending number
+                            counter = 1
+                            original_id = product_data["unique_id"]
+                            while f"{original_id}_{counter}" in unique_ids_seen:
+                                counter += 1
+                            product_data["unique_id"] = f"{original_id}_{counter}"
+                            unique_ids_seen.add(product_data["unique_id"])
+                            
+                            # Append to JSON immediately
+                            if append_product_to_json(product_data, json_file_path):
+                                total_scraped += 1
+                                products_scraped_in_batch += 1
+                                print(f"Scraped product {total_scraped}: {product_data['name']}")
+                
+                # Print batch summary
+                print(f"Batch completed. Products scraped in this batch: {products_scraped_in_batch}")
+                print(f"Total products scraped so far: {total_scraped}/{total_mobile_count}")
+                
+                # Check if we've scraped all products
                 if total_scraped >= total_mobile_count:
                     break
-                    
-                product_xpath = f"/html/body/div[1]/main/div[1]/div[2]/div[2]/div[{i}]"
                 
-                # Try to scrape product (count will be set when we successfully save the product)
-                product_data = scrape_product_details(driver, product_xpath)
-                
-                if product_data and product_data["unique_id"]:
-                    # Check for duplicate unique_id
-                    if product_data["unique_id"] not in unique_ids_seen:
-                        unique_ids_seen.add(product_data["unique_id"])
-                        
-                        # Set the count for this product
-                        product_count += 1
-                        product_data["count"] = product_count
-                        
-                        # Append to JSON immediately
-                        if append_product_to_json(product_data, json_file_path):
-                            total_scraped += 1
-                            products_scraped_in_batch += 1
-                            print(f"Scraped product {total_scraped}: {product_data['name']}")
-                    else:
-                        # Handle duplicate by appending number
-                        counter = 1
-                        original_id = product_data["unique_id"]
-                        while f"{original_id}_{counter}" in unique_ids_seen:
-                            counter += 1
-                        product_data["unique_id"] = f"{original_id}_{counter}"
-                        unique_ids_seen.add(product_data["unique_id"])
-                        
-                        # Set the count for this product
-                        product_count += 1
-                        product_data["count"] = product_count
-                        
-                        # Append to JSON immediately
-                        if append_product_to_json(product_data, json_file_path):
-                            total_scraped += 1
-                            products_scraped_in_batch += 1
-                            print(f"Scraped product {total_scraped}: {product_data['name']}")
-            
-            # Print batch summary
-            print(f"Batch completed. Products scraped in this batch: {products_scraped_in_batch}")
-            print(f"Total products scraped so far: {total_scraped}/{total_mobile_count}")
-            
-            # Check if we've scraped all products
-            if total_scraped >= total_mobile_count:
-                break
-            
-            # If no products were scraped in this batch and we haven't reached the total,
-            # we need to load more products before continuing
-            if products_scraped_in_batch == 0:
-                print("No products scraped in this batch. Will try to load more products...")
-                # Don't update position yet - we'll try to load more products first
-            else:
-                # Update current position for next batch only if we scraped some products
-                current_product_position += 20
-            
-            # Debug page elements before trying to click Load More (only if debug mode is enabled)
-            if debug_mode:
-                debug_page_elements(driver)
-            
-            # Count products currently on page before clicking Load More
-            products_on_page_before = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
-            print(f"Products on page before Load More: {products_on_page_before}")
-            
-            # Try to click Load More button
-            if not click_load_more_button(driver, load_more_xpath):
-                print("Failed to click Load More button, trying infinite scroll as fallback...")
-                
-                # Try infinite scroll approach
-                if try_infinite_scroll(driver):
-                    print("Infinite scroll worked, continuing...")
-                    # Count products after infinite scroll
-                    products_on_page_after = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
-                    print(f"Products on page after infinite scroll: {products_on_page_after}")
-                    continue
+                # If no products were scraped in this batch and we haven't reached the total,
+                # we need to load more products before continuing
+                if products_scraped_in_batch == 0:
+                    print("No products scraped in this batch. Will try to load more products...")
+                    # Don't update position yet - we'll try to load more products first
                 else:
-                    print("Both Load More button and infinite scroll failed")
+                    # Update current position for next batch only if we scraped some products
+                    current_product_position += 20
+                
+                # Debug page elements before trying to click Load More (only if debug mode is enabled)
+                if debug_mode:
+                    debug_page_elements(driver)
+                
+                # Count products currently on page before clicking Load More
+                products_on_page_before = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
+                print(f"Products on page before Load More: {products_on_page_before}")
+                
+                # Try to click Load More button
+                if not click_load_more_button(driver, load_more_xpath):
+                    print("Failed to click Load More button, trying infinite scroll as fallback...")
                     
-                    # Final check and debug info
-                    try:
-                        current_products = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
-                        print(f"Current products on page: {current_products}")
+                    # Try infinite scroll approach
+                    if try_infinite_scroll(driver):
+                        print("Infinite scroll worked, continuing...")
+                        # Count products after infinite scroll
+                        products_on_page_after = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
+                        print(f"Products on page after infinite scroll: {products_on_page_after}")
+                        continue
+                    else:
+                        print("Both Load More button and infinite scroll failed")
                         
-                        # If we haven't reached the expected total, there might be an issue
-                        if current_products < total_mobile_count:
-                            print("There might be more products available but both methods failed")
-                            print("This could be due to:")
-                            print("1. Website structure changed")
-                            print("2. Anti-bot protection")
-                            print("3. Different Load More button implementation")
-                            print("4. JavaScript not fully loaded")
-                            print("5. The website switched to a different pagination method")
+                        # Final check and debug info
+                        try:
+                            current_products = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
+                            print(f"Current products on page: {current_products}")
+                            
+                            # If we haven't reached the expected total, there might be an issue
+                            if current_products < total_mobile_count:
+                                print("There might be more products available but both methods failed")
+                                print("This could be due to:")
+                                print("1. Website structure changed")
+                                print("2. Anti-bot protection")
+                                print("3. Different Load More button implementation")
+                                print("4. JavaScript not fully loaded")
+                                print("5. The website switched to a different pagination method")
+                            
+                        except Exception as e:
+                            print(f"Error checking page state: {e}")
                         
-                    except Exception as e:
-                        print(f"Error checking page state: {e}")
-                    
-                    break  # No more Load More button or failed to click
-            else:
-                # Load More button was clicked successfully
-                products_on_page_after = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
-                print(f"Products on page after Load More: {products_on_page_after}")
-                new_products_loaded = products_on_page_after - products_on_page_before
-                print(f"New products loaded: {new_products_loaded}")
+                        break  # No more Load More button or failed to click
+                else:
+                    # Load More button was clicked successfully
+                    products_on_page_after = len(driver.find_elements(By.XPATH, "//div[contains(@class, 'product') or contains(@class, 'prd')]"))
+                    print(f"Products on page after Load More: {products_on_page_after}")
+                    new_products_loaded = products_on_page_after - products_on_page_before
+                    print(f"New products loaded: {new_products_loaded}")
+                
+                # If no products were scraped in this batch, break to avoid infinite loop
+                if products_scraped_in_batch == 0:
+                    break
             
-            # If no products were scraped in this batch, break to avoid infinite loop
-            if products_scraped_in_batch == 0:
+            except KeyboardInterrupt:
+                print(f"\n⚠️  KeyboardInterrupt detected! Stopping scraping gracefully...")
+                print(f"✅ Current progress: {total_scraped}/{total_mobile_count} products scraped")
+                print(f"✅ Data saved to {json_file_path}")
                 break
         
         return total_scraped
         
+    except KeyboardInterrupt:
+        print(f"\n⚠️  KeyboardInterrupt detected at main level! Stopping scraping gracefully...")
+        print(f"✅ Current progress: {total_scraped}/{total_mobile_count} products scraped")
+        print(f"✅ Data saved to {json_file_path}")
+        return total_scraped
     except Exception as e:
-        return None
+        print(f"❌ An error occurred during scraping: {e}")
+        print(f"✅ Current progress: {total_scraped}/{total_mobile_count} products scraped")
+        print(f"✅ Data saved to {json_file_path}")
+        return total_scraped
     finally:
         # Close the browser
+        print("🔄 Closing browser...")
         driver.quit()
 
 
 if __name__ == "__main__":
     import sys
     
-    # Check if debug mode is requested
-    debug_mode = len(sys.argv) > 1 and sys.argv[1] == "--debug"
-    
-    result = scrape_smartprix_mobiles(debug_mode=debug_mode)
-    
-    if result:
-        print(f"Successfully scraped {result} mobile phones and saved to mobiles.json")
-    else:
-        print("Failed to scrape mobile phones")
+    try:
+        # Check if debug mode is requested
+        debug_mode = len(sys.argv) > 1 and sys.argv[1] == "--debug"
         
-    if debug_mode:
-        print("\nDebug mode was enabled. Run without --debug flag for normal operation.")
+        print("=== Smartprix Mobile Phone Scraper ===")
+        print("Press Ctrl+C to stop scraping gracefully at any time")
+        print("Your progress will be saved automatically")
+        print()
+        
+        result = scrape_smartprix_mobiles(debug_mode=debug_mode)
+        
+        if result:
+            print(f"\n✅ Successfully scraped {result} mobile phones and saved to mobiles.json")
+        else:
+            print("\n❌ Failed to scrape mobile phones")
+            
+        if debug_mode:
+            print("\nDebug mode was enabled. Run without --debug flag for normal operation.")
+            
+    except KeyboardInterrupt:
+        print(f"\n⚠️  KeyboardInterrupt detected at top level! Exiting gracefully...")
+        print("✅ Any progress made has been saved to mobiles.json")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n❌ An unexpected error occurred: {e}")
+        print("✅ Any progress made has been saved to mobiles.json")
+        sys.exit(1)

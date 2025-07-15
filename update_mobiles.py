@@ -79,9 +79,15 @@ def clean_unicode_text(text):
 
 
 def setup_driver():
-    """Setup Chrome WebDriver with options (same as original script)"""
+    """Setup Chrome WebDriver with options and Amazon-specific image blocking
+    
+    This function configures Chrome to:
+    - Block images specifically for Amazon.in domains (www.amazon.in, amazon.in, m.amazon.in)
+    - Allow images for all other websites including Smartprix.com
+    - This improves performance when searching Amazon while preserving image scraping for other sites
+    """
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in background
+    #chrome_options.add_argument("--headless")  # Run in background
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
@@ -99,7 +105,38 @@ def setup_driver():
     chrome_options.add_argument("--disable-gpu-logging")  # Disable GPU logging
     chrome_options.add_argument("--disable-extensions")  # Disable extensions
     chrome_options.add_argument("--disable-plugins")  # Disable plugins
-    # Note: NOT disabling images as we need to scrape them
+    
+    # Configure content settings to block images specifically for Amazon.in domains
+    prefs = {
+        "profile.default_content_setting_values": {
+            "images": 1  # Allow images by default
+        },
+        "profile.content_settings": {
+            "exceptions": {
+                "images": {
+                    "https://www.amazon.in:443,*": {
+                        "setting": 2  # Block images for amazon.in
+                    },
+                    "https://amazon.in:443,*": {
+                        "setting": 2  # Block images for amazon.in (without www)
+                    },
+                    "https://m.amazon.in:443,*": {
+                        "setting": 2  # Block images for mobile amazon.in
+                    },
+                    "http://www.amazon.in:80,*": {
+                        "setting": 2  # Block images for http amazon.in
+                    },
+                    "http://amazon.in:80,*": {
+                        "setting": 2  # Block images for http amazon.in (without www)
+                    }
+                }
+            }
+        }
+    }
+    chrome_options.add_experimental_option("prefs", prefs)
+    print("    Image blocking configured specifically for Amazon.in domains")
+    print("    Images enabled for all other sites (including Smartprix)")
+    
     chrome_options.add_argument("--disable-web-security")  # Disable web security
     chrome_options.add_argument("--disable-features=VizDisplayCompositor")  # Disable compositor
     chrome_options.add_argument("--disable-background-networking")  # Disable background networking
@@ -133,6 +170,46 @@ def setup_driver():
         print(f"Error setting up Chrome driver: {e}")
         print("Make sure ChromeDriver is installed and in your PATH")
         return None
+
+
+def verify_image_blocking_for_amazon(driver):
+    """Verify that image blocking is working for Amazon.in domains"""
+    try:
+        print("    Verifying image blocking configuration for Amazon.in...")
+        
+        # Test by checking if images are blocked on Amazon.in
+        test_url = "https://www.amazon.in"
+        driver.get(test_url)
+        time.sleep(2)
+        
+        # Check if images are being loaded by looking for img elements with src
+        images = driver.find_elements(By.TAG_NAME, "img")
+        loaded_images = 0
+        
+        for img in images[:5]:  # Check first 5 images only
+            src = img.get_attribute("src")
+            if src and src.startswith("http") and "amazon" in src:
+                # Try to check if image is actually loaded
+                try:
+                    # Use JavaScript to check if image is loaded
+                    is_loaded = driver.execute_script(
+                        "return arguments[0].complete && arguments[0].naturalHeight !== 0;", img
+                    )
+                    if is_loaded:
+                        loaded_images += 1
+                except:
+                    pass
+        
+        if loaded_images == 0:
+            print("    ✓ Image blocking appears to be working for Amazon.in")
+            return True
+        else:
+            print(f"    ⚠ Warning: {loaded_images} images may still be loading on Amazon.in")
+            return False
+            
+    except Exception as e:
+        print(f"    Error verifying image blocking: {e}")
+        return False
 
 
 def create_images_directory(unique_id):
@@ -764,6 +841,8 @@ def scrape_and_save_product_images(driver, product_url, unique_id, retries=3):
     for attempt in range(retries):
         try:
             print(f"  Visiting URL: {product_url}")
+            if "smartprix.com" in product_url:
+                print("  📷 Images enabled for Smartprix (non-Amazon site)")
             driver.get(product_url)
             
             # Wait for page to load
@@ -956,6 +1035,7 @@ def extract_asin_from_amazon_url(url):
         # Common Amazon ASIN patterns
         patterns = [
             r'/dp/([A-Z0-9]{10})',
+            r'/gp/aw/d/([A-Z0-9]{10})',  # Mobile Amazon URLs
             r'/product/([A-Z0-9]{10})',
             r'/gp/product/([A-Z0-9]{10})',
             r'asin=([A-Z0-9]{10})',
@@ -965,7 +1045,11 @@ def extract_asin_from_amazon_url(url):
         for pattern in patterns:
             match = re.search(pattern, url)
             if match:
-                return match.group(1)
+                asin = match.group(1)
+                print(f"    ✓ Extracted ASIN: {asin} using pattern: {pattern}")
+                return asin
+        
+        print(f"    ✗ No ASIN pattern matched for URL: {url}")
         return None
     except Exception as e:
         print(f"    Error extracting ASIN from URL: {e}")
@@ -1345,7 +1429,19 @@ def get_amazon_mrp_from_asin(driver, asin):
         print(f"    Navigating directly to Amazon: {amazon_url}")
         
         driver.get(amazon_url)
+        print("    📷 Images should be blocked for Amazon.in domain")
         time.sleep(5)  # Wait for page to load
+        
+        # Check for 503 error after navigation
+        if check_for_503_error(driver):
+            print("    Direct ASIN URL encountered 503 error, trying fallback method")
+            
+            # Try fallback method by searching for the ASIN
+            if not search_amazon_fallback_method(driver, asin):
+                print("    Fallback method failed for ASIN access")
+                return ""
+            
+            print("    Fallback method successful for ASIN access")
         
         # Use the same get_amazon_mrp function to extract MRP
         return get_amazon_mrp(driver)
@@ -1438,6 +1534,147 @@ def compare_prices(price1, price2, tolerance_percent=5):
         return False
 
 
+def is_sponsored_product(price_element):
+    """Check if a price element belongs to a sponsored product"""
+    try:
+        # Look for sponsored indicators in the product container
+        # Start from the price element and traverse up to find the product container
+        current_element = price_element
+        max_levels = 15  # Maximum levels to traverse up
+        
+        for level in range(max_levels):
+            try:
+                # Check current element for sponsored indicators
+                
+                # Method 1: Check for "Sponsored" text in the element or its children
+                element_text = current_element.text.lower() if current_element.text else ""
+                if "sponsored" in element_text:
+                    return True
+                
+                # Method 2: Check for sponsored-related attributes
+                element_classes = current_element.get_attribute("class") or ""
+                if any(sponsored_class in element_classes.lower() for sponsored_class in [
+                    "sponsored", "sp-sponsored", "s-sponsored", "AdHolder"
+                ]):
+                    return True
+                
+                # Method 3: Check for data attributes that indicate sponsored content
+                data_component = current_element.get_attribute("data-component-type") or ""
+                if "sponsored" in data_component.lower():
+                    return True
+                
+                # Method 4: Look for sponsored badge/label elements within this container
+                try:
+                    sponsored_elements = current_element.find_elements(By.XPATH, 
+                        ".//*[contains(text(), 'Sponsored') or contains(text(), 'SPONSORED') or "
+                        "contains(@class, 'sponsored') or contains(@class, 'Sponsored') or "
+                        "contains(@data-component-type, 'sponsored')]"
+                    )
+                    if sponsored_elements:
+                        return True
+                except:
+                    pass
+                
+                # Method 5: Check for specific Amazon sponsored selectors
+                try:
+                    sponsored_selectors = [
+                        "[data-component-type*='sponsored']",
+                        ".s-sponsored-info-icon",
+                        ".a-sponsored",
+                        "[aria-label*='Sponsored']",
+                        ".AdHolder"
+                    ]
+                    
+                    for selector in sponsored_selectors:
+                        if current_element.find_elements(By.CSS_SELECTOR, selector):
+                            return True
+                except:
+                    pass
+                
+                # Move to parent element
+                parent = current_element.find_element(By.XPATH, "..")
+                if parent == current_element:  # Reached the top
+                    break
+                current_element = parent
+                
+            except Exception as e:
+                break
+        
+        return False
+        
+    except Exception as e:
+        # If there's an error checking, assume it's not sponsored to be safe
+        return False
+
+
+def check_for_503_error(driver):
+    """Check if the current page shows a 503 error"""
+    try:
+        page_source = driver.page_source.lower()
+        # Check for common 503 error indicators
+        error_indicators = [
+            "503 service unavailable",
+            "service temporarily unavailable",
+            "server is temporarily unable",
+            "503 error",
+            "temporarily overloaded"
+        ]
+        
+        for indicator in error_indicators:
+            if indicator in page_source:
+                return True
+        
+        # Check for specific Amazon error pages
+        if "sorry, we just need to make sure you're not a robot" in page_source:
+            return True
+            
+        return False
+    except Exception as e:
+        print(f"    Error checking for 503: {e}")
+        return False
+
+
+def search_amazon_fallback_method(driver, product_name):
+    """Fallback method: Navigate to Amazon.in and use search box"""
+    try:
+        print(f"    Using fallback method: navigating to Amazon.in homepage and using search box")
+        
+        # Navigate to Amazon.in homepage
+        driver.get("https://www.amazon.in")
+        print("    📷 Images should be blocked for Amazon.in domain")
+        time.sleep(3)
+        
+        # Check if homepage loaded successfully
+        if check_for_503_error(driver):
+            print("    Fallback method also encountered 503 error")
+            return False
+        
+        # Find the search box using the specified xpath
+        try:
+            search_box = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="twotabsearchtextbox"]'))
+            )
+            print("    Found search box successfully")
+        except TimeoutException:
+            print("    Could not find search box with xpath //*[@id=\"twotabsearchtextbox\"]")
+            return False
+        
+        # Clear any existing text and enter the product name
+        search_box.clear()
+        search_box.send_keys(product_name)
+        
+        # Press Enter to submit the search
+        search_box.send_keys(Keys.RETURN)
+        time.sleep(5)  # Wait for search results to load
+        
+        print(f"    Fallback search completed for: {product_name}")
+        return True
+        
+    except Exception as e:
+        print(f"    Error in fallback search method: {e}")
+        return False
+
+
 def search_amazon_for_product(driver, product_name, expected_price):
     """Search Amazon.in for product by name and verify by price matching"""
     try:
@@ -1452,102 +1689,196 @@ def search_amazon_for_product(driver, product_name, expected_price):
         
         # Navigate directly to search results
         driver.get(search_url)
+        print("    📷 Images should be blocked for Amazon.in domain")
         time.sleep(5)  # Wait for search results to load
+        
+        # Check for 503 error after navigation
+        if check_for_503_error(driver):
+            print("    Direct URL method encountered 503 error, trying fallback method")
+            
+            # Try fallback method
+            if not search_amazon_fallback_method(driver, product_name):
+                print("    Both direct URL and fallback methods failed")
+                return None, False
+            
+            # If fallback succeeded, continue with the rest of the function
+            print("    Fallback method successful, proceeding with search results processing")
         
         print(f"    Search completed for: {product_name}")
         
-        # Look for product results
+        # Wait for search results to load
         try:
-            # Try to find product results
-            product_elements = driver.find_elements(By.XPATH, "//div[@data-component-type='s-search-result']")
+            wait = WebDriverWait(driver, 10)
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-component-type='s-search-result']")))
+            print("    Search results loaded successfully")
+        except TimeoutException:
+            print("    Timeout waiting for search results to load")
+            return None, False
+        
+        # Give the page a moment to fully render
+        time.sleep(2)
+        
+        # Find all price elements with the specific class "a-price-whole"
+        price_elements = driver.find_elements(By.CSS_SELECTOR, "span.a-price-whole")
+        
+        print(f"    Found {len(price_elements)} price elements with class 'a-price-whole'")
+        
+        if not price_elements:
+            print("    No price elements found")
+            return None, False
+        
+        # Extract prices from the elements, skipping sponsored products
+        # Stop as soon as we find a matching price
+        skipped_sponsored = 0
+        matching_price_element = None
+        
+        print(f"    Matching prices with expected price: {expected_price}")
+        
+        for i, element in enumerate(price_elements):
+            try:
+                # Check if this price element belongs to a sponsored product
+                if is_sponsored_product(element):
+                    skipped_sponsored += 1
+                    print(f"      Price {i+1}: SKIPPED (Sponsored product)")
+                    continue
+                
+                price_text = element.text.strip()
+                if price_text:
+                    # Format price to match expected format (add ₹ if not present)
+                    if not price_text.startswith('₹'):
+                        formatted_price = f"₹{price_text}"
+                    else:
+                        formatted_price = price_text
+                    
+                    print(f"      Price {i+1}: {formatted_price}")
+                    
+                    # Check if this price matches the expected price
+                    if compare_prices(expected_price, formatted_price):
+                        print(f"    ✓ Price match found: {formatted_price} matches {expected_price}")
+                        matching_price_element = element
+                        break
+                    else:
+                        print(f"    ✗ Price mismatch: {formatted_price} vs {expected_price}")
+                        
+            except Exception as e:
+                print(f"      Error extracting price from element {i+1}: {e}")
+                continue
+        
+        if skipped_sponsored > 0:
+            print(f"    Skipped {skipped_sponsored} sponsored products")
+        
+        if not matching_price_element:
+            print("    No matching price found in search results")
+            return None, False
+        
+        # Click on the matching price element to navigate to product page
+        try:
+            print("    Clicking on matching price element...")
             
-            if not product_elements:
-                print("    No search results found")
+            # Scroll the element into view
+            driver.execute_script("arguments[0].scrollIntoView(true);", matching_price_element)
+            time.sleep(1)
+            
+            # Store current URL to detect navigation
+            current_url_before = driver.current_url
+            
+            # Try multiple click methods on the price element itself
+            click_success = False
+            
+            # Method 1: Direct click on the price element
+            try:
+                print("    Attempting direct click on price element...")
+                matching_price_element.click()
+                time.sleep(3)
+                
+                # Check if URL changed (indicating navigation)
+                if driver.current_url != current_url_before:
+                    click_success = True
+                    print("    ✓ Direct click successful - page navigated")
+                else:
+                    print("    Direct click didn't navigate - trying alternative methods")
+            except Exception as e:
+                print(f"    Direct click failed: {e}")
+            
+            # Method 2: JavaScript click on the price element
+            if not click_success:
+                try:
+                    print("    Attempting JavaScript click on price element...")
+                    driver.execute_script("arguments[0].click();", matching_price_element)
+                    time.sleep(3)
+                    
+                    if driver.current_url != current_url_before:
+                        click_success = True
+                        print("    ✓ JavaScript click successful - page navigated")
+                    else:
+                        print("    JavaScript click didn't navigate - trying parent elements")
+                except Exception as e:
+                    print(f"    JavaScript click failed: {e}")
+            
+            # Method 3: Try clicking on parent elements if price element itself isn't clickable
+            if not click_success:
+                print("    Trying to find clickable parent elements...")
+                clickable_element = matching_price_element
+                max_parent_levels = 5
+                
+                for level in range(max_parent_levels):
+                    try:
+                        parent = clickable_element.find_element(By.XPATH, "..")
+                        
+                        # Try clicking the parent
+                        try:
+                            print(f"    Attempting click on parent level {level + 1}...")
+                            parent.click()
+                            time.sleep(3)
+                            
+                            if driver.current_url != current_url_before:
+                                click_success = True
+                                print(f"    ✓ Parent level {level + 1} click successful - page navigated")
+                                break
+                        except:
+                            pass
+                        
+                        # Try JavaScript click on parent
+                        try:
+                            driver.execute_script("arguments[0].click();", parent)
+                            time.sleep(3)
+                            
+                            if driver.current_url != current_url_before:
+                                click_success = True
+                                print(f"    ✓ Parent level {level + 1} JavaScript click successful - page navigated")
+                                break
+                        except:
+                            pass
+                        
+                        clickable_element = parent
+                        
+                    except Exception as e:
+                        break
+            
+            if not click_success:
+                print("    ✗ All click methods failed - could not navigate to product page")
                 return None, False
             
-            print(f"    Found {len(product_elements)} search results")
+            # Wait for the product page to load
+            time.sleep(3)
             
-            # Check first few results for price matching
-            for i, product_element in enumerate(product_elements[:5]):  # Check first 5 results
-                try:
-                    print(f"    Checking result {i+1}...")
-                    
-                    # Get the product link
-                    product_link = product_element.find_element(By.XPATH, ".//a[contains(@href, '/dp/')]")
-                    product_url = product_link.get_attribute("href")
-                    
-                    if not product_url:
-                        continue
-                    
-                    # Extract ASIN from URL
-                    asin = extract_asin_from_amazon_url(product_url)
-                    if not asin:
-                        continue
-                    
-                    # Get price from search results
-                    price_elements = product_element.find_elements(By.XPATH, ".//span[@class='a-price-whole']")
-                    if not price_elements:
-                        # Try alternative price selectors
-                        price_elements = product_element.find_elements(By.XPATH, ".//span[contains(@class, 'a-price') and contains(@class, 'a-text-price')]//span[@class='a-offscreen']")
-                    
-                    if price_elements:
-                        amazon_price = price_elements[0].text.strip()
-                        print(f"      Found product with price: {amazon_price}")
-                        
-                        # Compare prices
-                        if compare_prices(expected_price, amazon_price):
-                            print(f"      ✓ Price match found! Navigating to product page...")
-                            
-                            # Navigate to product page to get detailed info with retry mechanism
-                            max_retries = 3
-                            retry_count = 0
-                            navigation_success = False
-                            
-                            while retry_count < max_retries and not navigation_success:
-                                try:
-                                    if retry_count > 0:
-                                        print(f"        Retry {retry_count}/{max_retries-1} for navigation...")
-                                    
-                                    driver.get(product_url)
-                                    time.sleep(5)
-                                    
-                                    # Verify we're on the correct product page by checking URL contains the ASIN
-                                    current_url = driver.current_url
-                                    if asin in current_url:
-                                        navigation_success = True
-                                        print(f"        ✓ Successfully navigated to product page for ASIN: {asin}")
-                                    else:
-                                        raise Exception(f"Navigation failed - URL does not contain ASIN {asin}. Current URL: {current_url}")
-                                    
-                                except Exception as nav_error:
-                                    retry_count += 1
-                                    print(f"        Navigation attempt {retry_count} failed: {nav_error}")
-                                    
-                                    if retry_count < max_retries:
-                                        print(f"        Retrying navigation in 3 seconds...")
-                                        time.sleep(3)
-                                    else:
-                                        print(f"        All navigation attempts failed after {max_retries} retries")
-                                        raise nav_error
-                            
-                            if navigation_success:
-                                # Extract MRP from product page
-                                mrp = get_amazon_mrp(driver)
-                                return {"asin": asin, "mrp": mrp}, True
-                        else:
-                            print(f"      ✗ Price mismatch, continuing search...")
-                    else:
-                        print(f"      No price found for this result")
-                        
-                except Exception as e:
-                    print(f"      Error checking result {i+1}: {e}")
-                    continue
+            # Extract ASIN from the new URL
+            current_url = driver.current_url
+            asin = extract_asin_from_amazon_url(current_url)
             
-            print("    No price-matched products found in search results")
-            return None, False
+            if asin:
+                print(f"    ✓ Successfully navigated to product page for ASIN: {asin}")
+                print(f"    Product page URL: {current_url}")
+                
+                # Extract MRP from product page
+                mrp = get_amazon_mrp(driver)
+                return {"asin": asin, "mrp": mrp}, True
+            else:
+                print(f"    ✗ Could not extract ASIN from product page URL: {current_url}")
+                return None, False
             
         except Exception as e:
-            print(f"    Error processing search results: {e}")
+            print(f"    ✗ Error clicking on price element: {e}")
             return None, False
             
     except Exception as e:
@@ -1742,6 +2073,9 @@ def main():
     if not driver:
         print("Failed to setup Chrome driver. Exiting.")
         return
+    
+    # Verify image blocking configuration for Amazon.in
+    verify_image_blocking_for_amazon(driver)
     
     try:
         # Process each product

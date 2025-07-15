@@ -1,17 +1,17 @@
 {
-  "total_mobile_phones": 882,
+  "total_mobile_phones": 892,
   "products": [
-    {
-      "unique_id": "oneplus_nord_ce_5_5g",
-      "name": "OnePlus Nord CE 5 5G",
-      "price": "₹24,998",
-      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1"
-    },
     {
       "unique_id": "vivo_x200_fe",
       "name": "Vivo X200 FE",
       "price": "₹54,999",
       "url": "https://www.smartprix.com/mobiles/vivo-x200-fe-ppd1plhdfvpr"
+    },
+    {
+      "unique_id": "oneplus_nord_ce_5_5g",
+      "name": "OnePlus Nord CE 5 5G",
+      "price": "₹24,998",
+      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-ppd1r3kavvs1"
     },
     {
       "unique_id": "oneplus_nord_5_5g",
@@ -26,16 +26,16 @@
       "url": "https://www.smartprix.com/mobiles/oppo-reno-14-pro-5g-ppd159386vd3"
     },
     {
+      "unique_id": "samsung_galaxy_s24_ultra",
+      "name": "Samsung Galaxy S24 Ultra",
+      "price": "₹85,900",
+      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-ppd1iyi3f6js"
+    },
+    {
       "unique_id": "oppo_reno_14_5g",
       "name": "OPPO Reno 14 5G",
       "price": "₹37,999",
       "url": "https://www.smartprix.com/mobiles/oppo-reno-14-5g-ppd16yet8j4z"
-    },
-    {
-      "unique_id": "samsung_galaxy_s24_ultra",
-      "name": "Samsung Galaxy S24 Ultra",
-      "price": "₹76,999",
-      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-ppd1iyi3f6js"
     },
     {
       "unique_id": "samsung_galaxy_m36_5g",
@@ -48,78 +48,6 @@
       "name": "Motorola Edge 60 5G",
       "price": "₹26,999",
       "url": "https://www.smartprix.com/mobiles/motorola-edge-60-5g-ppd1qz8oqize"
-    },
-    {
-      "unique_id": "oppo_reno_12_5g",
-      "name": "OPPO Reno 12 5G",
-      "price": "₹19,999",
-      "url": "https://www.smartprix.com/mobiles/oppo-reno-12-ppd1elple3sk"
-    },
-    {
-      "unique_id": "motorola_edge_60_fusion",
-      "name": "Motorola Edge 60 Fusion",
-      "price": "₹22,795",
-      "url": "https://www.smartprix.com/mobiles/motorola-edge-60-fusion-ppd1qc7i0he4"
-    },
-    {
-      "unique_id": "motorola_edge_60_pro",
-      "name": "Motorola Edge 60 Pro",
-      "price": "₹30,599",
-      "url": "https://www.smartprix.com/mobiles/motorola-edge-60-pro-ppd1n6m7zz1w"
-    },
-    {
-      "unique_id": "vivo_t4_5g",
-      "name": "Vivo T4 5G",
-      "price": "₹21,619",
-      "url": "https://www.smartprix.com/mobiles/vivo-t4-ppd186aae1n5"
-    },
-    {
-      "unique_id": "vivo_t4x_5g",
-      "name": "Vivo T4x 5G",
-      "price": "₹13,999",
-      "url": "https://www.smartprix.com/mobiles/vivo-t4x-5g-ppd1xeoou6dt"
-    },
-    {
-      "unique_id": "samsung_galaxy_s24_fe_5g",
-      "name": "Samsung Galaxy S24 FE 5G",
-      "price": "₹36,490",
-      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-fe-ppd1o1zy1v5x"
-    },
-    {
-      "unique_id": "iqoo_neo_10r",
-      "name": "iQOO Neo 10R",
-      "price": "₹26,998",
-      "url": "https://www.smartprix.com/mobiles/iqoo-neo-10r-ppd1bm0myepb"
-    },
-    {
-      "unique_id": "iqoo_neo_10",
-      "name": "iQOO Neo 10",
-      "price": "₹31,998",
-      "url": "https://www.smartprix.com/mobiles/iqoo-neo-10-ppd1z84s265q"
-    },
-    {
-      "unique_id": "oneplus_nord_ce_5_5g_8gb_ram_256gb",
-      "name": "OnePlus Nord CE 5 5G (8GB RAM + 256GB)",
-      "price": "₹26,998",
-      "url": "https://www.smartprix.com/mobiles/oneplus-nord-ce-5-5g-8gb-ram-256gb-ppd1qyk0ajaa"
-    },
-    {
-      "unique_id": "samsung_galaxy_a55_5g",
-      "name": "Samsung Galaxy A55 5G",
-      "price": "₹28,999",
-      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-ppd1j932nh5d"
-    },
-    {
-      "unique_id": "samsung_galaxy_m55s",
-      "name": "Samsung Galaxy M55s",
-      "price": "₹15,985",
-      "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55s-ppd1afgkxdis"
-    },
-    {
-      "unique_id": "oneplus_13s_5g",
-      "name": "OnePlus 13s 5G",
-      "price": "₹54,998",
-      "url": "https://www.smartprix.com/mobiles/oneplus-13s-ppd15ix9v6ny"
     }
   ]
 }

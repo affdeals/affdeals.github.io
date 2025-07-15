@@ -52,6 +52,7 @@ def setup_driver():
     chrome_options.add_argument("--disable-extensions")  # Disable extensions
     chrome_options.add_argument("--disable-plugins")  # Disable plugins
     chrome_options.add_argument("--disable-images")  # Disable images for faster loading
+    chrome_options.add_argument("--blink-settings=imagesEnabled=false")  # Alternative image blocking
     chrome_options.add_argument("--disable-web-security")  # Disable web security
     chrome_options.add_argument("--disable-features=VizDisplayCompositor")  # Disable compositor
     chrome_options.add_argument("--disable-background-networking")  # Disable background networking
@@ -68,6 +69,14 @@ def setup_driver():
     chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    
+    # Block images, CSS, and other resources for faster loading
+    prefs = {
+        "profile.managed_default_content_settings.images": 2,  # Block images
+        "profile.default_content_setting_values.notifications": 2,  # Block notifications
+        "profile.managed_default_content_settings.media_stream": 2,  # Block media
+    }
+    chrome_options.add_experimental_option("prefs", prefs)
 
     temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
     chrome_options.add_argument(f"--user-data-dir={temp_profile}")
@@ -172,6 +181,90 @@ def append_product_to_json(product_data, json_file_path):
         return False
 
 
+def fetch_amazon_price_from_product_page(driver, product_url):
+    """Fetch Amazon price from product page by opening in new tab"""
+    original_window = None
+    try:
+        # Store current window handle
+        original_window = driver.current_window_handle
+        
+        # Open product page in new tab
+        driver.execute_script(f"window.open('{product_url}', '_blank');")
+        
+        # Switch to new tab
+        new_windows = driver.window_handles
+        if len(new_windows) > 1:
+            driver.switch_to.window(new_windows[-1])
+        else:
+            print("Failed to open new tab")
+            return None
+        
+        # Wait for page to load
+        wait = WebDriverWait(driver, 10)
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        
+        # XPaths to check for "Amazon" text
+        amazon_text_xpaths = [
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[1]/a/div/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[2]/a/div/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[3]/a/div/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[4]/a/div/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[5]/a/div/span"
+        ]
+        
+        # Corresponding price XPaths
+        amazon_price_xpaths = [
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[1]/a/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[2]/a/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[3]/a/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[4]/a/span",
+            "/html/body/div[1]/main/div[1]/div[2]/div[3]/ul[1]/li[5]/a/span"
+        ]
+        
+        amazon_price = None
+        
+        # Check each xpath for "Amazon" text
+        for i, text_xpath in enumerate(amazon_text_xpaths):
+            try:
+                text_element = driver.find_element(By.XPATH, text_xpath)
+                if text_element and text_element.text and "Amazon" in text_element.text:
+                    # Found Amazon, now get the corresponding price
+                    try:
+                        price_element = driver.find_element(By.XPATH, amazon_price_xpaths[i])
+                        if price_element and price_element.text:
+                            amazon_price = price_element.text.strip()
+                            break
+                    except Exception as price_error:
+                        print(f"Error getting price for Amazon at index {i}: {price_error}")
+                        continue
+            except Exception as text_error:
+                # Element not found, continue to next xpath
+                continue
+        
+        # Close the product page tab and switch back to original window
+        driver.close()
+        if original_window:
+            driver.switch_to.window(original_window)
+        
+        return amazon_price
+        
+    except Exception as e:
+        # Make sure we switch back to original window even if there's an error
+        try:
+            current_handles = driver.window_handles
+            if len(current_handles) > 1:
+                driver.close()
+            if original_window and original_window in driver.window_handles:
+                driver.switch_to.window(original_window)
+            elif len(driver.window_handles) > 0:
+                driver.switch_to.window(driver.window_handles[0])
+        except Exception as cleanup_error:
+            print(f"Error during cleanup: {cleanup_error}")
+        
+        print(f"Error fetching Amazon price from product page: {e}")
+        return None
+
+
 def scrape_product_details(driver, product_xpath, retries=5):
     """Scrape individual product details with retry logic"""
     for attempt in range(retries):
@@ -199,18 +292,7 @@ def scrape_product_details(driver, product_xpath, retries=5):
                 except:
                     pass
             
-            # Try to extract price
-            try:
-                price_element = product_element.find_element(By.CSS_SELECTOR, ".prd-price, .price, [data-price], .product-price")
-                product_data["price"] = price_element.text.strip() if price_element.text else None
-            except:
-                try:
-                    price_element = product_element.find_element(By.XPATH, ".//span[contains(@class, 'price') or contains(text(), '₹')]")
-                    product_data["price"] = price_element.text.strip() if price_element.text else None
-                except:
-                    pass
-            
-            # Try to extract URL
+            # Try to extract URL first (needed for price fetching)
             try:
                 url_element = product_element.find_element(By.CSS_SELECTOR, "a[href]")
                 relative_url = url_element.get_attribute("href")
@@ -221,6 +303,23 @@ def scrape_product_details(driver, product_xpath, retries=5):
                         product_data["url"] = relative_url
             except:
                 pass
+            
+            # Fetch Amazon price from product page if URL is available
+            if product_data["url"]:
+                amazon_price = fetch_amazon_price_from_product_page(driver, product_data["url"])
+                if amazon_price:
+                    product_data["price"] = amazon_price
+                else:
+                    # Fallback to old price extraction method if Amazon price not found
+                    try:
+                        price_element = product_element.find_element(By.CSS_SELECTOR, ".prd-price, .price, [data-price], .product-price")
+                        product_data["price"] = price_element.text.strip() if price_element.text else None
+                    except:
+                        try:
+                            price_element = product_element.find_element(By.XPATH, ".//span[contains(@class, 'price') or contains(text(), '₹')]")
+                            product_data["price"] = price_element.text.strip() if price_element.text else None
+                        except:
+                            pass
             
             # Generate unique ID if we have a name
             if product_data["name"]:
@@ -485,7 +584,8 @@ def scrape_smartprix_mobiles(debug_mode=False):
                             if append_product_to_json(product_data, json_file_path):
                                 total_scraped += 1
                                 products_scraped_in_batch += 1
-                                print(f"Scraped product {total_scraped}: {product_data['name']}")
+                                price_info = f" - Found Amazon price: {product_data['price']}" if product_data.get('price') else " - No price found"
+                                print(f"Scraped product {total_scraped}: {product_data['name']}{price_info}")
                         else:
                             # Handle duplicate by appending number
                             counter = 1
@@ -499,7 +599,8 @@ def scrape_smartprix_mobiles(debug_mode=False):
                             if append_product_to_json(product_data, json_file_path):
                                 total_scraped += 1
                                 products_scraped_in_batch += 1
-                                print(f"Scraped product {total_scraped}: {product_data['name']}")
+                                price_info = f" - Found Amazon price: {product_data['price']}" if product_data.get('price') else " - No price found"
+                                print(f"Scraped product {total_scraped}: {product_data['name']}{price_info}")
                 
                 # Print batch summary
                 print(f"Batch completed. Products scraped in this batch: {products_scraped_in_batch}")

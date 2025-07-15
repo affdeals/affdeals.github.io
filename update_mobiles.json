@@ -1831,7 +1831,7 @@
       "id": "samsung_galaxy_s24_ultra",
       "name": "Samsung Galaxy S24 Ultra",
       "listed": "no",
-      "price": "₹76,999",
+      "price": "₹82,999",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-ultra-ppd1iyi3f6js",
       "images": [
@@ -2494,8 +2494,8 @@
     {
       "id": "motorola_edge_60_5g",
       "name": "Motorola Edge 60 5G",
-      "listed": "yes",
-      "price": "₹26,999",
+      "listed": "no",
+      "price": "₹26,899",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/motorola-edge-60-5g-ppd1qz8oqize",
       "images": [
@@ -2509,10 +2509,10 @@
       "variants": [
         {
           "size": null,
-          "price": "₹26,999"
+          "price": "₹26,899"
         }
       ],
-      "asin": "B0FDHHRD9Z",
+      "asin": null,
       "spec_score": "88",
       "features": {
         "GENERAL": [
@@ -2852,8 +2852,8 @@
     {
       "id": "oppo_reno_12_5g",
       "name": "OPPO Reno 12 5G",
-      "listed": "no",
-      "price": "₹19,999",
+      "listed": "yes",
+      "price": "₹22,259",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/oppo-reno-12-ppd1elple3sk",
       "images": [
@@ -2870,7 +2870,7 @@
           "price": "₹19,999"
         }
       ],
-      "asin": null,
+      "asin": "B0DB6BY8BN",
       "spec_score": "84",
       "features": {
         "GENERAL": [
@@ -3175,7 +3175,7 @@
       "id": "motorola_edge_60_fusion",
       "name": "Motorola Edge 60 Fusion",
       "listed": "yes",
-      "price": "₹22,795",
+      "price": "₹22,860",
       "mrp": "₹25,999",
       "url": "https://www.smartprix.com/mobiles/motorola-edge-60-fusion-ppd1qc7i0he4",
       "images": [
@@ -3192,11 +3192,11 @@
       "variants": [
         {
           "size": "8GB+256GB",
-          "price": "₹22,899"
+          "price": "₹22,850"
         },
         {
           "size": "12GB+256GB",
-          "price": "₹24,995"
+          "price": "₹24,550"
         }
       ],
       "asin": "B0F46SJ5SB",
@@ -3549,8 +3549,8 @@
     {
       "id": "motorola_edge_60_pro",
       "name": "Motorola Edge 60 Pro",
-      "listed": "yes",
-      "price": "₹30,599",
+      "listed": "no",
+      "price": "₹30,210",
       "mrp": "",
       "url": "https://www.smartprix.com/mobiles/motorola-edge-60-pro-ppd1n6m7zz1w",
       "images": [
@@ -3565,7 +3565,7 @@
       "variants": [
         {
           "size": "8GB+256GB",
-          "price": "₹30,599"
+          "price": "₹30,205"
         },
         {
           "size": "12GB+256GB",
@@ -3576,7 +3576,7 @@
           "price": "₹37,999"
         }
       ],
-      "asin": "B0F83GQV1T",
+      "asin": null,
       "spec_score": "80",
       "features": {
         "GENERAL": [
@@ -3946,9 +3946,9 @@
     {
       "id": "vivo_t4_5g",
       "name": "Vivo T4 5G",
-      "listed": "yes",
-      "price": "₹21,619",
-      "mrp": "₹25,999",
+      "listed": "no",
+      "price": "₹21,617",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/vivo-t4-ppd186aae1n5",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/vivo_t4_5g/image_1.jpg",
@@ -3962,18 +3962,18 @@
       "variants": [
         {
           "size": "8GB+128GB",
-          "price": "₹21,619"
+          "price": "₹21,617"
         },
         {
           "size": "8GB+256GB",
-          "price": "₹23,700"
+          "price": "₹23,825"
         },
         {
           "size": "12GB+256GB",
-          "price": "₹25,999"
+          "price": "₹25,860"
         }
       ],
-      "asin": "B0F6VZZ7CQ",
+      "asin": null,
       "spec_score": "79",
       "features": {
         "GENERAL": [
@@ -4339,9 +4339,9 @@
     {
       "id": "vivo_t4x_5g",
       "name": "Vivo T4x 5G",
-      "listed": "yes",
-      "price": "₹13,999",
-      "mrp": "₹17,999",
+      "listed": "no",
+      "price": "₹14,670",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/vivo-t4x-5g-ppd1xeoou6dt",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/vivo_t4x_5g/image_1.jpg",
@@ -4366,7 +4366,7 @@
           "price": "₹16,999"
         }
       ],
-      "asin": "B0F196CQSQ",
+      "asin": null,
       "spec_score": "75",
       "features": {
         "GENERAL": [
@@ -4684,9 +4684,9 @@
     {
       "id": "samsung_galaxy_s24_fe_5g",
       "name": "Samsung Galaxy S24 FE 5G",
-      "listed": "yes",
-      "price": "₹36,490",
-      "mrp": "₹59,999",
+      "listed": "no",
+      "price": "₹36,127",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-s24-fe-ppd1o1zy1v5x",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_s24_fe_5g/image_1.jpg",
@@ -4698,14 +4698,14 @@
       "variants": [
         {
           "size": "8GB+128GB",
-          "price": "₹36,297"
+          "price": "₹36,127"
         },
         {
           "size": "8GB+256GB",
-          "price": "₹41,090"
+          "price": "₹42,946"
         }
       ],
-      "asin": "B0DHL7YT5S",
+      "asin": null,
       "spec_score": "84",
       "features": {
         "GENERAL": [
@@ -6191,9 +6191,9 @@
     {
       "id": "samsung_galaxy_a55_5g",
       "name": "Samsung Galaxy A55 5G",
-      "listed": "yes",
-      "price": "₹28,999",
-      "mrp": "₹42,999",
+      "listed": "no",
+      "price": "₹26,999",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-a55-5g-ppd1j932nh5d",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_a55_5g/image_1.jpg",
@@ -6206,18 +6206,18 @@
       "variants": [
         {
           "size": "8GB+128GB",
-          "price": "₹28,999"
+          "price": "₹26,999"
         },
         {
           "size": "8GB+256GB",
-          "price": "₹30,999"
+          "price": "₹28,999"
         },
         {
           "size": "12GB+256GB",
           "price": "₹33,999"
         }
       ],
-      "asin": "B0CWPC2W5V",
+      "asin": null,
       "spec_score": "85",
       "features": {
         "GENERAL": [
@@ -6551,9 +6551,9 @@
     {
       "id": "samsung_galaxy_m55s",
       "name": "Samsung Galaxy M55s",
-      "listed": "yes",
-      "price": "₹15,985",
-      "mrp": "₹28,999",
+      "listed": "no",
+      "price": "₹16,198",
+      "mrp": "",
       "url": "https://www.smartprix.com/mobiles/samsung-galaxy-m55s-ppd1afgkxdis",
       "images": [
         "https://raw.githubusercontent.com/affdeals/affdeals.github.io/refs/heads/main/images/samsung_galaxy_m55s/image_1.jpg",
@@ -6566,18 +6566,18 @@
       "variants": [
         {
           "size": "8GB+128GB",
-          "price": "₹15,925"
+          "price": "₹15,970"
         },
         {
           "size": "8GB+256GB",
-          "price": "₹21,999"
+          "price": "₹21,699"
         },
         {
           "size": "12GB +256GB)",
           "price": "₹34,990"
         }
       ],
-      "asin": "B0DG2D3Z91",
+      "asin": null,
       "spec_score": "83",
       "features": {
         "GENERAL": [

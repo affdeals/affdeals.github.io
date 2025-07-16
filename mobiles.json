@@ -1,4 +1,23 @@
 {
-  "total_mobile_phones": 0,
-  "products": []
+  "total_mobile_phones": 3,
+  "products": [
+    {
+      "unique_id": "honor_x9c",
+      "name": "Honor X9c",
+      "price": "₹21,999",
+      "url": "https://www.smartprix.com/mobiles/honor-x9c-ppd1vf6w9zmu"
+    },
+    {
+      "unique_id": "honor_200",
+      "name": "Honor 200",
+      "price": "₹21,748",
+      "url": "https://www.smartprix.com/mobiles/honor-200-ppd147075zu6"
+    },
+    {
+      "unique_id": "honor_200_12gb_ram_512gb",
+      "name": "Honor 200 (12GB RAM + 512GB)",
+      "price": "₹29,999",
+      "url": "https://www.smartprix.com/mobiles/honor-200-12gb-ram-512gb-ppd12tte9t91"
+    }
+  ]
 }

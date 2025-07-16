@@ -501,7 +501,7 @@ def scrape_smartprix_mobiles(debug_mode=False):
     """Main function to scrape mobile phone details from Smartprix"""
     
     # URL to scrape
-    url = "https://www.smartprix.com/honor-brand/mobiles/exclude_global-exclude_out_of_stock-exclude_upcoming-stock/amazon-store"
+    url = "https://www.smartprix.com/mobiles/honor-brand/exclude_global-exclude_out_of_stock-exclude_upcoming-stock/amazon-store"
     
     # XPath patterns
     total_count_xpath = "/html/body/div[1]/main/div[1]/div[2]/div[1]/div/div[1]"

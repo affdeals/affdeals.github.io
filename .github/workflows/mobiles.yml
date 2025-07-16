@@ -2,8 +2,46 @@ name: Run Mobiles Script
 
 on:
   schedule:
-    # Run every Monday at 12 AM IST (6:30 PM UTC on Sunday)
-    - cron: '30 18 * * 0'
+    # Sunday: 6am, 12pm, 6pm IST
+    - cron: '30 0 * * 0'   # Sunday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 0'   # Sunday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 0'  # Sunday 6pm IST (12:30pm UTC)
+    
+    # Monday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 0'  # Monday 12am IST (6:30pm UTC Sunday)
+    - cron: '30 0 * * 1'   # Monday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 1'   # Monday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 1'  # Monday 6pm IST (12:30pm UTC)
+    
+    # Tuesday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 1'  # Tuesday 12am IST (6:30pm UTC Monday)
+    - cron: '30 0 * * 2'   # Tuesday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 2'   # Tuesday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 2'  # Tuesday 6pm IST (12:30pm UTC)
+    
+    # Wednesday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 2'  # Wednesday 12am IST (6:30pm UTC Tuesday)
+    - cron: '30 0 * * 3'   # Wednesday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 3'   # Wednesday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 3'  # Wednesday 6pm IST (12:30pm UTC)
+    
+    # Thursday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 3'  # Thursday 12am IST (6:30pm UTC Wednesday)
+    - cron: '30 0 * * 4'   # Thursday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 4'   # Thursday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 4'  # Thursday 6pm IST (12:30pm UTC)
+    
+    # Friday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 4'  # Friday 12am IST (6:30pm UTC Thursday)
+    - cron: '30 0 * * 5'   # Friday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 5'   # Friday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 5'  # Friday 6pm IST (12:30pm UTC)
+    
+    # Saturday: 12am, 6am, 12pm, 6pm IST
+    - cron: '30 18 * * 5'  # Saturday 12am IST (6:30pm UTC Friday)
+    - cron: '30 0 * * 6'   # Saturday 6am IST (12:30am UTC)
+    - cron: '30 6 * * 6'   # Saturday 12pm IST (6:30am UTC)
+    - cron: '30 12 * * 6'  # Saturday 6pm IST (12:30pm UTC)
   
   # Allow manual trigger
   workflow_dispatch:
@@ -35,11 +73,27 @@ jobs:
           chrome-version: stable
           install-chromedriver: true
 
+      - name: Run clear_mobiles.py script
+        run: |
+          python clear_mobiles.py
+      
+      - name: Commit and push after clearing mobiles data
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add mobiles.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Clear mobiles.json data [automated]")
+          
+          # Set the remote URL with PAT for authentication
+          # Using the format username:token for better authentication with organizations
+          git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/affdeals/affdeals.github.io.git
+          git push
+
       - name: Run mobiles.py script
         run: |
           python mobiles.py
       
-      - name: Commit and push if changes
+      - name: Commit and push after updating mobiles data
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'

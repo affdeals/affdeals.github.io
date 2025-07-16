@@ -12,6 +12,7 @@ import requests
 import re
 import shutil
 import unicodedata
+import random
 from urllib.parse import urlparse, quote_plus
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -26,6 +27,176 @@ import io
 import base64
 import tempfile
 from time_manager import TimeManager
+
+
+def get_random_user_agent():
+    """Get a random user agent from a pool of realistic ones"""
+    user_agents = [
+        # Chrome on Windows
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+        
+        # Chrome on macOS
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+        
+        # Firefox on Windows
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:119.0) Gecko/20100101 Firefox/119.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:118.0) Gecko/20100101 Firefox/118.0",
+        
+        # Edge on Windows
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0",
+        
+        # Safari on macOS
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        
+        # Chrome on Linux
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    ]
+    
+    return random.choice(user_agents)
+
+
+def get_random_viewport():
+    """Get a random viewport size from common resolutions"""
+    viewports = [
+        (1920, 1080),
+        (1366, 768),
+        (1440, 900),
+        (1536, 864),
+        (1600, 900),
+        (1680, 1050),
+        (1280, 720),
+        (1280, 800),
+        (1280, 1024),
+        (1024, 768),
+        (1920, 1200),
+        (2560, 1440),
+        (1920, 1200),
+        (1600, 1200),
+    ]
+    
+    return random.choice(viewports)
+
+
+def get_random_platform():
+    """Get a random platform string"""
+    platforms = [
+        "Win32",
+        "Win64",
+        "MacIntel",
+        "Linux x86_64",
+        "Linux i686",
+    ]
+    
+    return random.choice(platforms)
+
+
+def get_random_languages():
+    """Get a random set of languages"""
+    languages = [
+        "en-US,en;q=0.9",
+        "en-GB,en;q=0.9",
+        "en-US,en;q=0.9,hi;q=0.8",
+        "en-IN,en;q=0.9,hi;q=0.8",
+        "en-US,en;q=0.9,es;q=0.8",
+        "en-GB,en;q=0.9,fr;q=0.8",
+    ]
+    
+    return random.choice(languages)
+
+
+def add_random_delays():
+    """Add random delays to simulate human behavior"""
+    delay = random.uniform(0.5, 2.0)
+    time.sleep(delay)
+
+
+def simulate_human_scrolling(driver):
+    """Simulate human scrolling behavior"""
+    try:
+        # Random scroll behavior
+        scroll_actions = [
+            "window.scrollBy(0, 100);",
+            "window.scrollBy(0, 200);",
+            "window.scrollBy(0, 300);",
+            "window.scrollTo(0, 0);",
+            "window.scrollTo(0, document.body.scrollHeight/4);",
+            "window.scrollTo(0, document.body.scrollHeight/2);",
+        ]
+        
+        action = random.choice(scroll_actions)
+        driver.execute_script(action)
+        time.sleep(random.uniform(0.5, 1.5))
+    except Exception as e:
+        print(f"    Error in human scrolling simulation: {e}")
+
+
+def handle_amazon_captcha(driver):
+    """Handle Amazon CAPTCHA or robot detection"""
+    try:
+        page_source = driver.page_source.lower()
+        
+        # Check for CAPTCHA or robot detection
+        captcha_indicators = [
+            "captcha",
+            "robot",
+            "automated",
+            "security check",
+            "please confirm",
+            "verification",
+            "unusual activity"
+        ]
+        
+        for indicator in captcha_indicators:
+            if indicator in page_source:
+                print(f"    Detected potential CAPTCHA or robot detection: {indicator}")
+                
+                # Try to refresh the page and wait
+                print("    Attempting to refresh page and wait...")
+                driver.refresh()
+                time.sleep(random.uniform(10, 20))
+                
+                # Try a different approach - go to homepage first
+                print("    Trying to navigate to homepage first...")
+                driver.get("https://www.amazon.in/")
+                time.sleep(random.uniform(5, 10))
+                
+                return True
+        
+        return False
+    except Exception as e:
+        print(f"    Error handling CAPTCHA: {e}")
+        return False
+
+
+def add_mouse_movement_simulation(driver):
+    """Add mouse movement simulation using JavaScript"""
+    try:
+        # Simulate mouse movements
+        mouse_script = """
+        var event = new MouseEvent('mousemove', {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+            clientX: Math.random() * window.innerWidth,
+            clientY: Math.random() * window.innerHeight
+        });
+        document.dispatchEvent(event);
+        """
+        
+        driver.execute_script(mouse_script)
+        time.sleep(random.uniform(0.1, 0.5))
+    except Exception as e:
+        print(f"    Error in mouse movement simulation: {e}")
 
 
 @contextlib.contextmanager
@@ -85,9 +256,10 @@ def setup_driver():
     - Block images specifically for Amazon.in domains (www.amazon.in, amazon.in, m.amazon.in)
     - Allow images for all other websites including Smartprix.com
     - This improves performance when searching Amazon while preserving image scraping for other sites
+    - Uses randomized user agents and browser fingerprinting to avoid detection
     """
     chrome_options = Options()
-    #chrome_options.add_argument("--headless")  # Run in background
+    chrome_options.add_argument("--headless")  # Run in background
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
@@ -106,10 +278,58 @@ def setup_driver():
     chrome_options.add_argument("--disable-extensions")  # Disable extensions
     chrome_options.add_argument("--disable-plugins")  # Disable plugins
     
+    # Get random configurations
+    user_agent = get_random_user_agent()
+    viewport = get_random_viewport()
+    platform = get_random_platform()
+    languages = get_random_languages()
+    
+    print(f"    Using User Agent: {user_agent}")
+    print(f"    Using Viewport: {viewport[0]}x{viewport[1]}")
+    print(f"    Using Platform: {platform}")
+    print(f"    Using Languages: {languages}")
+    
+    # Anti-detection measures
+    chrome_options.add_argument(f"--user-agent={user_agent}")
+    chrome_options.add_argument(f"--window-size={viewport[0]},{viewport[1]}")
+    chrome_options.add_argument("--force-device-scale-factor=1")
+    
+    # Additional randomization arguments
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("--disable-web-security")
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+    chrome_options.add_argument("--disable-background-networking")
+    chrome_options.add_argument("--disable-default-apps")
+    chrome_options.add_argument("--disable-sync")
+    chrome_options.add_argument("--disable-translate")
+    chrome_options.add_argument("--hide-scrollbars")
+    chrome_options.add_argument("--mute-audio")
+    
+    # Randomize memory and CPU limits
+    memory_limit = random.choice([512, 1024, 2048, 4096])
+    chrome_options.add_argument(f"--memory-pressure-off")
+    chrome_options.add_argument(f"--max_old_space_size={memory_limit}")
+    
+    # Randomize timezone
+    timezones = [
+        "Asia/Kolkata",
+        "Asia/Mumbai", 
+        "Asia/Delhi",
+        "Asia/Chennai",
+        "Asia/Bengaluru"
+    ]
+    timezone = random.choice(timezones)
+    chrome_options.add_argument(f"--timezone={timezone}")
+    
     # Configure content settings to block images specifically for Amazon.in domains
     prefs = {
         "profile.default_content_setting_values": {
-            "images": 1  # Allow images by default
+            "images": 1,  # Allow images by default
+            "notifications": 2,  # Block notifications
+            "media_stream": 2,  # Block media stream
+            "geolocation": 2,  # Block geolocation
+            "plugins": 1,  # Allow plugins
+            "popups": 2,  # Block popups
         },
         "profile.content_settings": {
             "exceptions": {
@@ -131,30 +351,40 @@ def setup_driver():
                     }
                 }
             }
-        }
+        },
+        "profile.managed_default_content_settings": {
+            "images": 1
+        },
+        "intl.accept_languages": languages,
+        "intl.charset_default": "UTF-8",
+        "profile.default_content_settings": {
+            "popups": 0
+        },
+        "profile.password_manager_enabled": False,
+        "profile.default_content_setting_values.notifications": 2,
+        "profile.default_content_setting_values.media_stream": 2,
+        "profile.managed_default_content_settings.images": 1,
+        "webrtc.ip_handling_policy": "disable_non_proxied_udp",
+        "webrtc.multiple_routes_enabled": False,
+        "webrtc.nonproxied_udp_enabled": False
     }
     chrome_options.add_experimental_option("prefs", prefs)
     print("    Image blocking configured specifically for Amazon.in domains")
     print("    Images enabled for all other sites (including Smartprix)")
     
-    chrome_options.add_argument("--disable-web-security")  # Disable web security
-    chrome_options.add_argument("--disable-features=VizDisplayCompositor")  # Disable compositor
-    chrome_options.add_argument("--disable-background-networking")  # Disable background networking
-    chrome_options.add_argument("--disable-default-apps")  # Disable default apps
-    chrome_options.add_argument("--disable-sync")  # Disable sync
-    chrome_options.add_argument("--disable-translate")  # Disable translate
-    chrome_options.add_argument("--hide-scrollbars")  # Hide scrollbars
-    chrome_options.add_argument("--mute-audio")  # Mute audio
-    chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--force-device-scale-factor=1")  # Ensure consistent scaling
-    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-    
-    # Suppress DevTools listening message
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    # Suppress DevTools listening message and add more stealth
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging", "enable-automation"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    
+    # Add more stealth arguments
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+    chrome_options.add_argument("--disable-infobars")
+    chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--disable-popup-blocking")
+    chrome_options.add_argument("--disable-save-password-bubble")
+    
+    # Create randomized profile directory
     temp_profile = tempfile.mkdtemp(prefix="sp-chrome-profile-")
     chrome_options.add_argument(f"--user-data-dir={temp_profile}")
     
@@ -165,6 +395,60 @@ def setup_driver():
         # Create driver with suppressed stderr
         with suppress_stderr():
             driver = webdriver.Chrome(options=chrome_options)
+        
+        # Execute JavaScript to modify navigator properties for better stealth
+        stealth_script = f"""
+        Object.defineProperty(navigator, 'webdriver', {{
+            get: () => undefined,
+        }});
+        
+        Object.defineProperty(navigator, 'plugins', {{
+            get: () => [1, 2, 3, 4, 5],
+        }});
+        
+        Object.defineProperty(navigator, 'languages', {{
+            get: () => ['{languages.split(',')[0]}'],
+        }});
+        
+        Object.defineProperty(navigator, 'platform', {{
+            get: () => '{platform}',
+        }});
+        
+        window.chrome = {{
+            runtime: {{
+                onConnect: undefined,
+                onMessage: undefined,
+            }},
+        }};
+        
+        Object.defineProperty(navigator, 'permissions', {{
+            get: () => ({{
+                query: () => Promise.resolve({{ state: 'granted' }}),
+            }}),
+        }});
+        
+        // Randomize timing
+        const originalPerformanceNow = performance.now;
+        performance.now = function() {{
+            return originalPerformanceNow.call(this) + Math.random() * 0.1;
+        }};
+        
+        // Override getUserMedia
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        
+        // Add some fake hardware concurrency
+        Object.defineProperty(navigator, 'hardwareConcurrency', {{
+            get: () => {random.choice([2, 4, 8, 16])},
+        }});
+        """
+        
+        driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
+            'source': stealth_script
+        })
+        
+        # Add random delay before returning
+        add_random_delays()
+        
         return driver
     except Exception as e:
         print(f"Error setting up Chrome driver: {e}")
@@ -1635,37 +1919,85 @@ def check_for_503_error(driver):
 
 
 def search_amazon_fallback_method(driver, product_name):
-    """Fallback method: Navigate to Amazon.in and use search box"""
+    """Fallback method: Navigate to Amazon.in ref=cs_503_link and use search box"""
     try:
-        print(f"    Using fallback method: navigating to Amazon.in homepage and using search box")
+        print(f"    Using fallback method: navigating to Amazon.in ref=cs_503_link and using search box")
         
-        # Navigate to Amazon.in homepage
-        driver.get("https://www.amazon.in")
+        # Add random delay before fallback attempt
+        add_random_delays()
+        
+        # Try different entry points randomly
+        entry_points = [
+            "https://www.amazon.in/ref=cs_503_link/",
+            "https://www.amazon.in/",
+            "https://www.amazon.in/gp/homepage.html",
+            "https://www.amazon.in/gp/css/homepage.html"
+        ]
+        
+        entry_url = random.choice(entry_points)
+        
+        # Navigate to Amazon.in entry page
+        driver.get(entry_url)
         print("    📷 Images should be blocked for Amazon.in domain")
-        time.sleep(3)
         
-        # Check if homepage loaded successfully
+        # Random wait time
+        wait_time = random.uniform(2, 5)
+        time.sleep(wait_time)
+        
+        # Check if entry page loaded successfully
         if check_for_503_error(driver):
             print("    Fallback method also encountered 503 error")
             return False
         
-        # Find the search box using the specified xpath
-        try:
-            search_box = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="twotabsearchtextbox"]'))
-            )
-            print("    Found search box successfully")
-        except TimeoutException:
-            print("    Could not find search box with xpath //*[@id=\"twotabsearchtextbox\"]")
+        # Find the search box using multiple selectors
+        search_box = None
+        search_selectors = [
+            '//*[@id="twotabsearchtextbox"]',
+            '//input[@name="field-keywords"]',
+            '//input[@placeholder*="Search"]',
+            '#twotabsearchtextbox',
+            'input[name="field-keywords"]'
+        ]
+        
+        for selector in search_selectors:
+            try:
+                if selector.startswith('/'):
+                    # XPath selector
+                    search_box = WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located((By.XPATH, selector))
+                    )
+                else:
+                    # CSS selector
+                    search_box = WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+                    )
+                print(f"    Found search box successfully with selector: {selector}")
+                break
+            except TimeoutException:
+                continue
+        
+        if not search_box:
+            print("    Could not find search box with any selector")
             return False
         
-        # Clear any existing text and enter the product name
+        # Simulate human typing behavior
         search_box.clear()
-        search_box.send_keys(product_name)
+        add_random_delays()
+        
+        # Type with random delays between characters
+        for char in product_name:
+            search_box.send_keys(char)
+            time.sleep(random.uniform(0.05, 0.2))
+        
+        # Random delay before submitting
+        time.sleep(random.uniform(0.5, 1.5))
         
         # Press Enter to submit the search
         search_box.send_keys(Keys.RETURN)
-        time.sleep(5)  # Wait for search results to load
+        
+        # Random wait time for results
+        wait_time = random.uniform(4, 8)
+        time.sleep(wait_time)
         
         print(f"    Fallback search completed for: {product_name}")
         return True
@@ -1680,17 +2012,40 @@ def search_amazon_for_product(driver, product_name, expected_price):
     try:
         print(f"  Searching Amazon.in for product: {product_name}")
         
+        # Add random delay before starting search to simulate human behavior
+        add_random_delays()
+        
         # Create direct search URL by properly encoding the product name
         # Use quote_plus to handle spaces and special characters properly
         search_query = quote_plus(product_name)
-        search_url = f"https://www.amazon.in/s?k={search_query}"
+        
+        # Add some randomization to search URL parameters
+        search_params = [
+            f"k={search_query}",
+            f"ref=sr_st_relevancerank",
+            f"qid={int(time.time())}",
+        ]
+        
+        # Randomly add additional parameters
+        if random.choice([True, False]):
+            search_params.append(f"sprefix={quote_plus(product_name[:3])}")
+        
+        search_url = f"https://www.amazon.in/s?" + "&".join(search_params)
         
         print(f"    Using direct search URL: {search_url}")
         
         # Navigate directly to search results
         driver.get(search_url)
         print("    📷 Images should be blocked for Amazon.in domain")
-        time.sleep(5)  # Wait for search results to load
+        
+        # Use randomized wait times
+        wait_time = random.uniform(3, 7)
+        time.sleep(wait_time)  # Wait for search results to load
+        
+        # Check for CAPTCHA or robot detection
+        if handle_amazon_captcha(driver):
+            print("    CAPTCHA or robot detection handled, continuing...")
+            add_random_delays()
         
         # Check for 503 error after navigation
         if check_for_503_error(driver):
@@ -1706,25 +2061,110 @@ def search_amazon_for_product(driver, product_name, expected_price):
         
         print(f"    Search completed for: {product_name}")
         
-        # Wait for search results to load
-        try:
-            wait = WebDriverWait(driver, 10)
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-component-type='s-search-result']")))
-            print("    Search results loaded successfully")
-        except TimeoutException:
-            print("    Timeout waiting for search results to load")
-            return None, False
+        # Add human-like behavior
+        simulate_human_scrolling(driver)
+        add_mouse_movement_simulation(driver)
         
-        # Give the page a moment to fully render
-        time.sleep(2)
+        # Wait for search results to load with single attempt
+        max_attempts = 1
+        attempt = 0
+        search_results_loaded = False
         
-        # Find all price elements with the specific class "a-price-whole"
-        price_elements = driver.find_elements(By.CSS_SELECTOR, "span.a-price-whole")
+        while attempt < max_attempts and not search_results_loaded:
+            try:
+                attempt += 1
+                print(f"    Attempt {attempt}: Waiting for search results to load...")
+                
+                # Try multiple selectors for search results
+                selectors = [
+                    "[data-component-type='s-search-result']",
+                    ".s-result-item",
+                    "[data-index]",
+                    ".s-search-result"
+                ]
+                
+                for selector in selectors:
+                    try:
+                        wait = WebDriverWait(driver, 8)
+                        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
+                        print(f"    Search results loaded successfully with selector: {selector}")
+                        search_results_loaded = True
+                        break
+                    except TimeoutException:
+                        continue
+                
+                if not search_results_loaded:
+                    print(f"    Attempt {attempt}: No search results found with any selector")
+                    if attempt < max_attempts:
+                        print("    Refreshing page and trying again...")
+                        driver.refresh()
+                        time.sleep(random.uniform(3, 6))
+                        
+            except Exception as e:
+                print(f"    Attempt {attempt}: Error waiting for search results: {e}")
+                if attempt < max_attempts:
+                    add_random_delays()
         
-        print(f"    Found {len(price_elements)} price elements with class 'a-price-whole'")
+        if not search_results_loaded:
+            print("    Timeout waiting for search results to load through direct link, trying fallback method")
+            
+            # Try fallback method
+            if not search_amazon_fallback_method(driver, product_name):
+                print("    Both direct URL and fallback methods failed")
+                return None, False
+            
+            # If fallback succeeded, wait again for search results to load
+            try:
+                wait = WebDriverWait(driver, 15)
+                wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-component-type='s-search-result']")))
+                print("    Fallback method successful, search results loaded")
+            except TimeoutException:
+                print("    Timeout waiting for search results to load even after fallback method")
+                return None, False
+        
+        # Give the page a moment to fully render with random delay
+        render_time = random.uniform(2, 4)
+        time.sleep(render_time)
+        
+        # Add more human-like behavior
+        simulate_human_scrolling(driver)
+        add_mouse_movement_simulation(driver)
+        
+        # Find all price elements with multiple selectors
+        price_elements = []
+        price_selectors = [
+            "span.a-price-whole",
+            ".a-price-whole",
+            "span.a-price.a-text-price.a-size-medium.apexPriceToPay",
+            ".a-price .a-offscreen",
+            "span.a-price-symbol + span.a-price-whole",
+            ".a-price-range .a-price-whole"
+        ]
+        
+        for selector in price_selectors:
+            try:
+                elements = driver.find_elements(By.CSS_SELECTOR, selector)
+                if elements:
+                    price_elements.extend(elements)
+                    print(f"    Found {len(elements)} price elements with selector: {selector}")
+            except Exception as e:
+                print(f"    Error with selector {selector}: {e}")
+                continue
+        
+        # Remove duplicates while preserving order
+        unique_price_elements = []
+        seen_elements = set()
+        for element in price_elements:
+            element_id = id(element)
+            if element_id not in seen_elements:
+                unique_price_elements.append(element)
+                seen_elements.add(element_id)
+        
+        price_elements = unique_price_elements
+        print(f"    Found {len(price_elements)} unique price elements total")
         
         if not price_elements:
-            print("    No price elements found")
+            print("    No price elements found with any selector")
             return None, False
         
         # Extract prices from the elements, skipping sponsored products

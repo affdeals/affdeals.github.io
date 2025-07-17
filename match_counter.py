@@ -27,6 +27,22 @@ def count_products(data):
     
     return len(products)
 
+def count_listed_products(data):
+    """Count products with listed: 'yes' in JSON data"""
+    if not data or 'products' not in data:
+        return 0
+    
+    products = data['products']
+    if not products:
+        return 0
+    
+    listed_count = 0
+    for product in products:
+        if product.get('listed') == 'yes':
+            listed_count += 1
+    
+    return listed_count
+
 def main():
     """Main function to count products"""
     print("Product Counter")
@@ -44,10 +60,14 @@ def main():
     mobiles_count = count_products(mobiles_data)
     update_mobiles_count = count_products(update_mobiles_data)
     
+    # Count listed products in update_mobiles.json
+    update_mobiles_listed_count = count_listed_products(update_mobiles_data)
+    
     # Display results
     print(f"\nProduct Count Results:")
     print(f"- {mobiles_file}: {mobiles_count}")
     print(f"- {update_mobiles_file}: {update_mobiles_count}")
+    print(f"- {update_mobiles_file} (listed): {update_mobiles_listed_count}")
 
 if __name__ == "__main__":
     main()

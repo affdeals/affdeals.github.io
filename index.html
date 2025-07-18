@@ -3,153 +3,819 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Product Name – Landing Page</title>
+  <title>Aff Deals - Best Mobile Phone Deals & Offers</title>
+  <meta name="description" content="Discover the best mobile phone deals and offers on Amazon India. Find top smartphones from all brands with exclusive discounts and specs comparison.">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/config.js"></script>
+  <!-- Font Awesome for better icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏷️</text></svg>">
 </head>
-<body style="margin:0; font-family:Arial, sans-serif; line-height:1.6; color:#333;">
+<body>
 
   <!-- Header / Navigation -->
-  <header style="background:#2c3e50; padding:1rem 2rem;">
-    <nav style="text-align:right;">
-      <a href="#hero" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Home</a>
-      <a href="#features" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Features</a>
-      <a href="#pricing" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Pricing</a>
-      <a href="#testimonials" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Testimonials</a>
-      <a href="#contact" style="color:#ecf0f1; margin:0 0.5rem; text-decoration:none;">Contact</a>
+  <header class="nav-header">
+    <nav class="nav-container">
+      <!-- Brand Logo/Text -->
+      <div class="brand-container">
+        <a href="index.html" class="brand-logo">
+          <span class="brand-icon">🏷️</span>
+          <span class="brand-text">Aff <span class="brand-highlight">Deals</span></span>
+        </a>
+      </div>
+      
+      <!-- Navigation Menu -->
+      <div class="nav-menu">
+        <a href="#mobiles" class="nav-link" onclick="event.preventDefault();">
+          <i class="fas fa-mobile-alt nav-icon"></i>
+          <span>Mobiles</span>
+        </a>
+        <div class="dropdown-container" id="dropdownContainer">
+          <a href="#" class="dropdown-trigger">
+            <i class="fas fa-file-alt nav-icon"></i>
+            <span>Pages</span>
+          </a>
+          <div class="dropdown-menu" id="pagesDropdown">
+            <a href="pages/about-us.html" class="dropdown-item">
+              <i class="fas fa-info-circle dropdown-icon"></i>
+              <span>About Us</span>
+            </a>
+            <a href="pages/privacy-policy.html" class="dropdown-item">
+              <i class="fas fa-shield-alt dropdown-icon"></i>
+              <span>Privacy Policy</span>
+            </a>
+            <a href="pages/terms-of-service.html" class="dropdown-item">
+              <i class="fas fa-clipboard-list dropdown-icon"></i>
+              <span>Terms of Service</span>
+            </a>
+            <a href="pages/disclaimer.html" class="dropdown-item">
+              <i class="fas fa-exclamation-triangle dropdown-icon"></i>
+              <span>Disclaimer</span>
+            </a>
+            <a href="pages/contact-us.html" class="dropdown-item">
+              <i class="fas fa-envelope dropdown-icon"></i>
+              <span>Contact Us</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <section id="hero" style="background:#3498db; color:#fff; text-align:center; padding:4rem 2rem;">
-    <h1 style="font-size:2.5rem; margin-bottom:0.5rem;">Amazing Product</h1>
-    <p style="font-size:1.2rem; margin-bottom:1.5rem;">The best solution to all your problems. Fast, reliable, and cost-effective.</p>
-    <button onclick="window.location.href='#pricing'"
-            style="background:linear-gradient(45deg, #e67e22, #f1c40f); border:none;
-                   padding:0.75rem 1.5rem; font-size:1rem; color:#fff; cursor:pointer;
-                   border-radius:4px;">
-      Buy Now
-    </button>
-  </section>
+  <script>
+    let dropdownTimer;
+    const dropdownContainer = document.getElementById('dropdownContainer');
+    const dropdown = document.getElementById('pagesDropdown');
+    
+    function showDropdown() {
+      clearTimeout(dropdownTimer);
+      dropdown.style.display = 'block';
+      setTimeout(() => {
+        dropdown.classList.add('show');
+      }, 10);
+    }
+    
+    function hideDropdown() {
+      dropdownTimer = setTimeout(() => {
+        dropdown.classList.remove('show');
+        setTimeout(() => {
+          dropdown.style.display = 'none';
+        }, 300);
+      }, 150);
+    }
+    
+    // Add event listeners to the dropdown container
+    dropdownContainer.addEventListener('mouseenter', showDropdown);
+    dropdownContainer.addEventListener('mouseleave', hideDropdown);
+  </script>
 
-  <!-- Features Section -->
-  <section id="features" style="padding:3rem 2rem; background:#ecf0f1;">
-    <h2 style="text-align:center; margin-bottom:2rem;">Key Features</h2>
-    <ul style="max-width:600px; margin:0 auto; list-style:none; padding:0;">
-      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
-        <strong>Feature One:</strong> Short description of the most important benefit.
-      </li>
-      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
-        <strong>Feature Two:</strong> Another incredible capability that solves a pain point.
-      </li>
-      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
-        <strong>Feature Three:</strong> A third standout feature that sets you apart.
-      </li>
-      <li style="background:#fff; margin:0.5rem 0; padding:1rem; border-radius:4px;">
-        <strong>Feature Four:</strong> Additional feature to sweeten the deal.
-      </li>
-    </ul>
-  </section>
 
-  <!-- How It Works -->
-  <section id="details" style="padding:3rem 2rem;">
-    <h2 style="text-align:center; margin-bottom:2rem;">How It Works</h2>
-    <ol style="max-width:600px; margin:0 auto; padding-left:1.25rem;">
-      <li style="margin-bottom:1rem;">Sign up or download.</li>
-      <li style="margin-bottom:1rem;">Configure in minutes with our easy setup wizard.</li>
-      <li style="margin-bottom:1rem;">Enjoy seamless performance and automatic updates.</li>
-    </ol>
-  </section>
-
-  <!-- Pricing Section -->
-  <section id="pricing" style="background:#f8f9fa; padding:3rem 2rem;">
-    <h2 style="text-align:center; margin-bottom:2rem;">Pricing Plans</h2>
-    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;">
-      <!-- Basic -->
-      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-        <h3>Basic</h3>
-        <p style="font-size:1.5rem; color:#27ae60;">$9<span style="font-size:1rem;">/month</span></p>
-        <ul>
-          <li>Access to core features</li>
-          <li>Email support</li>
-        </ul>
-        <button onclick="alert('Selected Basic')" style="background:#27ae60; color:#fff;
-                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
-          Select Basic
-        </button>
+  <!-- Mobile Products Section -->
+  <section id="mobiles">
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-fire section-icon"></i>
+          Browse Our Mobile Collection
+        </h2>
+        <p class="section-subtitle">Find the perfect smartphone that fits your needs and budget</p>
       </div>
-      <!-- Pro -->
-      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-        <h3>Pro</h3>
-        <p style="font-size:1.5rem; color:#c0392b;">$29<span style="font-size:1rem;">/month</span></p>
-        <ul>
-          <li>All Basic features</li>
-          <li>Advanced analytics</li>
-          <li>Priority support</li>
-        </ul>
-        <button onclick="alert('Selected Pro')" style="background:#c0392b; color:#fff;
-                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
-          Select Pro
-        </button>
-      </div>
-      <!-- Enterprise -->
-      <div style="flex:1 1 200px; background:#fff; padding:1.5rem; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-        <h3>Enterprise</h3>
-        <p style="font-size:1.5rem; color:#8e44ad;">Contact us</p>
-        <ul>
-          <li>All Pro features</li>
-          <li>Dedicated account manager</li>
-          <li>Custom integrations</li>
-        </ul>
-        <button onclick="window.location.href='#contact'" style="background:#8e44ad; color:#fff;
-                border:none; padding:0.5rem 1rem; cursor:pointer; border-radius:4px;">
-          Contact Sales
-        </button>
+      
+      <!-- Main Content Area -->
+      <div style="display:flex; gap:2rem; align-items:flex-start;">
+        
+        <!-- Brand Filter Sidebar -->
+        <div id="brandFilter">
+          <h3><i class="fas fa-filter" style="margin-right: 0.5rem; color: #6366f1;"></i>Filter by Brand</h3>
+          
+          <!-- Clear All Button -->
+          <button id="clearAllBtn" onclick="clearAllFilters()">
+            <i class="fas fa-times" style="margin-right: 0.5rem;"></i>Clear All
+          </button>
+          
+          <!-- Brand Checkboxes -->
+          <div id="brandCheckboxes">
+            <!-- Checkboxes will be populated by JavaScript -->
+          </div>
+          
+          <!-- Results Count -->
+          <div id="resultsCount">
+            <i class="fas fa-mobile-alt" style="margin-right: 0.5rem; color: #10b981;"></i>
+            <span id="filteredCount">0</span> products found
+          </div>
+        </div>
+        
+        <!-- Products Area -->
+        <div style="flex:1; min-width:0;">
+          <!-- Loading State -->
+          <div id="loading" style="text-align:center; padding:4rem; color:#fff;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+              <div style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #fff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <p style="font-size: 1.25rem; font-weight: 500;">Loading amazing deals...</p>
+            </div>
+          </div>
+          
+          <!-- Products Container -->
+          <div id="productsContainer" style="display:none;">
+            <!-- Products will be loaded here -->
+          </div>
+          
+          <!-- No Products Message -->
+          <div id="noProducts" style="display:none; text-align:center; padding:4rem; color:#fff;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+              <i class="fas fa-search" style="font-size: 3rem; opacity: 0.7;"></i>
+              <p style="font-size: 1.25rem; font-weight: 500;">No mobile phones match your filter criteria.</p>
+              <p style="font-size: 1rem; opacity: 0.8;">Try adjusting your filters to see more results.</p>
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
   </section>
+  
+  <!-- CSS for loading animation -->
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 
-  <!-- Testimonials Section -->
-  <section id="testimonials" style="padding:3rem 2rem; background:#ecf0f1;">
-    <h2 style="text-align:center; margin-bottom:2rem;">What Our Customers Say</h2>
-    <blockquote style="max-width:600px; margin:1rem auto; font-style:italic; color:#555;">
-      “This product transformed our workflow and saved us hours every week!”<br>
-      <footer style="text-align:right; margin-top:0.5rem; font-weight:bold;">— Jane Doe, CEO of ExampleCorp</footer>
-    </blockquote>
-    <blockquote style="max-width:600px; margin:1rem auto; font-style:italic; color:#555;">
-      “A must‑have tool for any business looking to scale quickly.”<br>
-      <footer style="text-align:right; margin-top:0.5rem; font-weight:bold;">— John Smith, CTO of Acme Inc.</footer>
-    </blockquote>
-  </section>
+  <style>
+    /* Mobile Product Cards */
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .product-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .product-card-content {
+      display: flex;
+      align-items: center;
+      padding: 1.5rem;
+      gap: 1.5rem;
+    }
+    
+    .product-image {
+      flex-shrink: 0;
+      width: 120px;
+      height: 160px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image img {
+      transform: scale(1.05);
+    }
+    
+    .product-details {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .product-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.3;
+    }
+    
+    .product-price {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e7e34;
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .product-spec-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .spec-score-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .spec-icon {
+      font-size: 1rem;
+    }
+    
+    /* Psychology Triggers Styles */
+    .psychology-triggers {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    
+    .psychology-trigger {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .psychology-trigger i {
+      font-size: 0.75rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    
+    .product-price-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+      margin-left: auto;
+      min-width: 200px;
+    }
+    
+    .amazon-cta-button {
+      background: #ff6b35;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .amazon-cta-button:hover {
+      background: #e55a2b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+    
+    .error-message {
+      background: #fff3cd;
+      color: #856404;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ffeaa7;
+      text-align: center;
+      margin: 1rem 0;
+    }
+    
+    /* Brand Filter Styles */
+    .brand-checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .brand-checkbox:hover {
+      background: #f8f9fa;
+    }
+    
+    .brand-checkbox input[type="checkbox"] {
+      margin-right: 0.75rem;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    
+    .brand-checkbox label {
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: #333;
+      flex: 1;
+    }
+    
+    .brand-checkbox.checked {
+      background: #e3f2fd;
+      border-left: 3px solid #3498db;
+    }
+    
+    /* Scrollbar Styles */
+    #brandCheckboxes::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #brandCheckboxes::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    #brandCheckboxes::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+    
+    #brandCheckboxes::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      #mobiles > div {
+        flex-direction: column;
+      }
+      
+      #brandFilter {
+        width: 100%;
+        position: static;
+        margin-bottom: 1rem;
+      }
+      
+      #brandCheckboxes {
+        max-height: 200px;
+      }
+      
+      .product-card-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .product-price-section {
+        align-items: center;
+        min-width: auto;
+        margin-left: 0;
+        margin-top: 1rem;
+      }
+      
+      .product-image {
+        width: 100px;
+        height: 140px;
+      }
+      
+      .product-name {
+        font-size: 1.2rem;
+      }
+      
+      .product-price {
+        font-size: 1.4rem;
+      }
+      
+      .psychology-triggers {
+        margin-top: 0.5rem;
+        align-items: center;
+      }
+      
+      .psychology-trigger {
+        font-size: 0.75rem;
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .product-card-content {
+        padding: 0.75rem;
+      }
+      
+      .product-image {
+        width: 80px;
+        height: 120px;
+      }
+      
+      .product-name {
+        font-size: 1.1rem;
+      }
+      
+      .product-price {
+        font-size: 1.3rem;
+      }
+      
+      .psychology-trigger {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
 
-  <!-- FAQ Section -->
-  <section id="faq" style="padding:3rem 2rem;">
-    <h2 style="text-align:center; margin-bottom:2rem;">Frequently Asked Questions</h2>
-    <div style="max-width:600px; margin:0 auto;">
-      <h3 style="margin-top:1rem;">Q: Is there a trial period?</h3>
-      <p>A: Yes, we offer a 14‑day free trial with full access to Pro features.</p>
-      <h3 style="margin-top:1rem;">Q: Can I cancel anytime?</h3>
-      <p>A: Absolutely—no long‑term commitments or hidden fees.</p>
-      <h3 style="margin-top:1rem;">Q: Do you offer discounts for nonprofits?</h3>
-      <p>A: Yes, please <a href="#contact" style="color:#3498db; text-decoration:none;">contact us</a> to learn more.</p>
+  <script>
+    // Global variables for pagination and filtering
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentlyLoaded = 0;
+    const productsPerPage = 20;
+    let selectedBrands = new Set();
+
+    // Brand list
+    const brands = [
+      'Vivo', 'Samsung', 'OPPO', 'OnePlus', 'Motorola', 'Realme', 'iQOO', 'Xiaomi', 'Poco', 'Apple',
+      'Infinix', 'Nothing', 'Lava', 'Google', 'Tecno', 'CMF', 'Honor', 'Nokia', 'Jio', 'HMD',
+      'Acer', 'BlackZone', 'itel', 'iKall', 'Karbonn', 'Blackberry', 'Ulefone', 'Micromax', 'Snexian',
+      'Asus', 'Philips', 'Alcatel', 'AMAQ', 'Voto', 'Bigme', 'CAUL', 'Kechaoda', 'Lenovo', 'Vox',
+      'Easyfone', 'FONEME', 'GreenBerry', 'Ringme', 'Saregama'
+    ];
+
+    // Load mobile products on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadMobileProducts();
+    });
+
+    async function loadMobileProducts() {
+      const loadingDiv = document.getElementById('loading');
+      const productsContainer = document.getElementById('productsContainer');
+      const noProductsDiv = document.getElementById('noProducts');
+
+      try {
+        // Fetch the JSON data
+        const response = await fetch('update_mobiles.json');
+        if (!response.ok) {
+          throw new Error('Failed to load products');
+        }
+        
+        const data = await response.json();
+        
+        // Filter products with listed: "yes"
+        allProducts = data.products.filter(product => product.listed === "yes");
+        filteredProducts = [...allProducts]; // Initially show all products
+        
+        // Hide loading
+        loadingDiv.style.display = 'none';
+        
+        if (allProducts.length === 0) {
+          noProductsDiv.style.display = 'block';
+          return;
+        }
+        
+        // Initialize brand filter
+        initializeBrandFilter();
+        
+        // Show products container
+        productsContainer.style.display = 'block';
+        
+        // Load first batch of products
+        loadMoreProducts();
+        
+      } catch (error) {
+        console.error('Error loading products:', error);
+        loadingDiv.style.display = 'none';
+        productsContainer.innerHTML = '<div class="error-message">Error loading products. Please try again later.</div>';
+        productsContainer.style.display = 'block';
+      }
+    }
+
+    function initializeBrandFilter() {
+      const brandCheckboxes = document.getElementById('brandCheckboxes');
+      
+      // Create checkboxes for all brands
+      const checkboxesHTML = brands.map(brand => `
+        <div class="brand-checkbox">
+          <input type="checkbox" id="brand-${brand}" onchange="toggleBrand('${brand}')">
+          <label for="brand-${brand}">${brand}</label>
+        </div>
+      `).join('');
+      
+      brandCheckboxes.innerHTML = checkboxesHTML;
+      
+      // Update results count
+      updateResultsCount();
+    }
+
+    function toggleBrand(brand) {
+      const checkbox = document.getElementById(`brand-${brand}`);
+      const checkboxDiv = checkbox.closest('.brand-checkbox');
+      
+      if (checkbox.checked) {
+        selectedBrands.add(brand);
+        checkboxDiv.classList.add('checked');
+      } else {
+        selectedBrands.delete(brand);
+        checkboxDiv.classList.remove('checked');
+      }
+      
+      applyFilters();
+    }
+
+    function applyFilters() {
+      // Reset pagination
+      currentlyLoaded = 0;
+      
+      // Filter products based on selected brands
+      if (selectedBrands.size === 0) {
+        filteredProducts = [...allProducts];
+      } else {
+        filteredProducts = allProducts.filter(product => {
+          const productName = (product.name || '').toLowerCase();
+          return Array.from(selectedBrands).some(brand => 
+            productName.includes(brand.toLowerCase())
+          );
+        });
+      }
+      
+      // Update results count
+      updateResultsCount();
+      
+      // Clear products container and reload
+      const productsContainer = document.getElementById('productsContainer');
+      productsContainer.innerHTML = '';
+      
+      // Check if we have filtered products
+      if (filteredProducts.length === 0) {
+        document.getElementById('noProducts').style.display = 'block';
+        productsContainer.style.display = 'none';
+      } else {
+        document.getElementById('noProducts').style.display = 'none';
+        productsContainer.style.display = 'block';
+        loadMoreProducts();
+      }
+    }
+
+    function updateResultsCount() {
+      const filteredCount = document.getElementById('filteredCount');
+      filteredCount.textContent = filteredProducts.length;
+    }
+
+    function clearAllFilters() {
+      selectedBrands.clear();
+      
+      // Uncheck all checkboxes
+      const checkboxes = document.querySelectorAll('#brandCheckboxes input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        checkbox.closest('.brand-checkbox').classList.remove('checked');
+      });
+      
+      // Reset filters
+      applyFilters();
+    }
+
+    function generatePsychologyTriggers() {
+      // Helper function to generate random numbers
+      const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      const triggers = [
+        // Scarcity indicators
+        { text: `Only ${randomBetween(1, 4)} left in stock!`, icon: "fas fa-exclamation-triangle", color: "#dc3545" },
+        { text: "Limited time offer", icon: "fas fa-clock", color: "#fd7e14" },
+        { text: "Stock running low", icon: "fas fa-battery-quarter", color: "#dc3545" },
+        { text: `Only ${randomBetween(2, 8)} units remaining`, icon: "fas fa-boxes", color: "#dc3545" },
+        
+        // Social proof elements
+        { text: `${randomBetween(15, 89)} people bought this today`, icon: "fas fa-users", color: "#fd7e14" },
+        { text: "Trending now", icon: "fas fa-fire", color: "#dc3545" },
+        { text: "Most popular choice", icon: "fas fa-star", color: "#fd7e14" },
+        { text: `${randomBetween(8, 45)} people viewing this`, icon: "fas fa-eye", color: "#fd7e14" },
+        { text: `${randomBetween(120, 350)} sold this week`, icon: "fas fa-shopping-cart", color: "#fd7e14" },
+        { text: `${randomBetween(5, 25)} added to cart recently`, icon: "fas fa-cart-plus", color: "#fd7e14" },
+        
+        // Urgency messages
+        { text: `Sale ends in ${randomBetween(2, 12)} hours`, icon: "fas fa-hourglass-half", color: "#dc3545" },
+        { text: "Price may increase soon", icon: "fas fa-chart-line", color: "#fd7e14" },
+        { text: "Deal expires tonight", icon: "fas fa-moon", color: "#dc3545" },
+        { text: "Flash sale ending", icon: "fas fa-bolt", color: "#dc3545" },
+        { text: `${randomBetween(15, 45)} minutes left`, icon: "fas fa-stopwatch", color: "#dc3545" },
+        
+        // FOMO triggers
+        { text: "Don't miss out!", icon: "fas fa-hand-paper", color: "#dc3545" },
+        { text: "Others are viewing this", icon: "fas fa-users", color: "#fd7e14" },
+        { text: "High demand item", icon: "fas fa-chart-bar", color: "#fd7e14" },
+        { text: "Grab it before it's gone", icon: "fas fa-running", color: "#dc3545" },
+        { text: `${randomBetween(3, 15)} in wishlist today`, icon: "fas fa-heart", color: "#fd7e14" }
+      ];
+      
+      // Randomly select 1-2 triggers
+      const numTriggers = Math.random() > 0.6 ? 2 : 1;
+      const selectedTriggers = [];
+      
+      for (let i = 0; i < numTriggers; i++) {
+        const randomIndex = Math.floor(Math.random() * triggers.length);
+        const trigger = triggers[randomIndex];
+        
+        // Avoid duplicates
+        if (!selectedTriggers.find(t => t.text === trigger.text)) {
+          selectedTriggers.push(trigger);
+        }
+      }
+      
+      return selectedTriggers.map(trigger => `
+        <div class="psychology-trigger" style="color: ${trigger.color};">
+          <i class="${trigger.icon}"></i>
+          <span>${trigger.text}</span>
+        </div>
+      `).join('');
+    }
+
+    function loadMoreProducts() {
+      const productsContainer = document.getElementById('productsContainer');
+      
+      // Get the next batch of filtered products
+      const nextBatch = filteredProducts.slice(currentlyLoaded, currentlyLoaded + productsPerPage);
+      
+      // Generate HTML for the next batch
+      const newProductsHTML = nextBatch.map(product => {
+        const firstImage = product.images && product.images.length > 0 ? product.images[0] : '';
+        const price = product.price || 'Price not available';
+        const specScore = product.spec_score || 'N/A';
+        const name = product.name || 'Unknown Product';
+        const asin = product.asin || '';
+        const amazonLink = asin ? generateAmazonLink(asin) : '#';
+        const scoreColor = getSpecScoreColor(parseInt(specScore));
+        
+        return `
+          <div class="product-card">
+            <div class="product-card-content">
+              <div class="product-image">
+                ${firstImage ? `<img src="${firstImage}" alt="${name}" onerror="this.style.display='none'">` : '<div style="color:#999; font-size:0.8rem; display:flex; align-items:center; justify-content:center; flex-direction:column;"><i class="fas fa-image" style="font-size:2rem; margin-bottom:0.5rem;"></i>No Image</div>'}
+              </div>
+              <div class="product-details">
+                <h3 class="product-name">${name}</h3>
+                <div class="product-spec-score" style="background: ${scoreColor};">
+                  <i class="fas fa-star spec-icon"></i>
+                  <span class="spec-score-number">${specScore}</span>
+                  <span>Spec Score</span>
+                </div>
+                <div class="psychology-triggers">
+                  ${generatePsychologyTriggers()}
+                </div>
+              </div>
+              <div class="product-price-section">
+                <div class="product-price">${price}</div>
+                <a href="${amazonLink}" target="_blank" class="amazon-cta-button">
+                  <i class="fab fa-amazon"></i> Buy on Amazon
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Update currently loaded count
+      currentlyLoaded += nextBatch.length;
+      
+      // If this is the first load, replace content, otherwise append
+      if (currentlyLoaded === nextBatch.length) {
+        productsContainer.innerHTML = newProductsHTML;
+      } else {
+        // Remove existing load more button if it exists
+        const existingButton = document.getElementById('loadMoreBtn');
+        if (existingButton) {
+          existingButton.remove();
+        }
+        productsContainer.innerHTML += newProductsHTML;
+      }
+      
+      // Add load more button if there are more products to load
+      if (currentlyLoaded < filteredProducts.length) {
+        const loadMoreButton = `
+          <div style="text-align:center; padding:2rem;">
+            <button id="loadMoreBtn" onclick="loadMoreProducts()">
+              <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>
+              Load More Products (${filteredProducts.length - currentlyLoaded} remaining)
+            </button>
+          </div>
+        `;
+        productsContainer.innerHTML += loadMoreButton;
+      } else if (filteredProducts.length > 0) {
+        // All products loaded, show completion message
+        const completionMessage = `
+          <div style="text-align:center; padding:2rem; color:#fff; font-style:italic;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+              <i class="fas fa-check-circle" style="font-size: 2rem; color: #10b981;"></i>
+              <p style="font-size: 1.125rem; font-weight: 500;">All ${filteredProducts.length} products loaded successfully!</p>
+              <p style="font-size: 1rem; opacity: 0.8;">You've seen all available products. Check back later for new deals!</p>
+            </div>
+          </div>
+        `;
+        productsContainer.innerHTML += completionMessage;
+      }
+    }
+  </script>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <!-- Footer Top Section -->
+      <div class="footer-top">
+        <!-- Brand Section -->
+        <div class="footer-brand">
+          <h3><span class="brand-icon">🏷️</span> Aff Deals</h3>
+          <p style="text-align: justify;">Your trusted source for finding the best deals and offers on electronics and gadgets on Amazon India. We help you discover amazing products at great prices with detailed specs and honest reviews.</p>
+          
+          <!-- Social Media Section -->
+          <div class="social-media" style="margin-top:1.5rem;">
+            <h4 style="margin-bottom: 2rem;"><i class="fas fa-heart" style="margin-right: 0.5rem; color: #f59e0b;"></i>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://facebook.com" target="_blank" title="Follow us on Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="https://instagram.com" target="_blank" title="Follow us on Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://pinterest.com" target="_blank" title="Follow us on Pinterest">
+                <i class="fab fa-pinterest-p"></i>
+              </a>
+              <a href="https://youtube.com" target="_blank" title="Subscribe to our YouTube channel">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Links Section -->
+        <div class="footer-links">
+          <h4><i class="fas fa-link" style="margin-right: 0.5rem; color: #6366f1;"></i>Quick Links</h4>
+          <ul>
+            <li><a href="#mobiles"><i class="fas fa-mobile-alt"></i>Mobiles</a></li>
+            <li><a href="pages/about-us.html"><i class="fas fa-info-circle"></i>About Us</a></li>
+            <li><a href="pages/contact-us.html"><i class="fas fa-envelope"></i>Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <!-- Legal Section -->
+        <div class="footer-legal">
+          <h4><i class="fas fa-gavel" style="margin-right: 0.5rem; color: #ef4444;"></i>Legal</h4>
+          <ul>
+            <li><a href="pages/privacy-policy.html"><i class="fas fa-shield-alt"></i>Privacy Policy</a></li>
+            <li><a href="pages/terms-of-service.html"><i class="fas fa-clipboard-list"></i>Terms of Service</a></li>
+            <li><a href="pages/disclaimer.html"><i class="fas fa-exclamation-triangle"></i>Disclaimer</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="footer-contact">
+          <h4><i class="fas fa-phone-alt" style="margin-right: 0.5rem; color: #10b981;"></i>Get in Touch</h4>
+          <p><i class="fas fa-envelope" style="margin-right: 0.5rem; color: #6366f1;"></i>Email: <a href="mailto:kumar.ujjawal247@gmail.com" style="color:#f59e0b; text-decoration:none; transition:color 0.3s ease;">kumar.ujjawal247@gmail.com</a></p>
+          <p><i class="fas fa-globe" style="margin-right: 0.5rem; color: #6366f1;"></i>Website: <a href="https://affdeals.github.io" style="color:#f59e0b; text-decoration:none; transition:color 0.3s ease;">affdeals.github.io</a></p>
+          <p><i class="fab fa-amazon" style="margin-right: 0.5rem; color: #f59e0b;"></i>Amazon Associate Program Participant</p>
+        </div>
+      </div>
+      
+      <!-- Footer Bottom Section -->
+      <div class="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:2rem; text-align:center;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+          <p style="margin:0; opacity:0.9; color:#94a3b8; font-size:1rem; font-weight:500;">
+            <i class="fas fa-copyright" style="margin-right: 0.5rem;"></i>
+            © 2025 Aff Deals. All rights reserved. | Amazon Associate Program Participant
+          </p>
+          <p style="margin:0; opacity:0.7; color:#64748b; font-size:0.875rem;">
+            <i class="fas fa-heart" style="margin-right: 0.5rem; color: #ef4444;"></i>
+            Made with love for amazing deals and great products
+          </p>
+        </div>
+      </div>
     </div>
-  </section>
-
-  <!-- Call to Action -->
-  <section id="cta" style="background:#3498db; color:#fff; text-align:center; padding:3rem 2rem;">
-    <h2 style="margin-bottom:1rem;">Ready to Get Started?</h2>
-    <button onclick="window.location.href='#pricing'"
-            style="background:linear-gradient(45deg, #e67e22, #f1c40f); border:none;
-                   padding:0.75rem 1.5rem; font-size:1rem; color:#fff; cursor:pointer;
-                   border-radius:4px;">
-      Choose Your Plan
-    </button>
-  </section>
-
-  <!-- Footer / Contact -->
-  <footer id="contact" style="background:#2c3e50; color:#ecf0f1; text-align:center; padding:2rem;">
-    <h2>Get in Touch</h2>
-    <p>Email: <a href="mailto:support@example.com" style="color:#ecf0f1; text-decoration:none;">support@example.com</a></p>
-    <p>Phone: +1 (555) 123‑4567</p>
-    <p style="margin-top:1rem;">&copy; 2025 Amazing Product, Inc.</p>
   </footer>
 
 </body>

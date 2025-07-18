@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Terms of Service - Aff Deals</title>
+  <meta name="description" content="Read Aff Deals' Terms of Service to understand the rules and guidelines for using our website and services.">
+  <link rel="stylesheet" href="../css/styles.css">
+  <!-- Font Awesome for better icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏷️</text></svg>">
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="nav-header">
+    <nav class="nav-container">
+      <!-- Brand Logo/Text -->
+      <div class="brand-container">
+        <a href="../index.html" class="brand-logo">
+          <span class="brand-icon">🏷️</span>
+          <span class="brand-text">Aff <span class="brand-highlight">Deals</span></span>
+        </a>
+      </div>
+      
+      <!-- Navigation Menu -->
+      <div class="nav-menu">
+        <a href="../index.html#mobiles" class="nav-link" onclick="event.preventDefault(); window.location.href='../index.html#mobiles';">
+          <i class="fas fa-mobile-alt nav-icon"></i>
+          <span>Mobiles</span>
+        </a>
+        <div class="dropdown-container" id="dropdownContainer">
+          <a href="#" class="dropdown-trigger">
+            <i class="fas fa-file-alt nav-icon"></i>
+            <span>Pages</span>
+          </a>
+          <div class="dropdown-menu" id="pagesDropdown">
+            <a href="about-us.html" class="dropdown-item">
+              <i class="fas fa-info-circle dropdown-icon"></i>
+              <span>About Us</span>
+            </a>
+            <a href="privacy-policy.html" class="dropdown-item">
+              <i class="fas fa-shield-alt dropdown-icon"></i>
+              <span>Privacy Policy</span>
+            </a>
+            <a href="terms-of-service.html" class="dropdown-item">
+              <i class="fas fa-clipboard-list dropdown-icon"></i>
+              <span>Terms of Service</span>
+            </a>
+            <a href="disclaimer.html" class="dropdown-item">
+              <i class="fas fa-exclamation-triangle dropdown-icon"></i>
+              <span>Disclaimer</span>
+            </a>
+            <a href="contact-us.html" class="dropdown-item">
+              <i class="fas fa-envelope dropdown-icon"></i>
+              <span>Contact Us</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <script>
+    let dropdownTimer;
+    const dropdownContainer = document.getElementById('dropdownContainer');
+    const dropdown = document.getElementById('pagesDropdown');
+    
+    function showDropdown() {
+      clearTimeout(dropdownTimer);
+      dropdown.style.display = 'block';
+      setTimeout(() => {
+        dropdown.classList.add('show');
+      }, 10);
+    }
+    
+    function hideDropdown() {
+      dropdownTimer = setTimeout(() => {
+        dropdown.classList.remove('show');
+        setTimeout(() => {
+          dropdown.style.display = 'none';
+        }, 300);
+      }, 150);
+    }
+    
+    // Add event listeners to the dropdown container
+    dropdownContainer.addEventListener('mouseenter', showDropdown);
+    dropdownContainer.addEventListener('mouseleave', hideDropdown);
+  </script>
+
+  <!-- Terms of Service Content -->
+  <section class="content-section">
+    <h1 class="page-title">Terms of Service</h1>
+    
+    <div class="content-box">
+      <p style="margin-bottom:1rem; font-style:italic;">Last updated: January 2025</p>
+      
+      <h2>Acceptance of Terms</h2>
+      <p>By accessing and using Aff Deals website, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these terms, please do not use our service.</p>
+      
+      <h2>Use of Website</h2>
+      <h3>Permitted Use</h3>
+      <p>You may use our website for lawful purposes only. You agree to use the website in accordance with all applicable laws and regulations.</p>
+      
+      <h3>Prohibited Use</h3>
+      <p>You may not use our website for any of the following purposes:</p>
+      <ul>
+        <li>Transmitting or uploading any content that is unlawful, harmful, or offensive</li>
+        <li>Attempting to gain unauthorized access to our systems</li>
+        <li>Using automated systems to access our website</li>
+        <li>Violating any applicable laws or regulations</li>
+      </ul>
+      
+      <h2>Affiliate Program</h2>
+      <p>Aff Deals participates in the Amazon Associates Program. We may earn commissions from qualifying purchases made through our affiliate links. This does not affect the price you pay for products.</p>
+      
+      <h2>Content and Accuracy</h2>
+      <p>We strive to provide accurate and up-to-date information about products and prices. However, we cannot guarantee the accuracy of all information. Product prices and availability are subject to change without notice.</p>
+      
+      <h2>Intellectual Property</h2>
+      <p>All content on this website, including text, graphics, logos, and images, is the property of Aff Deals or its content suppliers and is protected by copyright laws.</p>
+      
+      <h2>Disclaimer of Warranties</h2>
+      <p>Our website is provided "as is" without any warranties, express or implied. We do not warrant that the website will be uninterrupted or error-free.</p>
+      
+      <h2>Limitation of Liability</h2>
+      <p>In no event shall Aff Deals be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our website.</p>
+      
+      <h2>Third-Party Links</h2>
+      <p>Our website may contain links to third-party websites. We are not responsible for the content or privacy practices of these external sites.</p>
+      
+      <h2>Changes to Terms</h2>
+      <p>We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on this page.</p>
+      
+      <h2>Contact Information</h2>
+      <p>If you have any questions about these Terms of Service, please contact us at: <a href="mailto:kumar.ujjawal247@gmail.com">kumar.ujjawal247@gmail.com</a></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <!-- Footer Top Section -->
+      <div class="footer-top">
+        <!-- Brand Section -->
+        <div class="footer-brand">
+          <h3><span class="brand-icon">🏷️</span> Aff Deals</h3>
+          <p style="text-align: justify;">Your trusted source for finding the best deals and offers on electronics and gadgets on Amazon India. We help you discover amazing products at great prices with detailed specs and honest reviews.</p>
+          
+          <!-- Social Media Section -->
+          <div class="social-media" style="margin-top:1.5rem;">
+            <h4 style="margin-bottom: 2rem;"><i class="fas fa-heart" style="margin-right: 0.5rem; color: #f59e0b;"></i>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://facebook.com" target="_blank" title="Follow us on Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="https://instagram.com" target="_blank" title="Follow us on Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://pinterest.com" target="_blank" title="Follow us on Pinterest">
+                <i class="fab fa-pinterest-p"></i>
+              </a>
+              <a href="https://youtube.com" target="_blank" title="Subscribe to our YouTube channel">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Links Section -->
+        <div class="footer-links">
+          <h4><i class="fas fa-link" style="margin-right: 0.5rem; color: #6366f1;"></i>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html#mobiles"><i class="fas fa-mobile-alt"></i>Mobiles</a></li>
+            <li><a href="about-us.html"><i class="fas fa-info-circle"></i>About Us</a></li>
+            <li><a href="contact-us.html"><i class="fas fa-envelope"></i>Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <!-- Legal Section -->
+        <div class="footer-legal">
+          <h4><i class="fas fa-gavel" style="margin-right: 0.5rem; color: #ef4444;"></i>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html"><i class="fas fa-shield-alt"></i>Privacy Policy</a></li>
+            <li><a href="terms-of-service.html"><i class="fas fa-clipboard-list"></i>Terms of Service</a></li>
+            <li><a href="disclaimer.html"><i class="fas fa-exclamation-triangle"></i>Disclaimer</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="footer-contact">
+          <h4><i class="fas fa-phone-alt" style="margin-right: 0.5rem; color: #10b981;"></i>Get in Touch</h4>
+          <p><i class="fas fa-envelope" style="margin-right: 0.5rem; color: #6366f1;"></i>Email: <a href="mailto:kumar.ujjawal247@gmail.com" style="color:#f59e0b; text-decoration:none; transition:color 0.3s ease;">kumar.ujjawal247@gmail.com</a></p>
+          <p><i class="fas fa-globe" style="margin-right: 0.5rem; color: #6366f1;"></i>Website: <a href="https://affdeals.github.io" style="color:#f59e0b; text-decoration:none; transition:color 0.3s ease;">affdeals.github.io</a></p>
+          <p><i class="fab fa-amazon" style="margin-right: 0.5rem; color: #f59e0b;"></i>Amazon Associate Program Participant</p>
+        </div>
+      </div>
+      
+      <!-- Footer Bottom Section -->
+      <div class="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:2rem; text-align:center;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+          <p style="margin:0; opacity:0.9; color:#94a3b8; font-size:1rem; font-weight:500;">
+            <i class="fas fa-copyright" style="margin-right: 0.5rem;"></i>
+            © 2025 Aff Deals. All rights reserved. | Amazon Associate Program Participant
+          </p>
+          <p style="margin:0; opacity:0.7; color:#64748b; font-size:0.875rem;">
+            <i class="fas fa-heart" style="margin-right: 0.5rem; color: #ef4444;"></i>
+            Made with love for amazing deals and great products
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

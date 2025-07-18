@@ -5,7 +5,6 @@ on:
     # Sunday: 12am, 6am, 12pm, 6pm IST
     - cron: '30 0 * * 0'   # Sunday 6am IST (12:30am UTC)
     - cron: '30 6 * * 0'   # Sunday 12pm IST (6:30am UTC)
-    - cron: '30 12 * * 0'  # Sunday 6pm IST (12:30pm UTC)
     
     # Monday: 12am, 6am, 12pm, 6pm IST
     - cron: '30 18 * * 0'  # Monday 12am IST (6:30pm UTC Sunday)

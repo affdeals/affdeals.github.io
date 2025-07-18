@@ -68,6 +68,7 @@ def main():
     print(f"- {mobiles_file}: {mobiles_count}")
     print(f"- {update_mobiles_file}: {update_mobiles_count}")
     print(f"- {update_mobiles_file} (listed): {update_mobiles_listed_count}")
+    print(f"- {update_mobiles_file} (unlisted): {update_mobiles_count - update_mobiles_listed_count}")
 
 if __name__ == "__main__":
     main()

@@ -2476,9 +2476,13 @@ def main():
     """Main function to scrape product images with time management"""
     print("=== Smartprix Mobile Image Scraper with Time Management ===")
     
+    # Configuration: Set to True to re-scrape products marked as listed: "no", False to skip them
+    rescrape_unlisted = False  # Developer can manually set this to True or False
+    
     # Initialize time manager
     time_manager = TimeManager()
     print(f"⏱️  Workflow time limit: {time_manager.format_time(time_manager.time_limit_seconds)}")
+    print(f"🔄 Rescrape unlisted products: {'Enabled' if rescrape_unlisted else 'Disabled'}")
     
     print("Loading existing mobiles data...")
     
@@ -2559,8 +2563,13 @@ def main():
                     skipped_count += 1
                     continue
                 elif current_price == existing_price and existing_listed == "no":
-                    print(f"  🔄 Product '{unique_id}' exists with same price ({current_price}) but listed status is 'no' - re-scraping")
-                    should_update = True
+                    if rescrape_unlisted:
+                        print(f"  🔄 Product '{unique_id}' exists with same price ({current_price}) but listed status is 'no' - re-scraping (rescrape_unlisted=True)")
+                        should_update = True
+                    else:
+                        print(f"  ⚠️  Product '{unique_id}' exists with same price ({current_price}) and listed status is 'no' - skipping (rescrape_unlisted=False)")
+                        skipped_count += 1
+                        continue
                 else:
                     print(f"  🔄 Product '{unique_id}' exists but price changed: '{existing_price}' -> '{current_price}' - updating")
                     should_update = True

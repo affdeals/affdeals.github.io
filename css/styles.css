@@ -1349,7 +1349,7 @@ body::before {
     text-align: center;
   }
   
-  /* Center the orange underlines below footer headings */
+  /* Left-align the orange underlines below footer headings */
   .footer-links h4,
   .footer-legal h4,
   .footer-contact h4 {
@@ -1361,8 +1361,7 @@ body::before {
   .footer-legal h4::after,
   .footer-contact h4::after {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     bottom: 0;
   }
 }
@@ -1478,8 +1477,7 @@ body::before {
   .footer-legal h4::after,
   .footer-contact h4::after {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     bottom: 0;
   }
   
@@ -1572,13 +1570,12 @@ body::before {
     font-size: 0.8rem;
   }
   
-  /* Center the orange underlines below footer headings */
+  /* Left-align the orange underlines below footer headings */
   .footer-links h4::after,
   .footer-legal h4::after,
   .footer-contact h4::after {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     bottom: 0;
   }
 }

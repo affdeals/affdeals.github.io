@@ -26,7 +26,7 @@
       </div>
       
       <!-- Navigation Menu -->
-      <div class="nav-menu" id="navMenu">
+      <div class="nav-menu">
         <a href="#mobiles" class="nav-link" onclick="event.preventDefault();">
           <i class="fas fa-mobile-alt nav-icon"></i>
           <span>Mobiles</span>
@@ -85,58 +85,9 @@
       }, 150);
     }
     
-    // Add event listeners to the dropdown container (only for desktop)
-    if (window.innerWidth > 768) {
-      dropdownContainer.addEventListener('mouseenter', showDropdown);
-      dropdownContainer.addEventListener('mouseleave', hideDropdown);
-    }
-    
-    // Mobile menu toggle functionality
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    mobileMenuToggle.addEventListener('click', function() {
-      const isHidden = navMenu.classList.contains('mobile-hidden');
-      
-      if (isHidden) {
-        navMenu.classList.remove('mobile-hidden');
-        navMenu.classList.add('mobile-visible');
-        mobileMenuToggle.innerHTML = '<i class="fas fa-times"></i>';
-      } else {
-        navMenu.classList.remove('mobile-visible');
-        navMenu.classList.add('mobile-hidden');
-        mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-      }
-    });
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-      const isClickInsideNav = navMenu.contains(event.target);
-      const isClickOnToggle = mobileMenuToggle.contains(event.target);
-      
-      if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('mobile-visible')) {
-        navMenu.classList.remove('mobile-visible');
-        navMenu.classList.add('mobile-hidden');
-        mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-      }
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-      if (window.innerWidth > 768) {
-        navMenu.classList.remove('mobile-hidden', 'mobile-visible');
-        mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        // Re-enable dropdown hover for desktop
-        dropdownContainer.addEventListener('mouseenter', showDropdown);
-        dropdownContainer.addEventListener('mouseleave', hideDropdown);
-      } else {
-        navMenu.classList.add('mobile-hidden');
-        navMenu.classList.remove('mobile-visible');
-        // Disable dropdown hover for mobile
-        dropdownContainer.removeEventListener('mouseenter', showDropdown);
-        dropdownContainer.removeEventListener('mouseleave', hideDropdown);
-      }
-    });
+    // Add event listeners to the dropdown container
+    dropdownContainer.addEventListener('mouseenter', showDropdown);
+    dropdownContainer.addEventListener('mouseleave', hideDropdown);
   </script>
 
 

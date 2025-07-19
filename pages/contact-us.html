@@ -25,7 +25,7 @@
       </div>
       
       <!-- Navigation Menu -->
-      <div class="nav-menu" id="navMenu">
+      <div class="nav-menu">
         <a href="../index.html#mobiles" class="nav-link" onclick="event.preventDefault(); window.location.href='../index.html#mobiles';">
           <i class="fas fa-mobile-alt nav-icon"></i>
           <span>Mobiles</span>
@@ -84,60 +84,9 @@
       }, 150);
     }
     
-    // Add event listeners to the dropdown container (only for desktop)
-    if (window.innerWidth > 768) {
-      dropdownContainer.addEventListener('mouseenter', showDropdown);
-      dropdownContainer.addEventListener('mouseleave', hideDropdown);
-    }
-    
-    // Mobile menu toggle functionality
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (mobileMenuToggle && navMenu) {
-      mobileMenuToggle.addEventListener('click', function() {
-        const isHidden = navMenu.classList.contains('mobile-hidden');
-        
-        if (isHidden) {
-          navMenu.classList.remove('mobile-hidden');
-          navMenu.classList.add('mobile-visible');
-          mobileMenuToggle.innerHTML = '<i class="fas fa-times"></i>';
-        } else {
-          navMenu.classList.remove('mobile-visible');
-          navMenu.classList.add('mobile-hidden');
-          mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        }
-      });
-      
-      // Close mobile menu when clicking outside
-      document.addEventListener('click', function(event) {
-        const isClickInsideNav = navMenu.contains(event.target);
-        const isClickOnToggle = mobileMenuToggle.contains(event.target);
-        
-        if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('mobile-visible')) {
-          navMenu.classList.remove('mobile-visible');
-          navMenu.classList.add('mobile-hidden');
-          mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        }
-      });
-      
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-          navMenu.classList.remove('mobile-hidden', 'mobile-visible');
-          mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-          // Re-enable dropdown hover for desktop
-          dropdownContainer.addEventListener('mouseenter', showDropdown);
-          dropdownContainer.addEventListener('mouseleave', hideDropdown);
-        } else {
-          navMenu.classList.add('mobile-hidden');
-          navMenu.classList.remove('mobile-visible');
-          // Disable dropdown hover for mobile
-          dropdownContainer.removeEventListener('mouseenter', showDropdown);
-          dropdownContainer.removeEventListener('mouseleave', hideDropdown);
-        }
-      });
-    }
+    // Add event listeners to the dropdown container
+    dropdownContainer.addEventListener('mouseenter', showDropdown);
+    dropdownContainer.addEventListener('mouseleave', hideDropdown);
   </script>
 
   <!-- Contact Us Content -->
@@ -335,103 +284,6 @@
       gap: 2rem;
       max-width: 1200px;
       margin: 0 auto;
-    }
-    
-    /* Mobile responsive styles for contact page */
-    @media (max-width: 768px) {
-      .page-title {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      
-      .page-subtitle {
-        font-size: 1rem;
-        padding: 0 1rem;
-      }
-      
-      .contact-grid {
-        gap: 1.5rem;
-        padding: 0 1rem;
-      }
-      
-      .main-contact-card,
-      .contact-topics-card,
-      .notice-card {
-        padding: 1.5rem;
-      }
-      
-      .topics-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      
-      .info-cards-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      
-      .email-section {
-        padding: 1.5rem;
-      }
-      
-      .email-button {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.95rem;
-        word-break: break-all;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .page-header {
-        padding: 1rem 0;
-        margin-bottom: 2rem;
-      }
-      
-      .page-title {
-        font-size: 1.75rem;
-      }
-      
-      .page-subtitle {
-        font-size: 0.9rem;
-        padding: 0 0.5rem;
-      }
-      
-      .contact-grid {
-        gap: 1rem;
-        padding: 0 0.5rem;
-      }
-      
-      .main-contact-card,
-      .contact-topics-card,
-      .notice-card {
-        padding: 1rem;
-      }
-      
-      .card-header h2 {
-        font-size: 1.5rem;
-      }
-      
-      .card-header h3 {
-        font-size: 1.25rem;
-      }
-      
-      .email-section {
-        padding: 1rem;
-      }
-      
-      .email-button {
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
-      }
-      
-      .topic-item {
-        padding: 0.75rem;
-      }
-      
-      .info-card {
-        padding: 1rem;
-      }
     }
     
     .main-contact-card {

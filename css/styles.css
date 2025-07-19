@@ -918,11 +918,11 @@ body::before {
 }
 
 .footer-legal {
-  margin-left: -5rem;
+  margin-left: 0;
 }
 
 .footer-contact {
-  margin-left: -5rem;
+  margin-left: 0;
 }
 
 .footer-links h4, .footer-legal h4, .footer-contact h4 {

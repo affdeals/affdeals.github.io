@@ -1311,7 +1311,11 @@ body::before {
   /* Navigation improvements */
   .nav-container {
     justify-content: space-between;
+    align-items: center;
     position: relative;
+    height: 70px;
+    padding: 0 1rem;
+    flex-wrap: nowrap;
   }
   
   .nav-menu {
@@ -1419,6 +1423,20 @@ body::before {
     justify-content: center;
     text-align: center;
   }
+  
+  /* Center the orange underlines below footer headings */
+  .footer-links h4,
+  .footer-legal h4,
+  .footer-contact h4 {
+    text-align: center;
+  }
+  
+  .footer-links h4::after,
+  .footer-legal h4::after,
+  .footer-contact h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 /* Enhanced Small Mobile */
@@ -1519,6 +1537,14 @@ body::before {
   .footer-contact h4 {
     font-size: 1rem;
     margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .footer-links h4::after,
+  .footer-legal h4::after,
+  .footer-contact h4::after {
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .footer-links a,
@@ -1603,6 +1629,14 @@ body::before {
     width: 28px;
     height: 28px;
     font-size: 0.8rem;
+  }
+  
+  /* Center the orange underlines below footer headings */
+  .footer-links h4::after,
+  .footer-legal h4::after,
+  .footer-contact h4::after {
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 

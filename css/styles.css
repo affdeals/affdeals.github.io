@@ -1324,7 +1324,7 @@ body::before {
   .footer-links,
   .footer-legal,
   .footer-contact {
-    text-align: center;
+    text-align: left;
   }
   
   .footer-legal,
@@ -1336,24 +1336,24 @@ body::before {
   .footer-legal ul {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
   
   .footer-links a,
   .footer-legal a {
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .footer-contact p {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
   
-  /* Left-align the orange underlines below footer headings */
+  /* Keep footer headings left-aligned for proper orange underline positioning */
   .footer-links h4,
   .footer-legal h4,
   .footer-contact h4 {
-    text-align: center;
+    text-align: left;
     position: relative;
   }
   
@@ -1469,7 +1469,7 @@ body::before {
   .footer-contact h4 {
     font-size: 1rem;
     margin-bottom: 1rem;
-    text-align: center;
+    text-align: left;
     position: relative;
   }
   
@@ -1490,6 +1490,7 @@ body::before {
   .footer-contact p {
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
+    text-align: left;
   }
   
   .footer-bottom {

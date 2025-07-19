@@ -2477,7 +2477,7 @@ def main():
     print("=== Smartprix Mobile Image Scraper with Time Management ===")
     
     # Configuration: Set to True to re-scrape products marked as listed: "no", False to skip them
-    rescrape_unlisted = False  # Developer can manually set this to True or False
+    rescrape_unlisted = True  # Developer can manually set this to True or False
     
     # Initialize time manager
     time_manager = TimeManager()
